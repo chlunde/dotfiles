@@ -20,5 +20,7 @@
   changed = green
   untracked = cyan
 
+[alias]
+  gl = log --graph --abbrev-commit --pretty=oneline --decorate
 [log]
   decorate = short
