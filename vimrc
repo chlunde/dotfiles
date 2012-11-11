@@ -21,6 +21,7 @@ set showmatch
 set autowrite
 set nocompatible
 set ruler
+set laststatus=2 " always
 set noerrorbells
 set visualbell
 set title
@@ -67,9 +68,6 @@ imap <F9> <Esc>9gta
 imap <F10> <Esc>10gta
 
 hi TabLineSel term=reverse ctermfg=white ctermbg=lightblue guifg=white guibg=blue
-set runtimepath^=~/.vim/bundle/ctrlp.vim
-set runtimepath^=~/.vim/bundle/xterm-color-table.vim
-
 
 filetype off
 
@@ -92,8 +90,12 @@ Bundle 'nvie/vim-flake8'
 Bundle 'msanders/snipmate.vim.git'
 Bundle 'chlunde/slimux'
 Bundle 'Lokaltog/vim-easymotion'
+if v:version < 703
+    Bundle 'tpope/vim-git'
+endif
 
 filetype plugin indent on
+set statusline=%<%f\ %h%m\ %{fugitive#statusline()}%r%=%k[%{(&fenc\ ==\ \"\"?&enc:&fenc).(&bomb?\",BOM\":\"\")}][U+%04B]\ %-12.(%l,%c%V%)\ %P 
 
 set t_Co=256
 set bg=dark
