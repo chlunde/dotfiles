@@ -7,7 +7,6 @@ set softtabstop=4
 set shiftwidth=4
 set shiftround
 "set textwidth=78
-set background=dark
 "set backupdir=~/backup
 "au BufWritePre * let &bex = '~' . strftime("%Y-%m-%dT%H-%M-%S")
 "set expandtab
@@ -67,8 +66,6 @@ imap <F8> <Esc>8gta
 imap <F9> <Esc>9gta
 imap <F10> <Esc>10gta
 
-hi TabLineSel term=reverse ctermfg=white ctermbg=lightblue guifg=white guibg=blue
-
 filetype off
 
 set rtp+=~/.vim/bundle/vundle/
@@ -94,12 +91,16 @@ if v:version < 703
     Bundle 'tpope/vim-git'
 endif
 
+if filereadable($HOME . '/tmux/examples/tmux.vim')
+    execute "source " . $HOME . '/tmux/examples/tmux.vim'
+endif
+
 filetype plugin indent on
 set statusline=%<%f\ %h%m\ %{fugitive#statusline()}%r%=%k[%{(&fenc\ ==\ \"\"?&enc:&fenc).(&bomb?\",BOM\":\"\")}][U+%04B]\ %-12.(%l,%c%V%)\ %P 
 
 set t_Co=256
-set bg=dark
 colorscheme molokai
+set background=dark
 
 " Bundle 'nanotech/jellybeans.vim'
 " Bundle 'godlygeek/tabular'
