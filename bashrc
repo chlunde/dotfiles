@@ -76,6 +76,8 @@ cd() {
 }
 
 # My Python virtualenv helpers {{{
+# RH 5.x: wget http://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.7.2.tar.gz
+# easy_install pip==1.1
 create_venv() {
     if [ -n "$1" ]
     then
