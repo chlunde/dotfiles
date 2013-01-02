@@ -9,12 +9,12 @@ set shiftround
 "set textwidth=78
 "set backupdir=~/backup
 "au BufWritePre * let &bex = '~' . strftime("%Y-%m-%dT%H-%M-%S")
-"set expandtab
+set expandtab
 set incsearch
 set hlsearch
 set ignorecase
 set smartcase
-set autoindent
+"set autoindent
 set showcmd
 set showmatch
 set autowrite
@@ -73,7 +73,7 @@ call vundle#rc()
 
 Bundle 'gmarik/vundle'
 Bundle 'kien/ctrlp.vim'
-Bundle 'tomasr/molokai'
+"Bundle 'tomasr/molokai'
 Bundle 'tpope/vim-commentary'
 Bundle 'tpope/vim-fugitive'
 Bundle 'tpope/vim-repeat'
@@ -87,6 +87,8 @@ Bundle 'nvie/vim-flake8'
 Bundle 'msanders/snipmate.vim.git'
 Bundle 'chlunde/slimux'
 Bundle 'Lokaltog/vim-easymotion'
+Bundle 'vim-scripts/indentpython.vim'
+Bundle 'nanotech/jellybeans.vim'
 if v:version < 703
     Bundle 'tpope/vim-git'
 endif
@@ -99,10 +101,9 @@ filetype plugin indent on
 set statusline=%<%f\ %h%m\ %{fugitive#statusline()}%r%=%k[%{(&fenc\ ==\ \"\"?&enc:&fenc).(&bomb?\",BOM\":\"\")}][U+%04B]\ %-12.(%l,%c%V%)\ %P 
 
 set t_Co=256
-colorscheme molokai
 set background=dark
+colorscheme jellybeans
 
-" Bundle 'nanotech/jellybeans.vim'
 " Bundle 'godlygeek/tabular'
 " Bundle 'sjl/gundo.vim'
 " Bundle 'Raimondi/delimitMate'
