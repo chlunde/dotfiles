@@ -6,7 +6,7 @@ stty -ixon
 
 export PATH=/home/chlunde/archive/tmux:$PATH
 export MAKEFLAGS='-j6'
-export PYTHONSTARTUP=~/.pystartup
+[ -e ~/.pystartup ] && export PYTHONSTARTUP=~/.pystartup
 
 HISTTIMEFORMAT='%FT%T '
 
@@ -20,7 +20,14 @@ less() { case $1 in less|vim) shift ;; esac; command $FUNCNAME ${1+"$@"}; }
 vim() { case $1 in less|vim) shift ;; esac; command $FUNCNAME ${1+"$@"}; }
 
 alias m='make'
-alias ls='ls -FX --color=auto'
+case $(uname -s) in
+    Darwin)
+        alias ls="ls -hFG"
+        ;;
+    *)
+        alias ls='ls -FX --color=auto'
+        ;;
+esac
 alias grep='grep --color=tty -d skip'
 alias grpe='grep --color=tty -d skip'
 
