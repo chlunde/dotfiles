@@ -6,6 +6,7 @@ stty -ixon
 
 export PATH=/home/chlunde/archive/tmux:$PATH
 export MAKEFLAGS='-j6'
+export PYTHONSTARTUP=~/.pystartup
 
 HISTTIMEFORMAT='%FT%T '
 
