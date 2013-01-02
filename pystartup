@@ -10,7 +10,10 @@ import os
 import readline
 import rlcompleter
 
-readline.parse_and_bind('tab: complete')
+# Linux:
+readline.parse_and_bind("tab: complete")
+# Mac OS X default python:
+readline.parse_and_bind("bind ^I rl_complete")
 
 historyPath = os.path.expanduser("~/.pyhistory")
 
