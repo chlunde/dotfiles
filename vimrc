@@ -32,6 +32,7 @@ filetype indent on
 "highlight CursorLine term=bold cterm=bold gui=bold ctermfg=7
 
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
+"set wildignore+=*.pyc
 
 autocmd BufWritePre *.{C,cc,cpp,c,java,h} silent! %s/[ \t]\+$//
 autocmd BufRead *.{C,cc,cpp,c,java,h} silent! %s/[ \t]\+$//
@@ -149,3 +150,5 @@ nmap <silent> <leader>sv :so $MYVIMRC<CR>
 map <C-c><C-c> :SlimuxREPLSendLine<CR>
 vmap <C-c><C-c> :SlimuxREPLSendSelection<CR>
 nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
+let g:ctrlp_extensions = ['tag']
+let g:ctrlp_root_markers = ['manage.py','.git']
