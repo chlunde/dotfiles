@@ -24,6 +24,10 @@ set laststatus=2 " always
 set noerrorbells
 set visualbell
 set title
+if &term == "screen"
+    set t_ts=]2;
+    set t_fs=\
+endif
 set wildmenu
 "set cursorline
 set cinoptions=:0,g0,(0,j1
@@ -31,6 +35,7 @@ filetype indent on
 "set mouse=a
 "highlight CursorLine term=bold cterm=bold gui=bold ctermfg=7
 
+let &titlestring = expand("%:t")
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 "set wildignore+=*.pyc
 
