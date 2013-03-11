@@ -1,5 +1,6 @@
 [ -z "$PS1" ] && return # Not interactive
 unset command_not_found_handle
+trap 'echo -ne "\033]2;$(HISTTIMEFORMAT="" history 1 | sed "s/^[ ]*[0-9]*[ ]*//g")\007"' DEBUG
 
 # Disable XON/XOFF
 stty -ixon
