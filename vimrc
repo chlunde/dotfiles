@@ -74,6 +74,8 @@ colorscheme jellybeans
 let mapleader=","
 nmap <leader>r :registers<CR>
 nmap <leader>m :marks<CR>
+nmap <leader>c :Gcommit --verbose<CR>
+nmap <leader>w :Gwrite<CR>
 nmap <silent> <leader>ev :sp $MYVIMRC<CR>
 nmap <silent> <leader>sv :so $MYVIMRC<CR>
 
