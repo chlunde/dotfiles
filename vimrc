@@ -30,8 +30,18 @@ set cinoptions=:0,g0,(0,j1
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set wildignore+=*.pyc
 
-autocmd BufWritePre *.{C,cc,cpp,c,java,h,py} silent! %s/[ \t]\+$//
-autocmd BufRead *.{C,cc,cpp,c,java,h,py} silent! %s/[ \t]\+$//
+augroup vimrc
+    au!
+
+    au BufWritePre *.{C,cc,cpp,c,java,h,py} silent! %s/[ \t]\+$//
+    au BufRead *.{C,cc,cpp,c,java,h,py} silent! %s/[ \t]\+$//
+
+    " Make sure Vim returns to the same line when you reopen a file.
+    au BufReadPost *
+                \ if line("'\"") > 0 && line("'\"") <= line("$") |
+                \     execute 'normal! g`"zvzz' |
+                \ endif
+augroup END
 
 if v:version < 703 || (v:version == 703 && !has("patch430"))
     filetype off
@@ -76,10 +86,26 @@ nmap <leader>r :registers<CR>
 nmap <leader>m :marks<CR>
 nmap <leader>c :Gcommit --verbose<CR>
 nmap <leader>w :Gwrite<CR>
+
 nmap <silent> <leader>ev :sp $MYVIMRC<CR>
 nmap <silent> <leader>sv :so $MYVIMRC<CR>
 
+" Source
+vnoremap <leader>S y:execute @@<cr>:echo 'Sourced selection.'<cr>
+nnoremap <leader>S ^vg_y:execute @@<cr>:echo 'Sourced line.'<cr>
+
+nnoremap Q gqip
+
 nnoremap <leader><space> :noh<cr>
+
+" Keep search matches in the middle of the window.
+nnoremap n nzzzv
+nnoremap N Nzzzv
+
+" Same when jumping around
+nnoremap g; g;zz
+nnoremap g, g,zz
+nnoremap <c-o> <c-o>zz
 
 map <Up> <nop>
 map <Down> <nop>
