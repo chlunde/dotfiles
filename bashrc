@@ -5,8 +5,6 @@ trap 'echo -ne "\033]2;$(HISTTIMEFORMAT="" history 1 | sed "s/^[ ]*[0-9]*[ ]*//g
 # Disable XON/XOFF
 stty -ixon
 
-export PATH=/home/chlunde/archive/tmux:$PATH
-
 [ -d /opt/vim74/bin ] && export PATH=/opt/vim74/bin:$PATH
 [ -d /opt/python27/bin ] && export PATH=/opt/python27/bin:$PATH
 
