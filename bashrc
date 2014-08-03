@@ -133,6 +133,8 @@ _venv_complete() {
 }
 
 complete -F _venv_complete venv
+
+[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 # }}}
 #source ~/.git-completion.sh
 
