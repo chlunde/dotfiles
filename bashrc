@@ -10,6 +10,7 @@ then
     export GOROOT=/usr/local/go/
     export GOPATH=$HOME/go
     export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+    . /usr/local/go/misc/bash/go
 fi
 [ -d /opt/vim74/bin ] && export PATH=/opt/vim74/bin:$PATH
 [ -d /opt/python27/bin ] && export PATH=/opt/python27/bin:$PATH
