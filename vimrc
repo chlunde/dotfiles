@@ -47,34 +47,37 @@ if v:version < 703 || (v:version == 703 && !has("patch430"))
     filetype off
 endif
 
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 
-Bundle 'gmarik/vundle'
+
+Plugin 'gmarik/Vundle.vim'
 if v:version < 703
-    Bundle 'tpope/vim-git'
+    Plugin 'tpope/vim-git'
 endif
-Bundle 'kien/ctrlp.vim'
-Bundle 'tpope/vim-commentary'
-Bundle 'tpope/vim-fugitive'
-Bundle 'tpope/vim-repeat'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-unimpaired'
-Bundle 'tpope/vim-markdown'
-Bundle 'chlunde/vim-signify'
-Bundle 'epeli/slimux'
-Bundle 'vim-scripts/indentpython.vim'
-Bundle 'chlunde/jellybeans.vim'
-Bundle 'scrooloose/syntastic'
-Bundle 'itchyny/lightline.vim'
+Plugin 'kien/ctrlp.vim'
+Plugin 'tpope/vim-commentary'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tpope/vim-repeat'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-unimpaired'
+Plugin 'tpope/vim-markdown'
+Plugin 'chlunde/vim-signify'
+Plugin 'epeli/slimux'
+Plugin 'vim-scripts/indentpython.vim'
+Plugin 'chlunde/jellybeans.vim'
+Plugin 'scrooloose/syntastic'
+Plugin 'itchyny/lightline.vim'
 
-" Bundle 'majutsushi/tagbar'
+" Plugin 'majutsushi/tagbar'
 " autocmd BufEnter * nested :call tagbar#autoopen(-1)
 "
-" Bundle 'davidhalter/jedi-vim'
-" Bundle 'michaeljsmith/vim-indent-object'
-" Bundle 'msanders/snipmate.vim.git'
-" Bundle 'marijnh/tern_for_vim'
+" Plugin 'davidhalter/jedi-vim'
+" Plugin 'michaeljsmith/vim-indent-object'
+" Plugin 'msanders/snipmate.vim.git'
+" Plugin 'marijnh/tern_for_vim'
+
+call vundle#end()
 
 filetype plugin indent on
 

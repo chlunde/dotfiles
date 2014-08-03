@@ -5,6 +5,9 @@
         ln -s ~/dotfiles/$f .$f
     done
 
+    git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
+    vim +PluginInstall +qall
+
 # Mac setup
 
 * Chrome
