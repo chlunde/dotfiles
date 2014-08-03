@@ -14,6 +14,8 @@ fi
 [ -d /opt/vim74/bin ] && export PATH=/opt/vim74/bin:$PATH
 [ -d /opt/python27/bin ] && export PATH=/opt/python27/bin:$PATH
 
+export EDITOR=vim
+
 export MAKEFLAGS='-j6'
 [ -e ~/.pystartup ] && export PYTHONSTARTUP=~/.pystartup
 
