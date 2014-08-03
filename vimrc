@@ -1,4 +1,3 @@
-syntax on
 set scrolloff=2
 set softtabstop=4
 set shiftwidth=4
@@ -48,6 +47,10 @@ if v:version < 703 || (v:version == 703 && !has("patch430"))
 endif
 
 set rtp+=~/.vim/bundle/Vundle.vim
+if $GOROOT != ""
+    set rtp+=$GOROOT/misc/vim
+endif
+
 call vundle#begin()
 
 
@@ -79,6 +82,8 @@ Plugin 'itchyny/lightline.vim'
 
 call vundle#end()
 
+
+syntax on
 filetype plugin indent on
 
 set t_Co=256

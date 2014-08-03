@@ -5,6 +5,12 @@ trap 'echo -ne "\033]2;$(HISTTIMEFORMAT="" history 1 | sed "s/^[ ]*[0-9]*[ ]*//g
 # Disable XON/XOFF
 stty -ixon
 
+if [ -d /usr/local/go/bin ]
+then
+    export GOROOT=/usr/local/go/
+    export GOPATH=$HOME/go
+    export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+fi
 [ -d /opt/vim74/bin ] && export PATH=/opt/vim74/bin:$PATH
 [ -d /opt/python27/bin ] && export PATH=/opt/python27/bin:$PATH
 
