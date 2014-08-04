@@ -2,6 +2,16 @@
 unset command_not_found_handle
 trap 'echo -ne "\033]2;$(HISTTIMEFORMAT="" history 1 | sed "s/^[ ]*[0-9]*[ ]*//g")\007"' DEBUG
 
+shorthost_prompt() {
+    local opt=$(shopt -p extglob)
+    shopt -s extglob
+    local host=${HOSTNAME/%.+([a-z0-9]).no/}
+    export PS1="\u@${host} \W\\$ "
+    eval "$opt"
+}
+
+shorthost_prompt
+
 pathmunge () {
     case ":${PATH}:" in
         *:"$1":*)
