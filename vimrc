@@ -161,6 +161,9 @@ let g:syntastic_python_checkers=['flake8'] ", 'pep257', 'pylint', 'py3kwarn']
 
 let python_highlight_all = 1
 
+" Autoupdate vimdiff on save
+autocmd BufWritePost * if &diff == 1 | diffupdate | endif
+
 let g:signify_vcs_list = ['git']
 let g:signify_difftool = 'diff'
 
