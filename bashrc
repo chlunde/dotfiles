@@ -171,3 +171,4 @@ complete -F _venv_complete venv
 # }}}
 #source ~/.git-completion.sh
 
+[ -f ~/.bashrc.local ] && source ~/.bashrc.local
