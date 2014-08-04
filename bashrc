@@ -2,6 +2,19 @@
 unset command_not_found_handle
 trap 'echo -ne "\033]2;$(HISTTIMEFORMAT="" history 1 | sed "s/^[ ]*[0-9]*[ ]*//g")\007"' DEBUG
 
+pathmunge () {
+    case ":${PATH}:" in
+        *:"$1":*)
+            ;;
+        *)
+            if [ "$2" = "after" ] ; then
+                PATH=$PATH:$1
+            else
+                PATH=$1:$PATH
+            fi
+    esac
+}
+
 # Disable XON/XOFF
 stty -ixon
 
@@ -9,9 +22,19 @@ if [ -d /usr/local/go/bin ]
 then
     export GOROOT=/usr/local/go/
     export GOPATH=$HOME/go
-    export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
+
+    pathmunge /usr/local/go/bin after
+    pathmunge $GOPATH/bin after
+
     . /usr/local/go/misc/bash/go
 fi
+
+test -L /sbin || pathmunge /sbin
+pathmunge /usr/sbin
+
+pathmunge /local/bin after
+pathmunge $HOME/bin
+
 [ -d /opt/vim74/bin ] && export PATH=/opt/vim74/bin:$PATH
 [ -d /opt/python27/bin ] && export PATH=/opt/python27/bin:$PATH
 
