@@ -165,6 +165,9 @@ let python_highlight_all = 1
 " Autoupdate vimdiff on save
 autocmd BufWritePost * if &diff == 1 | diffupdate | endif
 
+" gofmt
+autocmd FileType go autocmd BufWritePre <buffer> Fmt
+
 let g:signify_vcs_list = ['git']
 let g:signify_difftool = 'diff'
 
