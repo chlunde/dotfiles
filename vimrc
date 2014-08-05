@@ -155,6 +155,7 @@ nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 let g:ctrlp_extensions = ['tag']
 let g:ctrlp_root_markers = ['manage.py','.git']
 set wildignore+=.git/objects/*
+set wildignore+=target
 let g:ctrlp_custom_ignore = -1  "'\v[\/]\.git$'
 
 let g:syntastic_python_checkers=['flake8'] ", 'pep257', 'pylint', 'py3kwarn']
