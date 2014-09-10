@@ -68,6 +68,10 @@ Plugin 'vim-scripts/indentpython.vim'
 Plugin 'chlunde/jellybeans.vim'
 Plugin 'scrooloose/syntastic'
 Plugin 'itchyny/lightline.vim'
+Plugin 'Shougo/neocomplete'
+
+Plugin 'Shougo/neosnippet'
+Plugin 'Shougo/neosnippet-snippets'
 
 if $GOPATH != ""
     Plugin 'fatih/vim-go'
@@ -169,7 +173,27 @@ autocmd BufWritePost * if &diff == 1 | diffupdate | endif
 let g:signify_vcs_list = ['git']
 let g:signify_difftool = 'diff'
 
+let g:go_snippet_engine = "neosnippet"
+
 autocmd FileType go setlocal noexpandtab shiftwidth=4 tabstop=4 softtabstop=4
+
+inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+
+imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+            \ "\<Plug>(neosnippet_expand_or_jump)"
+            \: pumvisible() ? "\<C-n>" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+            \ "\<Plug>(neosnippet_expand_or_jump)"
+            \: "\<TAB>"
+
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+let g:neocomplete#enable_at_startup = 1
 
 let g:lightline = {
       \ 'colorscheme': 'jellybeans',
