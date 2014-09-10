@@ -14,3 +14,4 @@
 * http://mxcl.github.com/homebrew/
 * Brews:
     brew install mobile-shell
+    brew install vim --with-lua
