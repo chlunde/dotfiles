@@ -47,9 +47,6 @@ if v:version < 703 || (v:version == 703 && !has("patch430"))
 endif
 
 set rtp+=~/.vim/bundle/Vundle.vim
-if $GOROOT != ""
-    set rtp+=$GOROOT/misc/vim
-endif
 
 call vundle#begin()
 
@@ -71,6 +68,10 @@ Plugin 'vim-scripts/indentpython.vim'
 Plugin 'chlunde/jellybeans.vim'
 Plugin 'scrooloose/syntastic'
 Plugin 'itchyny/lightline.vim'
+
+if $GOPATH != ""
+    Plugin 'fatih/vim-go'
+endif
 
 " Plugin 'majutsushi/tagbar'
 " autocmd BufEnter * nested :call tagbar#autoopen(-1)
@@ -165,11 +166,10 @@ let python_highlight_all = 1
 " Autoupdate vimdiff on save
 autocmd BufWritePost * if &diff == 1 | diffupdate | endif
 
-" gofmt
-autocmd FileType go autocmd BufWritePre <buffer> Fmt
-
 let g:signify_vcs_list = ['git']
 let g:signify_difftool = 'diff'
+
+autocmd FileType go setlocal noexpandtab shiftwidth=4 tabstop=4 softtabstop=4
 
 let g:lightline = {
       \ 'colorscheme': 'jellybeans',
