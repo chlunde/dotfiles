@@ -9,11 +9,14 @@ import atexit
 import os
 import readline
 import rlcompleter
+import sys
 
 # Linux:
-readline.parse_and_bind("tab: complete")
-# Mac OS X default python:
-readline.parse_and_bind("bind ^I rl_complete")
+if sys.platform == 'darwin':
+    # Mac OS X default python:
+    readline.parse_and_bind("bind ^I rl_complete")
+else:
+    readline.parse_and_bind("tab: complete")
 
 historyPath = os.path.expanduser("~/.pyhistory")
 
