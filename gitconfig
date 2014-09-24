@@ -24,3 +24,5 @@
   gl = log --graph --abbrev-commit --pretty=oneline --decorate
 [log]
   decorate = short
+[push]
+	default = simple
