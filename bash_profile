@@ -7,3 +7,5 @@ case $(uname -s) in
         export LC_ALL=en_US.UTF-8
         ;;
 esac
+
+ulimit -c 262144
