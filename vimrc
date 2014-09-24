@@ -73,6 +73,10 @@ Plugin 'Shougo/neocomplete'
 Plugin 'Shougo/neosnippet'
 Plugin 'Shougo/neosnippet-snippets'
 
+if match($HOSTNAME, "puppet") != -1
+    Plugin 'rodjek/vim-puppet'
+endif
+
 if $GOPATH != ""
     Plugin 'fatih/vim-go'
 endif
