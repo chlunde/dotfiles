@@ -79,6 +79,9 @@ endif
 
 if $GOPATH != ""
     Plugin 'fatih/vim-go'
+    let g:go_fmt_command = "goimports"
+    let g:go_snippet_engine = "neosnippet"
+    " let g:go_auto_type_info = 1
 endif
 
 " Plugin 'majutsushi/tagbar'
@@ -177,7 +180,6 @@ autocmd BufWritePost * if &diff == 1 | diffupdate | endif
 let g:signify_vcs_list = ['git']
 let g:signify_difftool = 'diff'
 
-let g:go_snippet_engine = "neosnippet"
 
 autocmd FileType go setlocal noexpandtab shiftwidth=4 tabstop=4 softtabstop=4
 
