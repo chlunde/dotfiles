@@ -28,15 +28,18 @@ pathmunge () {
 # Disable XON/XOFF
 stty -ixon
 
-if [ -d /usr/local/go/bin ]
+[ -d /usr/local/go/bin ] && GOROOT=/usr/local/go
+[ -d $HOME/goroot ] && GOROOT=$HOME/goroot
+
+if [ -n "$GOROOT" ]
 then
-    export GOROOT=/usr/local/go/
+    export GOROOT
     export GOPATH=$HOME/go
 
-    pathmunge /usr/local/go/bin after
+    pathmunge $GOROOT/bin after
     pathmunge $GOPATH/bin after
 
-    . /usr/local/go/misc/bash/go
+#    test -f /usr/local/go/misc/bash/go && . /usr/local/go/misc/bash/go
 fi
 
 test -L /sbin || pathmunge /sbin
