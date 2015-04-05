@@ -28,6 +28,8 @@ pathmunge () {
 # Disable XON/XOFF
 stty -ixon
 
+[ -f /usr/local/bin/nvim ] && ! [ -f /usr/bin/vim ] && alias vim=nvim
+
 [ -d /usr/local/go/bin ] && GOROOT=/usr/local/go
 [ -d $HOME/goroot ] && GOROOT=$HOME/goroot
 
