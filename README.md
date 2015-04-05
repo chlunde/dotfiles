@@ -5,6 +5,8 @@
         ln -s ~/dotfiles/$f .$f
     done
 
+    ln -s ~/dotfiles/vimrc .nvimrc
+
     git clone https://github.com/gmarik/Vundle.vim.git ~/.vim/bundle/Vundle.vim
     vim +PluginInstall +qall
 
