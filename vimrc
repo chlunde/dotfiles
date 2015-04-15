@@ -46,55 +46,44 @@ if v:version < 703 || (v:version == 703 && !has("patch430"))
     filetype off
 endif
 
-set rtp+=~/.vim/bundle/Vundle.vim
+call plug#begin('~/.vim/plugged')
 
-call vundle#begin()
-
-
-Plugin 'gmarik/Vundle.vim'
 if v:version < 703
-    Plugin 'tpope/vim-git'
+    Plug 'tpope/vim-git'
 endif
-Plugin 'kien/ctrlp.vim'
-Plugin 'tpope/vim-commentary'
-Plugin 'tpope/vim-fugitive'
-Plugin 'tpope/vim-repeat'
-Plugin 'tpope/vim-surround'
-Plugin 'tpope/vim-unimpaired'
-Plugin 'tpope/vim-markdown'
-Plugin 'chlunde/vim-signify'
-Plugin 'epeli/slimux'
-Plugin 'vim-scripts/indentpython.vim'
-Plugin 'chlunde/jellybeans.vim'
-Plugin 'scrooloose/syntastic'
-Plugin 'itchyny/lightline.vim'
-if has("lua")
-    Plugin 'Shougo/neocomplete'
-endif
+Plug 'kien/ctrlp.vim'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-repeat'
+Plug 'tpope/vim-surround'
+Plug 'tpope/vim-unimpaired'
+Plug 'tpope/vim-markdown'
+Plug 'chlunde/vim-signify'
+Plug 'vim-scripts/indentpython.vim'
+Plug 'chlunde/jellybeans.vim'
+Plug 'scrooloose/syntastic'
+Plug 'itchyny/lightline.vim'
+Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
 
-Plugin 'Shougo/neosnippet'
-Plugin 'Shougo/neosnippet-snippets'
+"Plugin 'Shougo/neosnippet'
+"Plugin 'Shougo/neosnippet-snippets'
 
 if match($HOSTNAME, "puppet") != -1
-    Plugin 'rodjek/vim-puppet'
+    Plug 'rodjek/vim-puppet'
 endif
 
 if $GOPATH != ""
-    Plugin 'fatih/vim-go'
+    Plug 'fatih/vim-go'
     let g:go_fmt_command = "goimports"
     let g:go_snippet_engine = "neosnippet"
-    " let g:go_auto_type_info = 1
+    let g:go_highlight_functions = 1
+    let g:go_highlight_methods = 1
+    let g:go_highlight_structs = 1
+    let g:go_highlight_operators = 1
+    let g:go_highlight_build_constraints = 1
 endif
 
-" Plugin 'majutsushi/tagbar'
-" autocmd BufEnter * nested :call tagbar#autoopen(-1)
-"
-" Plugin 'davidhalter/jedi-vim'
-" Plugin 'michaeljsmith/vim-indent-object'
-" Plugin 'msanders/snipmate.vim.git'
-" Plugin 'marijnh/tern_for_vim'
-
-call vundle#end()
+call plug#end()
 
 
 syntax on
@@ -162,8 +151,6 @@ imap <F8> <Esc>8gta
 imap <F9> <Esc>9gta
 imap <F10> <Esc>10gta
 
-map <C-c><C-c> :SlimuxREPLSendLine<CR>
-vmap <C-c><C-c> :SlimuxREPLSendSelection<CR>
 nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 
 let g:ctrlp_extensions = ['tag']
@@ -182,21 +169,7 @@ autocmd BufWritePost * if &diff == 1 | diffupdate | endif
 let g:signify_vcs_list = ['git']
 let g:signify_difftool = 'diff'
 
-
 autocmd FileType go setlocal noexpandtab shiftwidth=4 tabstop=4 softtabstop=4
-
-if has("lua")
-    inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-    inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
-
-    imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-                \ "\<Plug>(neosnippet_expand_or_jump)"
-                \: pumvisible() ? "\<C-n>" : "\<TAB>"
-    smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-                \ "\<Plug>(neosnippet_expand_or_jump)"
-                \: "\<TAB>"
-endif
-
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
