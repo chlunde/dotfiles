@@ -1,6 +1,5 @@
 [ -z "$PS1" ] && return # Not interactive
 unset command_not_found_handle
-trap 'echo -ne "\033]2;$(HISTTIMEFORMAT="" history 1 | sed "s/^[ ]*[0-9]*[ ]*//g")\007"' DEBUG
 
 shorthost_prompt() {
     local opt=$(shopt -p extglob)
@@ -177,3 +176,5 @@ complete -F _venv_complete venv
 #source ~/.git-completion.sh
 
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
+
+trap 'echo -ne "\033]2;$(HISTTIMEFORMAT="" history 1 | sed "s/^[ ]*[0-9]*[ ]*//g")\007"' DEBUG
