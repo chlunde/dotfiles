@@ -42,8 +42,6 @@ then
 
     pathmunge $GOROOT/bin after
     pathmunge $GOPATH/bin after
-
-#    test -f /usr/local/go/misc/bash/go && . /usr/local/go/misc/bash/go
 fi
 
 test -L /sbin || pathmunge /sbin
