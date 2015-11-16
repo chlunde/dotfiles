@@ -177,5 +177,4 @@ complete -F _venv_complete venv
 shopt -s progcomp
 [ -f /etc/bash_completion.d/git ] && source /etc/bash_completion.d/git
 
-trap 'echo -ne "\033]2;$(HISTTIMEFORMAT="" history 1 | sed "s/^[ ]*[0-9]*[ ]*//g")\007"' DEBUG
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
