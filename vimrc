@@ -67,7 +67,9 @@ Plug 'vim-scripts/indentpython.vim'
 Plug 'chlunde/jellybeans.vim'
 Plug 'scrooloose/syntastic'
 Plug 'itchyny/lightline.vim'
-Plug 'Valloric/YouCompleteMe', { 'do': './install.sh' }
+" meh, https://github.com/Valloric/ycmd/commit/31c0eb8bda4bce1db49741f39ab22027b53e94b5
+let $TRAVIS=1
+Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp', 'py', 'go'], 'do': './install.sh' }
 
 "Plugin 'Shougo/neosnippet'
 "Plugin 'Shougo/neosnippet-snippets'
