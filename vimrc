@@ -35,6 +35,8 @@ augroup vimrc
     au BufWritePre *.{C,cc,cpp,c,java,h,py} silent! %s/[ \t]\+$//
     au BufRead *.{C,cc,cpp,c,java,h,py} silent! %s/[ \t]\+$//
 
+    au BufWritePost vimrc,.vimrc nested if expand('%') !~ 'fugitive' | source % | endif
+
     " Make sure Vim returns to the same line when you reopen a file.
     au BufReadPost *
                 \ if line("'\"") > 0 && line("'\"") <= line("$") |
