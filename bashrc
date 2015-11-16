@@ -12,6 +12,11 @@ shorthost_prompt() {
 shorthost_prompt
 
 pathmunge () {
+    if ! [[ -d "$1" ]]
+    then
+        return
+    fi
+
     case ":${PATH}:" in
         *:"$1":*)
             ;;
