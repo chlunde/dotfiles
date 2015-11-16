@@ -51,7 +51,9 @@ call plug#begin('~/.vim/plugged')
 if v:version < 703
     Plug 'tpope/vim-git'
 endif
-Plug 'kien/ctrlp.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
+
 Plug 'tpope/vim-commentary'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-repeat'
@@ -153,11 +155,12 @@ imap <F10> <Esc>10gta
 
 nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 
-let g:ctrlp_extensions = ['tag']
-let g:ctrlp_root_markers = ['manage.py','.git']
+"let g:ctrlp_extensions = ['tag']
+"let g:ctrlp_root_markers = ['manage.py','.git']
+"let g:ctrlp_custom_ignore = -1  "'\v[\/]\.git$'
+"
 set wildignore+=.git/objects/*
 set wildignore+=target
-let g:ctrlp_custom_ignore = -1  "'\v[\/]\.git$'
 
 let g:syntastic_python_checkers=['flake8'] ", 'pep257', 'pylint', 'py3kwarn']
 
@@ -176,7 +179,17 @@ autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
 autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
-let g:neocomplete#enable_at_startup = 1
+function! s:ctrlp()
+    let root = systemlist('git rev-parse --show-toplevel')[0]
+    if v:shell_error
+        Files
+    else
+        GitFiles
+    endif
+endfunction
+command! CtrlP call s:ctrlp()
+
+nnoremap <silent> <c-p> :CtrlP<CR>
 
 let g:lightline = {
       \ 'colorscheme': 'jellybeans',
