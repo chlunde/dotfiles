@@ -69,12 +69,12 @@ less() { case $1 in less|vim) shift ;; esac; command $FUNCNAME ${1+"$@"}; }
 vim() { case $1 in less|vim) shift ;; esac; command $FUNCNAME ${1+"$@"}; }
 
 alias m='make'
-case $(uname -s) in
-    Darwin)
-        alias ls="ls -hFG"
+case $MACHTYPE in
+    *linux*)
+        alias ls='ls -FX --color=auto'
         ;;
     *)
-        alias ls='ls -FX --color=auto'
+        alias ls="ls -hFG"
         ;;
 esac
 alias grep='grep --color=tty -d skip'
