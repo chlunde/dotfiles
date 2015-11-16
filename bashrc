@@ -173,6 +173,7 @@ complete -F _venv_complete venv
 
 # }}}
 
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash
 
 shopt -s progcomp
 [ -f /etc/bash_completion.d/git ] && source /etc/bash_completion.d/git
