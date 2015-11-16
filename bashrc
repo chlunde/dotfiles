@@ -37,7 +37,7 @@ stty -ixon
 [ -d /usr/local/go/bin ] && GOROOT=/usr/local/go
 [ -d $HOME/goroot ] && GOROOT=$HOME/goroot
 
-if [ -n "$GOROOT" ]
+if [[ -n "$GOROOT" ]]
 then
     export GOROOT
     export GOPATH=$HOME/go
