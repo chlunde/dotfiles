@@ -171,10 +171,11 @@ _venv_complete() {
 
 complete -F _venv_complete venv
 
-[ -f /usr/local/etc/bash_completion ] && . /usr/local/etc/bash_completion
 # }}}
-#source ~/.git-completion.sh
 
-[ -f ~/.bashrc.local ] && source ~/.bashrc.local
+
+shopt -s progcomp
+[ -f /etc/bash_completion.d/git ] && source /etc/bash_completion.d/git
 
 trap 'echo -ne "\033]2;$(HISTTIMEFORMAT="" history 1 | sed "s/^[ ]*[0-9]*[ ]*//g")\007"' DEBUG
+[ -f ~/.bashrc.local ] && source ~/.bashrc.local

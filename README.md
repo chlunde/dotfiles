@@ -5,6 +5,8 @@
         ln -s ~/dotfiles/$f .$f
     done
 
+    mkdir -p ~/.config
+    ln -s ~/dotfiles/bash_completion ~/.config/
     ln -s ~/dotfiles/vimrc .nvimrc
 
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs \

@@ -1,0 +1,3 @@
+# disable bash_completion in profile.d, source selected files manually
+# in bashrc instead (faster startup)
+shopt -u progcomp
