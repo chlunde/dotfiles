@@ -48,13 +48,12 @@ fi
 
 test -L /sbin || pathmunge /sbin
 pathmunge /usr/sbin
-
 pathmunge /local/bin after
 pathmunge $HOME/bin
+pathmunge /opt/python27/bin
 
-[ -d /opt/vim74/bin ] && export PATH=/opt/vim74/bin:$PATH
-[ -d /opt/python27/bin ] && export PATH=/opt/python27/bin:$PATH
 
+alias vi=vim
 export EDITOR=vim
 
 export MAKEFLAGS='-j6'
