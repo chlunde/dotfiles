@@ -50,7 +50,6 @@ pathmunge /local/bin after
 pathmunge $HOME/bin
 pathmunge /opt/python27/bin
 
-
 alias vi=vim
 export EDITOR=vim
 
@@ -173,7 +172,25 @@ complete -F _venv_complete venv
 
 # }}}
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+if [[ -f ~/.fzf.bash ]]
+then
+    source ~/.fzf.bash
+
+    __fzf_proj__() {
+        local dir
+        dir=$((command find -L /git ~/src ~/go/src/ -maxdepth 3 \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
+            -o -type d -print 2> /dev/null; command find -L ~/ -maxdepth 1 -type d)| $(__fzfcmd) +m) && printf 'cd %q' "$dir"
+    }
+    # alt-c
+    bind '"\ec": " \C-e\C-u$(__fzf_proj__)\e\C-e\er\C-m"'
+
+    __fzf_shell_in_container__() {
+        local container
+        container=$(docker ps -a | sed 1d | $(__fzfcmd) +m | cut -d' ' -f1) && printf 'docker exec -it %q /bin/bash' "$container"
+    }
+    # alt-e
+    bind '"\ee": " \C-e\C-u$(__fzf_shell_in_container__)\e\C-e\er\C-m"'
+fi
 
 shopt -s progcomp
 [ -f /etc/bash_completion.d/git ] && source /etc/bash_completion.d/git
