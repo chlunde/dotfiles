@@ -67,6 +67,7 @@ Plug 'vim-scripts/indentpython.vim'
 Plug 'pearofducks/ansible-vim', { 'for': ['yml', 'ansible'] }
 Plug 'chlunde/jellybeans.vim'
 Plug 'scrooloose/syntastic'
+Plug 'benekastah/neomake'
 Plug 'itchyny/lightline.vim'
 " meh, https://github.com/Valloric/ycmd/commit/31c0eb8bda4bce1db49741f39ab22027b53e94b5
 let $TRAVIS=1
@@ -176,6 +177,9 @@ autocmd BufWritePost * if &diff == 1 | diffupdate | endif
 
 let g:signify_vcs_list = ['git']
 let g:signify_difftool = 'diff'
+
+let g:neomake_open_list = 1
+autocmd! BufWritePost *.go Neomake
 
 autocmd FileType go setlocal noexpandtab shiftwidth=4 tabstop=4 softtabstop=4
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
