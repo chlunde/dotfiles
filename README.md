@@ -7,7 +7,8 @@
 
     mkdir -p ~/.config
     ln -s ~/dotfiles/bash_completion ~/.config/
-    ln -s ~/dotfiles/vimrc .nvimrc
+    ln -s ~/.vim ~/.config/nvim
+    ln -s ~/dotfiles/vimrc ~/.config/nvim/init.vim
 
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
