@@ -101,6 +101,9 @@ call plug#end()
 syntax on
 filetype plugin indent on
 
+if $TERM == "screen"
+    let $TERM = "screen-256color"
+endif
 set t_Co=256
 colorscheme jellybeans
 
