@@ -223,6 +223,21 @@ augroup BWCCreateDir
     autocmd BufWritePre * :call s:MkNonExDir(expand('<afile>'), +expand('<abuf>'))
 augroup END
 
+let g:neomake_go_go_maker = {
+        \ 'args': [
+            \ 'build'
+        \ ],
+        \ 'append_file': 0,
+        \ 'errorformat':
+            \ '%W%f:%l: warning: %m,' .
+            \ '%E%f:%l:%c:%m,' .
+            \ '%E%f:%l:%m,' .
+            \ '%C%\s%\+%m,' .
+            \ '%-G#%.%#'
+        \ }
+
+let g:neomake_javascript_enabled_makers = ['go']
+
 let g:lightline = {
       \ 'colorscheme': 'jellybeans',
       \ 'active': {
