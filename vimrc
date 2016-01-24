@@ -180,13 +180,12 @@ let javascript_enable_domhtmlcss=1
 let g:jsx_ext_required=0
 
 " Autoupdate vimdiff on save
-autocmd BufWritePost * if &diff == 1 | diffupdate | endif
+autocmd! BufWritePost * if &diff == 1 | diffupdate | endif | Neomake
 
 let g:signify_vcs_list = ['git']
 let g:signify_difftool = 'diff'
 
 let g:neomake_open_list = 1
-autocmd! BufWritePost *.go Neomake
 
 autocmd FileType go setlocal noexpandtab shiftwidth=4 tabstop=4 softtabstop=4
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
