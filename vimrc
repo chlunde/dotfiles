@@ -169,6 +169,7 @@ nnoremap <leader>" viw<esc>a"<esc>hbi"<esc>lel
 "
 set wildignore+=.git/objects/*
 set wildignore+=target
+set wildignore+=node_modules
 
 let g:syntastic_python_checkers=['flake8'] ", 'pep257', 'pylint', 'py3kwarn']
 
