@@ -72,6 +72,8 @@ Plug 'itchyny/lightline.vim'
 " meh, https://github.com/Valloric/ycmd/commit/31c0eb8bda4bce1db49741f39ab22027b53e94b5
 let $TRAVIS=1
 Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp', 'py', 'go'], 'do': './install.sh' }
+Plug 'pangloss/vim-javascript'
+Plug 'mxw/vim-jsx'
 
 "Plugin 'Shougo/neosnippet'
 "Plugin 'Shougo/neosnippet-snippets'
@@ -171,6 +173,10 @@ set wildignore+=target
 let g:syntastic_python_checkers=['flake8'] ", 'pep257', 'pylint', 'py3kwarn']
 
 let python_highlight_all = 1
+
+" pangloss
+let javascript_enable_domhtmlcss=1
+let g:jsx_ext_required=0
 
 " Autoupdate vimdiff on save
 autocmd BufWritePost * if &diff == 1 | diffupdate | endif
