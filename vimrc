@@ -71,6 +71,8 @@ Plug 'benekastah/neomake'
 Plug 'itchyny/lightline.vim'
 " meh, https://github.com/Valloric/ycmd/commit/31c0eb8bda4bce1db49741f39ab22027b53e94b5
 let $TRAVIS=1
+
+" cmake gcc-c++ python-devel
 Plug 'Valloric/YouCompleteMe', { 'for': ['c', 'cpp', 'py', 'go'], 'do': './install.sh' }
 Plug 'pangloss/vim-javascript'
 Plug 'mxw/vim-jsx'
