@@ -183,6 +183,7 @@ let g:jsx_ext_required=0
 
 " Autoupdate vimdiff on save
 autocmd! BufWritePost * if &diff == 1 | diffupdate | endif | Neomake
+autocmd! BufWritePost *.js exec '!touch %'
 
 let g:signify_vcs_list = ['git']
 let g:signify_difftool = 'diff'
