@@ -25,7 +25,7 @@ set wildmenu
 set cinoptions=:0,g0,(0,j1
 "set mouse=a
 
-"let &titlestring = expand("%:t")
+let &titlestring = substitute(hostname(), '\..*', '', 0) . " " . expand("%:t")
 set suffixes=.bak,~,.swp,.o,.info,.aux,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx,.out,.toc
 set wildignore+=*.pyc
 
