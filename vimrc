@@ -64,6 +64,7 @@ Plug 'tpope/vim-unimpaired'
 Plug 'tpope/vim-markdown'
 Plug 'chlunde/vim-signify'
 Plug 'vim-scripts/indentpython.vim'
+Plug 'pearofducks/ansible-vim', { 'for': ['yml', 'ansible'] }
 Plug 'chlunde/jellybeans.vim'
 Plug 'scrooloose/syntastic'
 Plug 'itchyny/lightline.vim'
