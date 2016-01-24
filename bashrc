@@ -67,6 +67,10 @@ wgets() {
 less() { case $1 in less|vim) shift ;; esac; command $FUNCNAME ${1+"$@"}; }
 vim() { case $1 in less|vim) shift ;; esac; command $EDITOR ${1+"$@"}; }
 
+# "infinite" history
+history -a
+HISTSIZE=100000
+
 alias m='make'
 case $MACHTYPE in
     *linux*)
