@@ -65,7 +65,7 @@ wgets() {
 
 # avoid vim vim foo.c / less vim foo.log etc
 less() { case $1 in less|vim) shift ;; esac; command $FUNCNAME ${1+"$@"}; }
-vim() { case $1 in less|vim) shift ;; esac; command $FUNCNAME ${1+"$@"}; }
+vim() { case $1 in less|vim) shift ;; esac; command $EDITOR ${1+"$@"}; }
 
 alias m='make'
 case $MACHTYPE in
