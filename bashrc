@@ -82,6 +82,7 @@ case $MACHTYPE in
 esac
 alias grep='grep --color=tty -d skip'
 alias grpe='grep --color=tty -d skip'
+alias grwp='grep --color=tty -d skip'
 
 # archive stuff by date
 a() {
