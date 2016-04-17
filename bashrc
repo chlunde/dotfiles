@@ -33,6 +33,7 @@ pathmunge () {
 stty -ixon
 
 [ -d /usr/local/go/bin ] && GOROOT=/usr/local/go
+[ -d ~/opt/go ] && GOROOT=~/opt/go
 [ -d $HOME/goroot ] && GOROOT=$HOME/goroot
 
 if [[ -n "$GOROOT" ]]
