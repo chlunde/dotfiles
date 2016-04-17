@@ -50,8 +50,15 @@ pathmunge /local/bin after
 pathmunge $HOME/bin
 pathmunge /opt/python27/bin
 
-alias vi=vim
-export EDITOR=vim
+if [[ -f /usr/bin/nvim ]]
+then
+    alias vi=nvim
+    alias vim=nvim
+    export EDITOR=nvim
+else
+    alias vi=vim
+    export EDITOR=vim
+fi
 
 export MAKEFLAGS='-j6'
 [ -e ~/.pystartup ] && export PYTHONSTARTUP=~/.pystartup
