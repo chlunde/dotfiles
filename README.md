@@ -1,6 +1,6 @@
 # Common setup
     cd ~/
-    for f in bash_profile bashrc gitconfig pystartup tmux.conf vimrc
+    for f in bash_profile bashrc gitconfig pystartup tmux.conf vimrc emacs
     do
         test -f ~/.$f && mv ~/.$f ~/.${f}.OLD
         ln -s ~/dotfiles/$f .$f
