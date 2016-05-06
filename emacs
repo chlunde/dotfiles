@@ -16,7 +16,10 @@
 	  flycheck
 	  go-mode
 	  yaml-mode
+	  projectile
+	  markdown-mode
 	  quelpa
+	  flx-ido
 	  multiple-cursors))
 
   (add-to-list 'package-archives
@@ -85,6 +88,7 @@
       delete-old-versions t
       kept-new-versions 200
       kept-old-versions 50
+      vc-follow-symlinks t
       version-control t)                ; use versioned backups
 
 (setq gc-cons-threshold 15000000)       ; I have enough ram ;)
@@ -121,12 +125,14 @@
  '(diff-file-header ((t (:background "brightmagenta" :weight bold))))
  '(diff-header ((t (:background "magenta"))))
  '(diff-removed ((t (:inherit diff-changed :background "color-52"))))
- '(ediff-even-diff-A ((t (:background "gray30"))))
- '(ediff-even-diff-B ((t (:background "gray30"))))
- '(ediff-odd-diff-A ((t (:background "gray30"))))
- '(ediff-odd-diff-B ((t (:background "gray30"))))
- '(magit-section-highlight ((t (:background "color-236"))))
- '(secondary-selection ((t (:background "color-237" :foreground "#f6f3e8")))))
+ '(ediff-even-diff-A ((t (:background "gray30"))) t)
+ '(ediff-even-diff-B ((t (:background "gray30"))) t)
+ '(ediff-odd-diff-A ((t (:background "gray30"))) t)
+ '(ediff-odd-diff-B ((t (:background "gray30"))) t)
+ '(flycheck-error ((t (:underline (:color "Red1" :style wave) :weight bold))))
+ '(magit-section-highlight ((t (:background "color-236"))) t)
+ '(secondary-selection ((t (:background "color-237" :foreground "#f6f3e8"))))
+ '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta")))))
 
 
 ;;; Go mode
@@ -138,13 +144,18 @@
   (set (make-local-variable 'company-backends) '(company-go))
   (require 'company-go)                                ; load company mode go backend
 
+  (require 'projectile)
+  (local-set-key (kbd "C-x C-f") 'projectile-find-file)
   (subword-mode)
   (go-eldoc-setup)
   (load-file "$GOPATH/src/golang.org/x/tools/cmd/guru/go-guru.el")
-
+  (setq compilation-always-kill t)
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
-           "go build -v && go test -v && go vet"))
+		   (concat (if (projectile-project-root)
+					   (concat "cd " (projectile-project-root) ";")
+					 "")
+				   "go build -i -v && go test -v -test.short && go vet")))
 
   (local-set-key (kbd "M-.") 'godef-jump-other-window))
 
@@ -158,6 +169,26 @@
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
             (eldoc-mode)))
+
+(require 'web-mode)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+;; disable jshint since we prefer eslint checking
+(setq-default flycheck-disabled-checkers
+  (append flycheck-disabled-checkers
+    '(javascript-jshint)))
+(flycheck-add-mode 'javascript-eslint 'web-mode)
+
+;(setq web-mode-content-types-alist
+;  '(("jsx"  . ".*\\.js\\'")))
+;(setq web-mode-content-types-alist
+;  '(("jsx" . "\\.js[x]?\\'")))
+
+(add-hook 'web-mode-hook
+		  (lambda ()
+			(when (equal "javascript" web-mode-content-type)
+			  (web-mode-set-content-type "jsx"))
+			(message web-mode-content-type)
+			(local-set-key (kbd "RET") 'newline-and-indent)))
 
 ;;;
 (if window-system
