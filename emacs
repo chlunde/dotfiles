@@ -7,20 +7,19 @@
 
   (defvar chl/package-selected-packages
 	'(yasnippet
-	  expand-region
-	  restclient
-	  diff-hl
 	  company
 	  company-go
-	  go-eldoc
-	  flycheck
-	  go-mode
-	  yaml-mode
-	  projectile
-	  markdown-mode
-	  quelpa
+	  diff-hl
 	  flx-ido
-	  multiple-cursors))
+	  flycheck
+	  go-eldoc
+	  go-mode
+	  markdown-mode
+	  projectile
+	  quelpa
+	  restclient
+	  web-mode
+	  yaml-mode))
 
   (add-to-list 'package-archives
    '("melpa" . "https://melpa.org/packages/") t)
@@ -49,6 +48,7 @@
 (column-number-mode t)
 (line-number-mode t)
 (ido-mode)
+(flx-ido-mode)
 (fset 'yes-or-no-p 'y-or-n-p)           ; Be consistent!
 (show-paren-mode t)                     ; Highlight matching paren
 (auto-compression-mode t)               ; Decompress gz-files etc.
@@ -80,6 +80,7 @@
 (setq compilation-window-height 8)
 
 (setq diff-switches "-u")               ; Unified diffs
+(require 'ediff)
 (setq ediff-split-window-function 'split-window-horizontally)
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
@@ -110,7 +111,7 @@
 
 ;;; Keyboard bindings
 (global-set-key (kbd "TAB") 'indent-or-complete)
-(global-set-key (kbd "M-g") 'goto-line)
+;(global-set-key (kbd "M-g") 'goto-line)
 (global-set-key (kbd "<f5>") 'recompile)
 (global-set-key (kbd "<f6>") 'next-error)
 
@@ -155,7 +156,7 @@
 		   (concat (if (projectile-project-root)
 					   (concat "cd " (projectile-project-root) ";")
 					 "")
-				   "go build -i -v && go test -v -test.short && go vet")))
+				   "go build -i -v && go test -v -test.short ./... && go vet")))
 
   (local-set-key (kbd "M-.") 'godef-jump-other-window))
 
@@ -190,12 +191,15 @@
 			(message web-mode-content-type)
 			(local-set-key (kbd "RET") 'newline-and-indent)))
 
+(add-hook 'window-setup-hook
+		  (lambda ()
+			(set-background-color "black")
+			(set-foreground-color "white")))
+
 ;;;
 (if window-system
 	;; GUI settings
 	(progn
-	  (set-background-color "black")
-	  (set-foreground-color "white")
 	  (set-cursor-color "red")
 	  (setq initial-frame-alist
 			'((width . 102)
@@ -207,12 +211,4 @@
 					  :weight 'bold)
 
   (menu-bar-mode 0) ; no mouse anyway
-
-  ;; This is a dirty hack that I accidentally stumbled across:
-  ;;  initializing "rxvt" first and _then_ "xterm" seems
-  ;;  to make the colors work... although I have no idea why.
-  (tty-run-terminal-initialization (selected-frame) "rxvt")
-  (tty-run-terminal-initialization (selected-frame) "xterm")
-
-  (diff-hl-margin-mode)
-  (load-theme 'wombat))
+  (diff-hl-margin-mode))
