@@ -85,7 +85,7 @@
 (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (setq backup-by-copying t               ; don't clobber symlinks
-      backup-directory-alist '(("." . "/home/chlunde/.backups")) ; don't litter my fs tree
+      backup-directory-alist (list (cons "." (expand-file-name "~/.backups"))) ; don't litter my fs tree
       delete-old-versions t
       kept-new-versions 200
       kept-old-versions 50
@@ -115,6 +115,11 @@
 (global-set-key (kbd "<f5>") 'recompile)
 (global-set-key (kbd "<f6>") 'next-error)
 
+(defun re-fontify ()
+  (interactive)
+  (font-lock-fontify-buffer)
+  (recenter-top-bottom))
+(global-set-key (kbd "C-l") 're-fontify)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -133,7 +138,8 @@
  '(flycheck-error ((t (:underline (:color "Red1" :style wave) :weight bold))))
  '(magit-section-highlight ((t (:background "color-236"))) t)
  '(secondary-selection ((t (:background "color-237" :foreground "#f6f3e8"))))
- '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta")))))
+ '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta"))))
+ '(web-mode-html-tag-face ((t (:foreground "color-213")))))
 
 
 ;;; Go mode
@@ -150,13 +156,14 @@
   (subword-mode)
   (go-eldoc-setup)
   (load-file "$GOPATH/src/golang.org/x/tools/cmd/guru/go-guru.el")
+  (add-to-list 'write-file-functions 'delete-trailing-whitespace)
   (setq compilation-always-kill t)
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
 		   (concat (if (projectile-project-root)
 					   (concat "cd " (projectile-project-root) ";")
 					 "")
-				   "go build -i -v && go test -v -test.short ./... && go vet")))
+				   "GOGC=800 go build -i -v && go test -v -test.short ./... && go vet")))
 
   (local-set-key (kbd "M-.") 'godef-jump-other-window))
 
@@ -165,7 +172,8 @@
 ;;;
 (add-hook 'yaml-mode-hook
 		  (lambda ()
-            (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+			(add-to-list 'write-file-functions 'delete-trailing-whitespace)
+			(define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
 (add-hook 'emacs-lisp-mode-hook
           (lambda ()
@@ -179,6 +187,29 @@
     '(javascript-jshint)))
 (flycheck-add-mode 'javascript-eslint 'web-mode)
 
+(defun chl/js-extract-with-imports ()
+  "Extract region (React component) to a new file, including any imports in the current file"
+  (interactive)
+
+  (let ((selected (buffer-substring-no-properties (mark) (point))))
+	(if (eq nil (string-match "^const \\([A-Z][A-Za-z]+\\)\s*=" selected))
+		(message "Didn't match ^const Function = ...")
+	  (let ((component (match-string 1 selected))
+			(imports))
+		(save-excursion
+		  (kill-region (mark) (point))
+		  (goto-char 1)
+		  (while (search-forward-regexp "^import .*" nil t 1)
+			(push (match-string 0) imports))
+		  (insert "\nimport " component " from './" component "'")
+		  (find-file-other-window (concat component ".js"))
+		  (dolist (import imports)
+			(insert import "\n"))
+		  (insert "\n")
+		  (yank)
+		  (insert "\n" "export default " component "\n")
+		  (set-buffer-modified-p t))))))
+
 ;(setq web-mode-content-types-alist
 ;  '(("jsx"  . ".*\\.js\\'")))
 ;(setq web-mode-content-types-alist
@@ -189,12 +220,25 @@
 			(when (equal "javascript" web-mode-content-type)
 			  (web-mode-set-content-type "jsx"))
 			(message web-mode-content-type)
+			(setq indent-tabs-mode nil)
+			(add-to-list 'write-file-functions 'delete-trailing-whitespace)
+			(local-set-key (kbd "C-x C-f") 'projectile-find-file)
 			(local-set-key (kbd "RET") 'newline-and-indent)))
 
 (add-hook 'window-setup-hook
 		  (lambda ()
 			(set-background-color "black")
 			(set-foreground-color "white")))
+
+(defun chl/use-projectile-if-git ()
+  (when (or (file-exists-p ".git")
+			(file-exists-p "../.git")
+			(file-exists-p "../../.git")
+			(file-exists-p "../../../.git"))
+	(local-set-key (kbd "C-x C-f") 'projectile-find-file)))
+
+(add-hook 'find-file-hook 'chl/use-projectile-if-git)
+(add-hook 'dired-mode-hook 'chl/use-projectile-if-git)
 
 ;;;
 (if window-system
