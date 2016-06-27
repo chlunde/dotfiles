@@ -10,10 +10,12 @@
 	  company
 	  company-go
 	  diff-hl
+	  evil
 	  flx-ido
 	  flycheck
 	  go-eldoc
 	  go-mode
+	  go-rename
 	  markdown-mode
 	  projectile
 	  quelpa
@@ -42,7 +44,8 @@
 
 ;;; Global modes
 (when (fboundp 'set-scroll-bar-mode) (set-scroll-bar-mode nil))
-(when (fboundp 'tool-base-more) (tool-bar-mode nil))
+(when (fboundp 'tool-bar-mode) (tool-bar-mode 0))
+(menu-bar-mode 0)
 (prefer-coding-system 'utf-8)
 (global-font-lock-mode t)               ; fontify when possible
 (column-number-mode t)
@@ -56,7 +59,7 @@
 (winner-mode 1)
 (global-auto-revert-mode)
 (auto-fill-mode)
-(electric-pair-mode)
+;(electric-pair-mode)
 
 ;;; Extra packages installed
 (global-diff-hl-mode)
@@ -181,6 +184,8 @@
 
 (require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+
 ;; disable jshint since we prefer eslint checking
 (setq-default flycheck-disabled-checkers
   (append flycheck-disabled-checkers
@@ -254,5 +259,4 @@
 					  :underline t :foreground "green"
 					  :weight 'bold)
 
-  (menu-bar-mode 0) ; no mouse anyway
   (diff-hl-margin-mode))
