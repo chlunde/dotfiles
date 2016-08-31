@@ -15,10 +15,4 @@
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     vim +PlugInstall +qall
 
-# Mac setup
-
-* Chrome
-* http://mxcl.github.com/homebrew/
-* Brews:
-    brew install mobile-shell
-    brew install vim --with-lua
+    ln -s $PWD/bin/go-tool-install ~/bin/

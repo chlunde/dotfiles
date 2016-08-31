@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -x
+set -e
+
+export GOPATH=~/opt/gotoolpath
+
+test -d $GOPATH/ || mkdir -p $GOPATH
+
+if ! [[ -L $GOPATH/bin ]]
+then
+	ln -s ~/bin/ $GOPATH/bin
+fi
+
+if [[ $# == 0 ]]
+then
+	go get -u github.com/nsf/gocode github.com/alecthomas/gometalinter golang.org/x/tools/cmd/goimports golang.org/x/tools/cmd/guru golang.org/x/tools/cmd/gorename github.com/golang/lint/golint github.com/rogpeppe/godef github.com/kisielk/errcheck github.com/jstemmer/gotags github.com/klauspost/asmfmt/cmd/asmfmt github.com/fatih/motion github.com/zmb3/gogetdoc github.com/josharian/impl github.com/FiloSottile/gvt
+else
+	go get $@
+fi
