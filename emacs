@@ -3,14 +3,11 @@
 ;;; Packages
 (when (>= emacs-major-version 24)
   (require 'package)
-  (setq quelpa-update-melpa-p nil)
 
   (defvar chl/package-selected-packages
-	'(yasnippet
-	  company
+	'(company
 	  company-go
 	  diff-hl
-	  evil
 	  flx-ido
 	  flycheck
 	  go-eldoc
@@ -30,16 +27,20 @@
   ;; Install missing packages now
   (dolist (p chl/package-selected-packages)
 	(when (not (package-installed-p p))
-	  (package-install p))))
+	  (package-install p t))))
 
 (if (or (> emacs-major-version 24) (and (= emacs-major-version 24) (> emacs-minor-version 3)))
-	(when (not (package-installed-p 'magit))
-	  (package-install 'magit))
+    (when (not (package-installed-p 'magit))
+      (package-install 'magit t))
   ;; Fall back to 1.4.2 for emacs 24.3 (RHEL7), magit 2.x requires 24.4
   (progn
-	(quelpa '(git-commit-mode :repo "magit/git-modes" :commit "3423997a89f63eb4c8a4ce495928bc5951767932" :fetcher github))
-	(quelpa '(git-rebase-mode :repo "magit/git-modes" :commit "3423997a89f63eb4c8a4ce495928bc5951767932" :fetcher github))
-	(quelpa '(magit :repo "magit/magit" :commit "1.4.2" :fetcher github :files ("*.el" (:exclude "magit-autoloads.el"))))))
+    (when (not (package-installed-p 'quelpa))
+      (package-install 'quelpa t))
+    (require 'quelpa)
+    (setq quelpa-update-melpa-p nil)
+    (quelpa '(git-commit-mode :repo "magit/git-modes" :commit "3423997a89f63eb4c8a4ce495928bc5951767932" :fetcher github))
+    (quelpa '(git-rebase-mode :repo "magit/git-modes" :commit "3423997a89f63eb4c8a4ce495928bc5951767932" :fetcher github))
+    (quelpa '(magit :repo "magit/magit" :commit "1.4.2" :fetcher github :files ("*.el" (:exclude "magit-autoloads.el"))))))
 
 
 ;;; Global modes
@@ -51,7 +52,8 @@
 (column-number-mode t)
 (line-number-mode t)
 (ido-mode)
-(flx-ido-mode)
+(ido-everywhere t)
+(flx-ido-mode t)
 (fset 'yes-or-no-p 'y-or-n-p)           ; Be consistent!
 (show-paren-mode t)                     ; Highlight matching paren
 (auto-compression-mode t)               ; Decompress gz-files etc.
@@ -59,14 +61,12 @@
 (winner-mode 1)
 (global-auto-revert-mode)
 (auto-fill-mode)
-;(electric-pair-mode)
+(delete-selection-mode t)
 
 ;;; Extra packages installed
 (global-diff-hl-mode)
 (global-flycheck-mode)
-(require 'company)
-(global-company-mode)
-(require 'eldoc)
+(add-hook 'after-init-hook 'global-company-mode)
 
 ;;; Props
 (setq user-full-name "Carl Henrik Lunde"
@@ -80,12 +80,12 @@
 
 (setq-default tab-width 4)
 
-(setq compilation-window-height 8)
 
 (setq diff-switches "-u")               ; Unified diffs
-(require 'ediff)
-(setq ediff-split-window-function 'split-window-horizontally)
-(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(eval-after-load 'ediff
+  '(progn
+	(setq ediff-split-window-function 'split-window-horizontally)
+	(setq ediff-window-setup-function 'ediff-setup-windows-plain)))
 
 (setq backup-by-copying t               ; don't clobber symlinks
       backup-directory-alist (list (cons "." (expand-file-name "~/.backups"))) ; don't litter my fs tree
@@ -96,6 +96,8 @@
       version-control t)                ; use versioned backups
 
 (setq gc-cons-threshold 15000000)       ; I have enough ram ;)
+
+(setq org-log-done t)
 
 (defadvice backward-page (after chl-page-start-at-top activate)
   "Recenter window with page break at top."
@@ -113,16 +115,59 @@
 
 
 ;;; Keyboard bindings
-(global-set-key (kbd "TAB") 'indent-or-complete)
+(global-set-key (kbd "TAB") #'indent-or-complete)
 ;(global-set-key (kbd "M-g") 'goto-line)
-(global-set-key (kbd "<f5>") 'recompile)
-(global-set-key (kbd "<f6>") 'next-error)
+(global-set-key (kbd "<f5>") #'recompile)
+(global-set-key (kbd "<f6>") #'next-error)
+
+(define-key isearch-mode-map [(control return)] #'isearch-exit-other-end)
+
+(defun isearch-exit-other-end ()
+  "Exit isearch, at the opposite end of the string."
+  (interactive)
+  (isearch-exit)
+  (goto-char isearch-other-end))
+
+(defun move-to-char (arg char)
+  "Move to and including ARGth occurrence of CHAR.
+Case is ignored if `case-fold-search' is non-nil in the current buffer.
+Goes backward if ARG is negative; error if CHAR not found."
+  (interactive (list (prefix-numeric-value current-prefix-arg)
+		     (read-char "Go to char: " t)))
+  (search-forward (char-to-string char) nil nil arg)
+  (goto-char (match-beginning 0)))
+
+(global-set-key (kbd "M-i") #'move-to-char)
 
 (defun re-fontify ()
   (interactive)
   (font-lock-fontify-buffer)
   (recenter-top-bottom))
-(global-set-key (kbd "C-l") 're-fontify)
+(global-set-key (kbd "C-l") #'re-fontify)
+
+;;(set-default-font "Liberation Mono Medium 11")
+;;									(set-default-font "Fira Mono 12")
+;;(set-default-font "Roboto Mono Medium 12")
+;;(set-default-font "PT Mono Medium 18")
+
+(defun chl/compilation-small-font-size ()
+  "Use a condensed tiny font for the compilation window."
+  (setq buffer-face-mode-face '(:family "DejaVu Sans Moo" :height 80 :width semi-condensed))
+  (buffer-face-mode))
+
+(add-hook 'compilation-mode-hook #'chl/compilation-small-font-size)
+
+(setq compilation-window-height 9)
+(defun chl/compilation-shrink-maybe (buf status)
+  "Shrink compilation window for `BUF'.
+Make sure it's no larger than need, and at most as high as
+specified by `compilation-window-height'."
+  (let ((win (get-buffer-window buf)))
+	(when win
+	  (set-window-text-height win compilation-window-height)
+	  (shrink-window-if-larger-than-buffer win))))
+
+(add-hook 'compilation-finish-functions #'chl/compilation-shrink-maybe)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -134,11 +179,12 @@
  '(diff-file-header ((t (:background "brightmagenta" :weight bold))))
  '(diff-header ((t (:background "magenta"))))
  '(diff-removed ((t (:inherit diff-changed :background "color-52"))))
- '(ediff-even-diff-A ((t (:background "gray30"))) t)
- '(ediff-even-diff-B ((t (:background "gray30"))) t)
- '(ediff-odd-diff-A ((t (:background "gray30"))) t)
- '(ediff-odd-diff-B ((t (:background "gray30"))) t)
+ '(ediff-even-diff-A ((t (:background "gray30"))))
+ '(ediff-even-diff-B ((t (:background "gray30"))))
+ '(ediff-odd-diff-A ((t (:background "gray30"))))
+ '(ediff-odd-diff-B ((t (:background "gray30"))))
  '(flycheck-error ((t (:underline (:color "Red1" :style wave) :weight bold))))
+ '(go-guru-hl-identifier-face ((t (:inherit nil :underline (:color "cyan" :style wave)))))
  '(magit-section-highlight ((t (:background "color-236"))) t)
  '(secondary-selection ((t (:background "color-237" :foreground "#f6f3e8"))))
  '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta"))))
@@ -146,43 +192,78 @@
 
 
 ;;; Go mode
+(defun chl/go-build-root ()
+  (interactive)
+  (let ((cur default-directory)
+		(last-go-directory default-directory)
+		root)
+	(while (let ((is-git-root (file-exists-p (concat cur ".git")))
+				 (has-go-files (directory-files cur nil "^.*\\.go$" t)))
+			 (when has-go-files (setq last-go-directory cur))
+
+			 (setq cur (file-name-directory (directory-file-name cur)))
+			 (not (when (or is-git-root (equal cur "/"))
+					(setq root last-go-directory)))))
+	root))
+
+
 (defun chl/go-mode ()
-  (add-hook 'before-save-hook #'gofmt-before-save)
-  (add-hook 'after-save-hook #'recompile)
+  "Hook for go mode customizations."
+  (require 'company)
+  (require 'company-go)
+  (require 'projectile)
+
+  (add-hook 'before-save-hook #'gofmt-before-save t t)
+  (add-hook 'after-save-hook #'recompile t t)
+  (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
 
   (setq-default gofmt-command "goimports")
-  (set (make-local-variable 'company-backends) '(company-go))
-  (require 'company-go)                                ; load company mode go backend
+  (set (make-local-variable 'company-backends) '(company-go company-files))
 
-  (require 'projectile)
   (local-set-key (kbd "C-x C-f") 'projectile-find-file)
+  (set (make-local-variable 'projectile-require-project-root) nil)
+
+  (flyspell-prog-mode)
   (subword-mode)
   (go-eldoc-setup)
-  (load-file "$GOPATH/src/golang.org/x/tools/cmd/guru/go-guru.el")
-  (add-to-list 'write-file-functions 'delete-trailing-whitespace)
-  (setq compilation-always-kill t)
+
+  (when (string-match "/\\(github.com/[^/]+/[^/]+\\)/" buffer-file-name)
+	(setq bug-reference-bug-regexp "\\([Bb]ug ?#?\\|[Pp]atch ?#\\|RFE ?#\\|PR [a-z-+]+/\\|#\\)\\([0-9]+\\(?:#[0-9]+\\)?\\)")
+	(set (make-local-variable 'bug-reference-url-format)
+		 (concat "https://" (match-string-no-properties 1 buffer-file-name) "/issues/%s"))
+	(bug-reference-prog-mode))
+
+  (unless (featurep 'go-guru)
+	(dolist (guru '("$GOPATH/src/golang.org/x/tools/cmd/guru/go-guru.el"
+					"~/opt/gotoolpath/src/golang.org/x/tools/cmd/guru/go-guru.el"))
+	  (when (file-exists-p guru)
+		(add-to-list 'load-path (file-name-directory (directory-file-name guru)))
+		(require 'go-guru))))
+
+  (setq compilation-always-kill t
+		compilation-auto-jump-to-first-error t)
+
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
-		   (concat (if (projectile-project-root)
-					   (concat "cd " (projectile-project-root) ";")
+		   (concat (if (chl/go-build-root)
+					   (concat "cd " (chl/go-build-root) ";")
 					 "")
-				   "GOGC=800 go build -i -v && go test -v -test.short ./... && go vet")))
+				   "go vet & "
+				   "GOGC=800 go build -i -v ./... && "
+				   "go test -v -test.short ./...")))
 
-  (local-set-key (kbd "M-.") 'godef-jump-other-window))
+  (local-set-key (kbd "M-.") #'godef-jump-other-window))
 
-(eval-after-load 'go-mode '(add-hook 'go-mode-hook 'chl/go-mode))
+(eval-after-load 'go-mode '(add-hook 'go-mode-hook #'chl/go-mode))
 
 ;;;
 (add-hook 'yaml-mode-hook
 		  (lambda ()
-			(add-to-list 'write-file-functions 'delete-trailing-whitespace)
+			(add-hook 'write-file-functions #'delete-trailing-whitespace t t)
 			(define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
-(add-hook 'emacs-lisp-mode-hook
-          (lambda ()
-            (eldoc-mode)))
+(add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
-(require 'web-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 
@@ -242,8 +323,13 @@
 			(file-exists-p "../../../.git"))
 	(local-set-key (kbd "C-x C-f") 'projectile-find-file)))
 
-(add-hook 'find-file-hook 'chl/use-projectile-if-git)
-(add-hook 'dired-mode-hook 'chl/use-projectile-if-git)
+(add-hook 'find-file-hook #'chl/use-projectile-if-git)
+(add-hook 'dired-mode-hook #'chl/use-projectile-if-git)
+
+
+(require 'undo-tree)
+(global-undo-tree-mode t)
+(setq undo-tree-visualizer-diff t)
 
 ;;;
 (if window-system
@@ -260,3 +346,35 @@
 					  :weight 'bold)
 
   (diff-hl-margin-mode))
+
+(when (window-system)
+  (set-default-font "Fira Code")
+
+  (add-hook 'after-make-frame-functions (lambda (frame) (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")))
+  ;; This works when using emacs without server/client
+  (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")
+  ;; I haven't found one statement that makes both of the above situations work, so I use both for now
+
+  (defconst fira-code-font-lock-keywords-alist
+	(mapcar (lambda (regex-char-pair)
+			  `(,(car regex-char-pair)
+				(0 (prog1 ()
+					 (compose-region (match-beginning 1)
+									 (match-end 1)
+									 ;; The first argument to concat is a string containing a literal tab
+									 ,(concat "	" (list (decode-char 'ucs (cadr regex-char-pair)))))))))
+			'(
+			  ("\\(!=\\)"                    #Xe10e)
+			  ("\\(&&\\)"                    #Xe131)
+			  ("\\(||\\)"                    #Xe132)
+			  ("\\(<=\\)"                    #Xe141)
+			  ("\\(<-\\)"                    #Xe152)
+			  ("\\(<=\\)"                    #Xe157)
+			  ("\\(->\\)"                    #Xe114)
+			  ("[^=]\\(:=\\)"                #Xe10c))))
+
+  (defun add-fira-code-symbol-keywords ()
+	(font-lock-add-keywords nil fira-code-font-lock-keywords-alist))
+
+  (add-hook 'prog-mode-hook
+			#'add-fira-code-symbol-keywords))
