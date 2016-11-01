@@ -5,6 +5,7 @@ set -e
 export GOPATH=~/opt/gotoolpath
 
 test -d $GOPATH/ || mkdir -p $GOPATH
+test -d ~/bin || mkdir -p ~/bin
 
 if ! [[ -L $GOPATH/bin ]]
 then
