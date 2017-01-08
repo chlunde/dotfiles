@@ -231,9 +231,9 @@ specified by `compilation-window-height'."
            (concat (if (chl/go-build-root)
                        (concat "cd " (chl/go-build-root) ";")
                      "")
-                   "go vet | grep " (file-name-nondirectory (buffer-file-name)) " & "
+                   "go vet | grep " (file-name-nondirectory (buffer-file-name)) " ; "
                    "GOGC=800 go build -i -v ./... && "
-                   "go test -v -test.short ./... & "
+                   "go test -v -test.short ./... && "
                    "gometalinter ./... -s vendor --dupl-threshold=150 -e 'Subprocess launching with partial path.' | grep " (file-name-nondirectory (buffer-file-name))
                    )))
 
