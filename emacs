@@ -135,6 +135,8 @@ Goes backward if ARG is negative; error if CHAR not found."
   (recenter-top-bottom))
 (global-set-key (kbd "C-l") #'re-fontify)
 
+(global-set-key (kbd "C-x g") #'magit-status)
+
 (defun chl/compilation-small-font-size ()
   "Use a condensed tiny font for the compilation window."
   (setq buffer-face-mode-face '(:family "DejaVu Sans Moo" :height 80 :width semi-condensed))
