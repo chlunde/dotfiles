@@ -332,33 +332,35 @@ specified by `compilation-window-height'."
 
   (diff-hl-margin-mode)
 
-  (set-default-font "Fira Mono")
+  ;;(set-default-font "Fira Mono-13:weight=light")
+  (set-default-font "Go Mono-13")
 
-  (add-hook 'after-make-frame-functions (lambda (frame) (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")))
-  ;; This works when using emacs without server/client
-  (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")
-  ;; I haven't found one statement that makes both of the above situations work, so I use both for now
+  (when nil
+	(add-hook 'after-make-frame-functions (lambda (frame) (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")))
+	;; This works when using emacs without server/client
+	(set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")
+	;; I haven't found one statement that makes both of the above situations work, so I use both for now
 
-  (defconst fira-code-font-lock-keywords-alist
-    (mapcar (lambda (regex-char-pair)
-              `(,(car regex-char-pair)
-                (0 (prog1 ()
-                     (compose-region (match-beginning 1)
-                                     (match-end 1)
-                                     ;; The first argument to concat is a string containing a literal tab
-                                     ,(concat "	" (list (decode-char 'ucs (cadr regex-char-pair)))))))))
-            '(
-              ("\\(!=\\)"                    #Xe10e)
-              ("\\(&&\\)"                    #Xe131)
-              ("\\(||\\)"                    #Xe132)
-              ("\\(<=\\)"                    #Xe141)
-              ("\\(<-\\)"                    #Xe152)
-              ("\\(<=\\)"                    #Xe157)
-              ("\\(->\\)"                    #Xe114)
-              ("[^=]\\(:=\\)"                #Xe10c))))
+	(defconst fira-code-font-lock-keywords-alist
+	  (mapcar (lambda (regex-char-pair)
+				`(,(car regex-char-pair)
+				  (0 (prog1 ()
+					   (compose-region (match-beginning 1)
+									   (match-end 1)
+									   ;; The first argument to concat is a string containing a literal tab
+									   ,(concat "	" (list (decode-char 'ucs (cadr regex-char-pair)))))))))
+			  '(
+				("\\(!=\\)"                    #Xe10e)
+				("\\(&&\\)"                    #Xe131)
+				("\\(||\\)"                    #Xe132)
+				("\\(<=\\)"                    #Xe141)
+				("\\(<-\\)"                    #Xe152)
+				("\\(<=\\)"                    #Xe157)
+				("\\(->\\)"                    #Xe114)
+				("[^=]\\(:=\\)"                #Xe10c))))
 
-  (defun add-fira-code-symbol-keywords ()
-    (font-lock-add-keywords nil fira-code-font-lock-keywords-alist))
+	(defun add-fira-code-symbol-keywords ()
+	  (font-lock-add-keywords nil fira-code-font-lock-keywords-alist))
 
-  (add-hook 'prog-mode-hook
-            #'add-fira-code-symbol-keywords))
+	(add-hook 'prog-mode-hook
+			  #'add-fira-code-symbol-keywords)))
