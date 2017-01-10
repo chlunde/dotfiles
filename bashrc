@@ -49,6 +49,8 @@ test -L /sbin || pathmunge /sbin
 pathmunge /usr/sbin
 pathmunge /local/bin after
 pathmunge $HOME/bin
+pathmunge $HOME/opt/bin
+pathmunge $HOME/opt/emacs/bin
 pathmunge /opt/python27/bin
 
 if [[ -f /usr/bin/nvim ]]
