@@ -51,6 +51,7 @@ pathmunge /local/bin after
 pathmunge $HOME/bin
 pathmunge $HOME/opt/bin
 pathmunge $HOME/opt/emacs/bin
+pathmunge $HOME/opt/git/bin
 pathmunge /opt/python27/bin
 
 if [[ -f /usr/bin/nvim ]]

@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+v=2.11.0
+
+mkdir -p ~/Downloads
+cd ~/Downloads
+test -f ~/Downloads/git-${v}.tar.xz || curl -O https://www.kernel.org/pub/software/scm/git/git-${v}.tar.xz
+mkdir -p ~/tmp
+rm -Rf ~/tmp/git-${v}
+tar -C ~/tmp -xf git-${v}.tar.xz
+cd ~/tmp/git-${v}
+sudo yum -y install perl-ExtUtils-MakeMaker
+./configure --prefix=$HOME/opt/git
+make
+rm -Rf ~/opt/git
+make install
