@@ -8,8 +8,9 @@ shorthost_prompt() {
     shopt -s extglob
     local host=${HOSTNAME/%.+([a-z0-9]).no/}
     local host=${host/%.localdomain/}
-    export PS1="\u@${host} \W\\$ "
     eval "$opt"
+
+    PS1="\u@${host} \w\\$ "
 }
 
 shorthost_prompt
