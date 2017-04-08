@@ -10,6 +10,7 @@ shorthost_prompt() {
     local host=${host/%.localdomain/}
     eval "$opt"
 
+    PROMPT_DIRTRIM=2
     PS1="\u@${host} \w\\$ "
 }
 
