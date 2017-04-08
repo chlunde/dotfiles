@@ -84,8 +84,10 @@ less() { case $1 in less|vim) shift ;; esac; command $FUNCNAME ${1+"$@"}; }
 vim() { case $1 in less|vim) shift ;; esac; command $EDITOR ${1+"$@"}; }
 
 # "infinite" history
-history -a
+PROMPT_COMMAND='history -a'
 HISTSIZE=100000
+HISTIGNORE='fg:bg:ls:ps:uptime:w:history:ps -ef:ls -l:ls -ltr:ls -ltra:emacs:vim:dmesg:jobs:clear:reset:&'
+
 
 alias m='make'
 case $MACHTYPE in
