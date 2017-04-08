@@ -88,6 +88,9 @@ PROMPT_COMMAND='history -a'
 HISTSIZE=100000
 HISTIGNORE='fg:bg:ls:ps:uptime:w:history:ps -ef:ls -l:ls -ltr:ls -ltra:emacs:vim:dmesg:jobs:clear:reset:&'
 
+shopt -s dirspell 2> /dev/null
+shopt -s cdspell 2> /dev/null
+
 
 alias m='make'
 case $MACHTYPE in
