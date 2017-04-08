@@ -1,0 +1,22 @@
+#!/bin/bash
+v=1.8.1
+hash=a579ab19d5237e263254f1eac5352efcf1d70b9dacadb6d6bb12b0911ede8994
+
+if [[ "$(go version)" == "go version go$v "* ]]
+then
+    echo "Already updated"
+    exit 0
+fi
+
+mkdir -p ~/Downloads/
+curl -o ~/Downloads/go$v.linux-amd64.tar.gz https://storage.googleapis.com/golang/go$v.linux-amd64.tar.gz
+
+if [[ "$(sha256sum ~/Downloads/go$v.linux-amd64.tar.gz | cut -d ' ' -f1)" != "$hash" ]]
+then
+	echo "Checksum mismatch"
+	exit 1
+fi
+
+mkdir -p ~/opt
+rm -Rf ~/opt/go
+tar -C ~/opt -xzf ~/Downloads/go$v.linux-amd64.tar.gz

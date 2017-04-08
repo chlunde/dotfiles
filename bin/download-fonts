@@ -1,0 +1,13 @@
+#!/bin/bash
+
+mkdir -p ~/.local/share/fonts/
+
+for font in Go-Bold-Italic.ttf Go-Bold.ttf Go-Italic.ttf Go-Medium-Italic.ttf Go-Medium.ttf Go-Mono-Bold-Italic.ttf Go-Mono-Bold.ttf Go-Mono-Italic.ttf Go-Mono.ttf Go-Regular.ttf Go-Smallcaps-Italic.ttf Go-Smallcaps.ttf
+do
+	if [[ ! -f ~/.local/share/fonts/$font ]]
+	then
+		curl --output ~/.local/share/fonts/$font https://raw.githubusercontent.com/golang/image/master/font/gofont/ttfs/$font
+	fi
+done
+
+fc-cache -f -v
