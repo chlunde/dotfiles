@@ -1,3 +1,5 @@
+# -*- mode: sh -*-
+
 [ -z "$PS1" ] && return # Not interactive
 unset command_not_found_handle
 
