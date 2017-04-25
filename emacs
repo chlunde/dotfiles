@@ -262,7 +262,7 @@ specified by `compilation-window-height'."
 ;; disable jshint since we prefer eslint checking
 (setq-default flycheck-disabled-checkers
   (append flycheck-disabled-checkers
-    '(javascript-jshint)))
+    '(javascript-jshint go-build go-errcheck)))
 (flycheck-add-mode 'javascript-eslint 'web-mode)
 
 (defun chl/js-extract-with-imports ()
