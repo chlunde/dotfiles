@@ -9,7 +9,7 @@ mkdir -p ~/tmp
 rm -Rf ~/tmp/git-${v}
 tar -C ~/tmp -xf git-${v}.tar.xz
 cd ~/tmp/git-${v}
-sudo yum -y install perl-ExtUtils-MakeMaker
+sudo yum -y install perl-ExtUtils-MakeMaker curl-devel
 ./configure --prefix=$HOME/opt/git
 make
 rm -Rf ~/opt/git
