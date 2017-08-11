@@ -14,7 +14,18 @@ fi
 
 if [[ $# == 0 ]]
 then
-	go get -u github.com/nsf/gocode github.com/alecthomas/gometalinter golang.org/x/tools/cmd/goimports golang.org/x/tools/cmd/guru golang.org/x/tools/cmd/gorename github.com/golang/lint/golint github.com/rogpeppe/godef github.com/kisielk/errcheck github.com/jstemmer/gotags github.com/klauspost/asmfmt/cmd/asmfmt github.com/fatih/motion github.com/zmb3/gogetdoc github.com/josharian/impl github.com/FiloSottile/gvt honnef.co/go/staticcheck/cmd/staticcheck golang.org/x/tools/cmd/gotype github.com/golang/dep/...
+	#go get -u github.com/nsf/gocode github.com/alecthomas/gometalinter golang.org/x/tools/cmd/goimports golang.org/x/tools/cmd/guru golang.org/x/tools/cmd/gorename github.com/golang/lint/golint github.com/rogpeppe/godef github.com/kisielk/errcheck github.com/jstemmer/gotags github.com/klauspost/asmfmt/cmd/asmfmt github.com/fatih/motion github.com/zmb3/gogetdoc github.com/josharian/impl github.com/FiloSottile/gvt honnef.co/go/staticcheck/cmd/staticcheck golang.org/x/tools/cmd/gotype github.com/golang/dep/...
+	go get -u \
+            github.com/golang/dep/cmd/dep \
+            github.com/golang/lint/golint \
+            github.com/josharian/impl \
+            github.com/nsf/gocode \
+            golang.org/x/tools/cmd/goimports \
+            golang.org/x/tools/cmd/gorename \
+            golang.org/x/tools/cmd/gotype \
+            golang.org/x/tools/cmd/guru \
+            honnef.co/go/tools/cmd/megacheck \
+            honnef.co/go/staticcheck/cmd/staticcheck
 else
-	go get $@
+	go get -u $@
 fi
