@@ -215,7 +215,7 @@ then
     bind '"\ee": " \C-e\C-u$(__fzf_shell_in_container__)\e\C-e\er\C-m"'
 fi
 
-shopt -s progcomp
-[ -f /etc/bash_completion.d/git ] && source /etc/bash_completion.d/git
+#shopt -s progcomp
+#[ -f /etc/bash_completion.d/git ] && source /etc/bash_completion.d/git
 
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
