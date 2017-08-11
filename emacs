@@ -226,7 +226,7 @@ specified by `compilation-window-height'."
       (when (file-exists-p guru)
         (add-to-list 'load-path (file-name-directory (directory-file-name guru)))
         (require 'go-guru))))
-
+  (go-guru-hl-identifier-mode)
   (setq compilation-always-kill t
         compilation-auto-jump-to-first-error t)
 
