@@ -2,7 +2,7 @@
 v=1.8.3
 hash=1862f4c3d3907e59b04a757cfda0ea7aa9ef39274af99a784f5be843c80c6772
 
-if [[ "$(go version)" == "go version go$v "* ]]
+if [[ "$(go version 2> /dev/null)" == "go version go$v "* ]]
 then
     echo "Already updated"
     exit 0
