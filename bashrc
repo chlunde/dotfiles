@@ -87,6 +87,7 @@ vim() { case $1 in less|vim) shift ;; esac; command $EDITOR ${1+"$@"}; }
 PROMPT_COMMAND='history -a'
 HISTSIZE=100000
 
+shopt -s checkwinsize
 
 alias m='make'
 case $MACHTYPE in
