@@ -20,4 +20,5 @@
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
     vim +PlugInstall +qall
 
-    ln -s $PWD/bin/go-tool-install ~/bin/
+    mkdir -p ~/bin
+    ln -s ~/dotfiles/bin/go-tool-install ~/bin/
