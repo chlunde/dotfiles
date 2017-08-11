@@ -173,6 +173,7 @@ specified by `compilation-window-height'."
  '(flycheck-error ((t (:underline (:color "Red1" :style wave) :weight bold))))
  '(go-guru-hl-identifier-face ((t (:inherit nil :underline (:color "green" :style wave)))))
  '(magit-section-highlight ((t (:background "color-236"))) t)
+ '(markdown-code-face ((t (:inherit fixed-pitch :background "gray20"))))
  '(secondary-selection ((t (:background "color-237" :foreground "#f6f3e8"))))
  '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta"))))
  '(web-mode-html-tag-face ((t (:foreground "color-213")))))
