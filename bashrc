@@ -201,7 +201,7 @@ then
 
     __fzf_proj__() {
         local dir
-        dir=$((command find -L /git ~/src ~/go/src/ -maxdepth 3 \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
+        dir=$( (command find -L /git ~/src ~/go/src/ -maxdepth 3 \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
             -o -type d -print 2> /dev/null; command find -L ~/ -maxdepth 1 -type d)| $(__fzfcmd) +m) && printf 'cd %q' "$dir"
     }
     # alt-c
