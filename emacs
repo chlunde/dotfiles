@@ -57,6 +57,8 @@
 ;;; Extra packages installed
 (global-diff-hl-mode)
 (global-flycheck-mode)
+(setq-default flycheck-shellcheck-follow-sources nil) ; not supported in epel
+
 (add-hook 'after-init-hook 'global-company-mode)
 
 ;;; Props
