@@ -210,6 +210,10 @@ specified by `compilation-window-height'."
   (setq-default gofmt-command "goimports")
   (set (make-local-variable 'company-backends) '(company-go company-files))
 
+  (setq projectile-globally-ignored-directories
+		(append projectile-globally-ignored-directories '("vendor")))
+
+
   (local-set-key (kbd "C-x C-f") 'projectile-find-file)
   (set (make-local-variable 'projectile-require-project-root) nil)
 
