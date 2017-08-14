@@ -239,17 +239,16 @@ specified by `compilation-window-height'."
 
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
-           (concat (if (chl/go-build-root)
-                       (concat "cd " (chl/go-build-root) ";")
-                     "")
-                   "go vet | grep " (file-name-nondirectory (buffer-file-name)) " ; "
+           (concat "cd " (chl/go-build-root) ";\n"
+                   "go vet;\n"
 				   ;; Don't build the Go project using go build
                    (if (string-prefix-p "/home/chlunde/src/go/" (chl/go-build-root))
 					   "(cd ~/src/go/src; GOROOT_BOOTSTRAP=~/opt/go ./make.bash --no-clean) && "
-					 (concat "GOGC=800 go build -i -v ./... && "
-							 "go test -v -test.short ./... && "))
-                   "gometalinter --deadline=10s ./... -s vendor --dupl-threshold=150 -e 'Subprocess launching with partial path.' | grep -v testdata/ | grep " (file-name-nondirectory (buffer-file-name))
+					 (concat "GOGC=800 go build -i -v $(errfilt | grep . || echo .) && "
+							 "go test -v -test.short $(errfilt | grep . || echo .) && "))
+                   "megacheck $(errfilt)"
                    )))
+  ;;| grep " (file-name-nondirectory (buffer-file-name)) "
 
   (local-set-key (kbd "M-.") #'go-guru-definition))
 
