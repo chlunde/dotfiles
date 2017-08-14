@@ -184,14 +184,17 @@ specified by `compilation-window-height'."
   (interactive)
   (let ((cur default-directory)
         (last-go-directory default-directory)
-        root)
+        root default-directory)
     (while (let ((is-git-root (file-exists-p (concat cur ".git")))
                  (has-go-files (directory-files cur nil "^.*\\.go$" t)))
-             (when has-go-files (setq last-go-directory cur))
-
+             (when has-go-files
+			   (setq last-go-directory cur))
+			 (when is-git-root
+			   (setq root cur))
              (setq cur (file-name-directory (directory-file-name cur)))
-             (not (when (or is-git-root (equal cur "/"))
-                    (setq root last-go-directory)))))
+             (when (equal cur "/")
+			   (setq root last-go-directory))
+			 (and (not is-git-root) (not (equal cur "/")))))
     root))
 
 (defun chl/go-mode ()
