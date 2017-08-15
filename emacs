@@ -16,6 +16,7 @@
     go-mode
     go-guru
     go-rename
+    highlight-indent-guides
     magit
     markdown-mode
     projectile
@@ -60,6 +61,11 @@
 (setq-default flycheck-shellcheck-follow-sources nil) ; not supported in epel
 
 (add-hook 'after-init-hook 'global-company-mode)
+
+(add-hook 'yaml-mode-hook 'highlight-indent-guides-mode)
+(setq-default highlight-indent-guides-method 'character)
+(setq-default highlight-indent-guides-auto-character-face-perc 30)
+(setq-default highlight-indent-guides-character ?\│)
 
 ;;; Props
 (setq user-full-name "Carl Henrik Lunde"
