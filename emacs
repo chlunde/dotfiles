@@ -12,11 +12,13 @@
     diff-hl
     flx-ido
     flycheck
+    fzf
     go-eldoc
     go-mode
     go-guru
     go-rename
     highlight-indent-guides
+    key-chord
     magit
     markdown-mode
     projectile
@@ -136,6 +138,23 @@ Goes backward if ARG is negative; error if CHAR not found."
   (goto-char (match-beginning 0)))
 
 (global-set-key (kbd "M-i") #'move-to-char)
+(key-chord-mode 1)
+(key-chord-define-global "fd" #'fzf)
+(defun fzf-home ()
+  (interactive)
+  (fzf-directory "~"))
+(key-chord-define-global "er" #'fzf-home)
+
+(defun fzf-ffap ()
+  (interactive)
+  (setq fzf/args (concat "-x --color bw --print-query -q " (word-at-point)))
+  (fzf-directory "~")
+  (setq fzf/args "-x --color bw --print-query"))
+
+(key-chord-define-global "fp" #'fzf-ffap)
+
+;; less problems with fzf
+(setq-default term-term-name "vt100")
 
 (defun re-fontify ()
   (interactive)
