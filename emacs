@@ -269,7 +269,7 @@ specified by `compilation-window-height'."
 				   ;; Don't build the Go project using go build
                    (if (string-prefix-p "/home/chlunde/src/go/" (chl/go-build-root))
 					   "(cd ~/src/go/src; GOROOT_BOOTSTRAP=~/opt/go ./make.bash --no-clean) && "
-					 (concat "GOGC=800 go build -i -v $(errfilt | grep . || echo .) && "
+					 (concat "if [[ -f Makefile ]]; then make; else GOGC=800 go build -i -v $(errfilt | grep . || echo .); fi && "
 							 "go test -v -test.short $(errfilt | grep . || echo .) && "))
                    "megacheck $(errfilt)"
                    )))
