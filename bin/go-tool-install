@@ -26,7 +26,7 @@ then
             golang.org/x/tools/cmd/gotype \
             golang.org/x/tools/cmd/guru \
             honnef.co/go/tools/cmd/megacheck \
-            honnef.co/go/staticcheck/cmd/staticcheck
+            honnef.co/go/tools/cmd/staticcheck
 else
 	go get -u $@
 fi
