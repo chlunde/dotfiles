@@ -190,21 +190,20 @@ complete -F _venv_complete venv
 
 # }}}
 
-if [[ -f ~/.fzf.bash ]]
+if [[ -x ~/bin/fzf ]]
 then
-    source ~/.fzf.bash
 
     __fzf_proj__() {
         local dir
         dir=$( (command find -L /git ~/src ~/go/src/ -maxdepth 3 \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
-            -o -type d -print 2> /dev/null; command find -L ~/ -maxdepth 1 -type d)| $(__fzfcmd) +m) && printf 'cd %q' "$dir"
+            -o -type d -print 2> /dev/null; command find -L ~/ -maxdepth 1 -type d)| fzf +m) && printf 'cd %q' "$dir"
     }
     # alt-c
     bind '"\ec": " \C-e\C-u$(__fzf_proj__)\e\C-e\er\C-m"'
 
     __fzf_shell_in_container__() {
         local container
-        container=$(docker ps -a | sed 1d | $(__fzfcmd) +m | cut -d' ' -f1) && printf 'docker exec -it %q /bin/bash' "$container"
+        container=$(docker ps -a | sed 1d | fzf +m | cut -d' ' -f1) && printf 'docker exec -it %q /bin/bash' "$container"
     }
     # alt-e
     bind '"\ee": " \C-e\C-u$(__fzf_shell_in_container__)\e\C-e\er\C-m"'
