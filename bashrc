@@ -1,4 +1,4 @@
-# -*- mode: sh -*-
+#!/bin/bash
 
 [ -z "$PS1" ] && return # Not interactive
 unset command_not_found_handle
@@ -39,24 +39,24 @@ stty -ixon
 
 [ -d /usr/local/go/bin ] && GOROOT=/usr/local/go
 [ -d ~/opt/go ] && GOROOT=~/opt/go
-[ -d $HOME/goroot ] && GOROOT=$HOME/goroot
+[ -d "$HOME/goroot" ] && GOROOT=$HOME/goroot
 
 if [[ -n "$GOROOT" ]]
 then
     export GOROOT
     export GOPATH=$HOME/go
 
-    pathmunge $GOROOT/bin after
-    pathmunge $GOPATH/bin after
+    pathmunge "$GOROOT/bin" after
+    pathmunge "$GOPATH/bin" after
 fi
 
 test -L /sbin || pathmunge /sbin
 pathmunge /usr/sbin
 pathmunge /local/bin after
-pathmunge $HOME/bin
-pathmunge $HOME/opt/bin
-pathmunge $HOME/opt/emacs/bin
-pathmunge $HOME/opt/git/bin
+pathmunge "$HOME/bin"
+pathmunge "$HOME/opt/bin"
+pathmunge "$HOME/opt/emacs/bin"
+pathmunge "$HOME/opt/git/bin"
 pathmunge /opt/python27/bin
 
 alias vi=vim
@@ -75,8 +75,8 @@ wgets() {
 }
 
 # avoid vim vim foo.c / less vim foo.log etc
-less() { case $1 in less|vim) shift ;; esac; command $FUNCNAME ${1+"$@"}; }
-vim() { case $1 in less|vim) shift ;; esac; command $EDITOR ${1+"$@"}; }
+less() { case $1 in less|vim) shift ;; esac; command "$FUNCNAME" ${1+"$@"}; }
+vim() { case $1 in less|vim) shift ;; esac; command "$EDITOR" ${1+"$@"}; }
 
 # "infinite" history
 PROMPT_COMMAND='history -a'
@@ -99,7 +99,7 @@ alias grwp='grep --color=tty -d skip'
 
 # archive stuff by date
 a() {
-    dest=~/archive/`date +%Y/%m/%d`
+    dest=~/archive/$(date +%Y/%m/%d)
     mkdir -p "$dest"
     mv -i -t "$dest" "$@"
 }
