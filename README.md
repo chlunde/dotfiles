@@ -12,7 +12,6 @@
     done
 
     mkdir -p ~/.config ~/.vim
-    ln -s ~/dotfiles/bash_completion ~/.config/
     ln -s ~/.vim ~/.config/nvim
     ln -s ~/dotfiles/vimrc ~/.config/nvim/init.vim
 
