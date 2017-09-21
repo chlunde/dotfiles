@@ -59,15 +59,10 @@ pathmunge $HOME/opt/emacs/bin
 pathmunge $HOME/opt/git/bin
 pathmunge /opt/python27/bin
 
-if [[ -f /usr/bin/nvim ]]
-then
-    alias vi=nvim
-    alias vim=nvim
-    export EDITOR=nvim
-else
-    alias vi=vim
-    export EDITOR=vim
-fi
+alias vi=vim
+export EDITOR=vim
+export ALTERNATE_EDITOR=""
+alias e='emacsclient -t'
 
 export MAKEFLAGS='-j6'
 [ -e ~/.pystartup ] && export PYTHONSTARTUP=~/.pystartup
