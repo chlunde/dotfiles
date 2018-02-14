@@ -1,13 +1,26 @@
 #!/bin/bash
 
 mkdir -p ~/.local/share/fonts/
+cd ~/.local/share/fonts/
 
 for font in Go-Bold-Italic.ttf Go-Bold.ttf Go-Italic.ttf Go-Medium-Italic.ttf Go-Medium.ttf Go-Mono-Bold-Italic.ttf Go-Mono-Bold.ttf Go-Mono-Italic.ttf Go-Mono.ttf Go-Regular.ttf Go-Smallcaps-Italic.ttf Go-Smallcaps.ttf
 do
-	if [[ ! -f ~/.local/share/fonts/$font ]]
+	if [[ ! -f $font ]]
 	then
-		curl --output ~/.local/share/fonts/$font https://raw.githubusercontent.com/golang/image/master/font/gofont/ttfs/$font
+		curl --output $font https://raw.githubusercontent.com/golang/image/master/font/gofont/ttfs/$font
 	fi
 done
+
+v=1.14.0
+if [[ ! -f iosevka/$v.zip ]]
+then
+        rm -Rf iosevka/
+        mkdir -p iosevka/
+        cd iosevka/
+	curl --location --output $v.zip https://github.com/be5invis/Iosevka/releases/download/v$v/06-iosevka-term-slab-$v.zip
+	#curl --location --output $v.zip https://github.com/be5invis/Iosevka/releases/download/v$v/02-iosevka-term-$v.zip
+	unzip $v.zip
+        cd ..
+fi
 
 fc-cache -f -v
