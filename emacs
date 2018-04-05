@@ -1,9 +1,22 @@
-;; -*- emacs-lisp -*-
+;;; dot-emacs --- .emacs -*- emacs-lisp -*-
 
-;;; Packages
+;;; Commentary:
+;; None
+
+;;; Code:
 (when (< emacs-major-version 25)
   (message "too old"))
 
+(when (window-system)
+  ;; GUI settings
+  (set-cursor-color "red")
+  (setq initial-frame-alist
+		'((width . 102)
+		  (height . 54)))
+  ;(set-frame-font "Go Mono-13")
+  (set-frame-font "Iosevka Term Slab Light-13"))
+
+;;; Packages
 (require 'package)
 
 (defvar chl/package-selected-packages
@@ -17,18 +30,18 @@
     go-mode
     go-guru
     go-rename
-    highlight-indent-guides
+;    highlight-indent-guides
     key-chord
     magit
     markdown-mode
     projectile
     undo-tree
-    restclient
+;    restclient
     web-mode
     yaml-mode))
 
 (add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+             '("melpa" . "https://stable.melpa.org/packages/") t)
 
 (package-initialize)
 
@@ -158,7 +171,7 @@ Goes backward if ARG is negative; error if CHAR not found."
 
 (defun re-fontify ()
   (interactive)
-  (font-lock-fontify-buffer)
+  (font-lock-ensure)
   (recenter-top-bottom))
 (global-set-key (kbd "C-l") #'re-fontify)
 
@@ -231,6 +244,7 @@ specified by `compilation-window-height'."
   (add-hook 'before-save-hook #'gofmt-before-save t t)
   (add-hook 'after-save-hook #'recompile t t)
   (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
+  (setq-default flycheck-disabled-checkers '(go-golint go-build go-test go-errcheck go-unconvert go-megacheck))
 
   (setq-default gofmt-command "goimports")
   (set (make-local-variable 'company-backends) '(company-go company-files))
@@ -258,6 +272,9 @@ specified by `compilation-window-height'."
       (when (file-exists-p guru)
         (add-to-list 'load-path (file-name-directory (directory-file-name guru)))
         (require 'go-guru))))
+  (when (file-exists-p "~/opt/gotoolpath/src/github.com/stapelberg/expanderr/lisp/go-expanderr.el")
+	(load "~/opt/gotoolpath/src/github.com/stapelberg/expanderr/lisp/go-expanderr.el")
+	(local-set-key (kbd "C-c C-e") #'go-expanderr))
   (go-guru-hl-identifier-mode)
   (setq compilation-always-kill t
         compilation-auto-jump-to-first-error t)
@@ -265,13 +282,12 @@ specified by `compilation-window-height'."
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
            (concat "cd " (chl/go-build-root) ";\n"
-                   "go vet;\n"
 				   ;; Don't build the Go project using go build
                    (if (string-prefix-p "/home/chlunde/src/go/" (chl/go-build-root))
 					   "(cd ~/src/go/src; GOROOT_BOOTSTRAP=~/opt/go ./make.bash --no-clean) && "
-					 (concat "if [[ -f Makefile ]]; then make; else GOGC=800 go build -i -v $(errfilt | grep . || echo .); fi && "
-							 "go test -v -test.short $(errfilt | grep . || echo .) && "))
-                   "megacheck $(errfilt)"
+					 (concat "if [[ -f Makefile ]]; then make; else GOGC=800 go build -i -v; fi && "
+							 "go test -v . && "))
+                   "megacheck $(type errfilt 2> /dev/null && errfilt || echo .)"
                    )))
   ;;| grep " (file-name-nondirectory (buffer-file-name)) "
 
@@ -297,8 +313,10 @@ specified by `compilation-window-height'."
     '(javascript-jshint go-build go-errcheck)))
 (flycheck-add-mode 'javascript-eslint 'web-mode)
 
+(setq markdown-fontify-code-blocks-natively t)
+
 (defun chl/js-extract-with-imports ()
-  "Extract region (React component) to a new file, including any imports in the current file"
+  "Extract region (React component) to a new file, including any imports in the current file."
   (interactive)
 
   (let ((selected (buffer-substring-no-properties (mark) (point))))
@@ -356,50 +374,11 @@ specified by `compilation-window-height'."
 (setq undo-tree-visualizer-diff t)
 
 (when (window-system)
-    ;; GUI settings
-    (progn
-      (set-cursor-color "red")
-      (setq initial-frame-alist
-            '((width . 102)
-              (height . 54))))
-
   ;; Terminal settings
   (require 'eldoc)
   (set-face-attribute 'eldoc-highlight-function-argument nil
                       :underline t :foreground "green"
                       :weight 'bold)
 
-  (diff-hl-margin-mode)
-
-  ;;(set-default-font "Fira Mono-13:weight=light")
-  (set-default-font "Go Mono-13")
-
-  (when nil
-	(add-hook 'after-make-frame-functions (lambda (frame) (set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")))
-	;; This works when using emacs without server/client
-	(set-fontset-font t '(#Xe100 . #Xe16f) "Fira Code Symbol")
-	;; I haven't found one statement that makes both of the above situations work, so I use both for now
-
-	(defconst fira-code-font-lock-keywords-alist
-	  (mapcar (lambda (regex-char-pair)
-				`(,(car regex-char-pair)
-				  (0 (prog1 ()
-					   (compose-region (match-beginning 1)
-									   (match-end 1)
-									   ;; The first argument to concat is a string containing a literal tab
-									   ,(concat "	" (list (decode-char 'ucs (cadr regex-char-pair)))))))))
-			  '(
-				("\\(!=\\)"                    #Xe10e)
-				("\\(&&\\)"                    #Xe131)
-				("\\(||\\)"                    #Xe132)
-				("\\(<=\\)"                    #Xe141)
-				("\\(<-\\)"                    #Xe152)
-				("\\(<=\\)"                    #Xe157)
-				("\\(->\\)"                    #Xe114)
-				("[^=]\\(:=\\)"                #Xe10c))))
-
-	(defun add-fira-code-symbol-keywords ()
-	  (font-lock-add-keywords nil fira-code-font-lock-keywords-alist))
-
-	(add-hook 'prog-mode-hook
-			  #'add-fira-code-symbol-keywords)))
+  (diff-hl-margin-mode))
+;;; emacs ends here
