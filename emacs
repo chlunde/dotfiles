@@ -1,59 +1,80 @@
 ;;; dot-emacs --- .emacs -*- emacs-lisp -*-
-
+;; -*- lexical-binding: t; -*-
 ;;; Commentary:
 ;; None
 
 ;;; Code:
+
+(setq gc-cons-threshold 15000000)
+
+;; Configure basic look and feel first, to avoid flickering
+(when (fboundp 'set-scroll-bar-mode) (set-scroll-bar-mode nil))
+(when (fboundp 'tool-bar-mode) (tool-bar-mode 0))
+(menu-bar-mode 0)
+
+(add-hook 'window-setup-hook
+          (lambda ()
+            (set-background-color "black")
+            (set-foreground-color "white")))
+
+(when (window-system)
+  (set-cursor-color "red")
+  ;;(set-frame-font "Go Mono-13")
+  (set-frame-font "Iosevka Term Slab Light-13"))
+
 (when (< emacs-major-version 25)
   (message "too old"))
 
-(when (window-system)
-  ;; GUI settings
-  (set-cursor-color "red")
-  (setq initial-frame-alist
-		'((width . 102)
-		  (height . 54)))
-  ;(set-frame-font "Go Mono-13")
-  (set-frame-font "Iosevka Term Slab Light-13"))
-
 ;;; Packages
 (require 'package)
-
-(defvar chl/package-selected-packages
-  '(company
-    company-go
-    diff-hl
-    flx-ido
-    flycheck
-    fzf
-    go-eldoc
-    go-mode
-    go-guru
-    go-rename
-;    highlight-indent-guides
-    key-chord
-    magit
-    markdown-mode
-    projectile
-    undo-tree
-;    restclient
-    web-mode
-    yaml-mode))
+(package-initialize)
 
 (add-to-list 'package-archives
              '("melpa" . "https://stable.melpa.org/packages/") t)
 
-(package-initialize)
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
 
-;; Install missing packages now
-(dolist (p chl/package-selected-packages)
-  (when (not (package-installed-p p))
-    (package-install p t)))
+(eval-when-compile
+  (require 'use-package))
+
+(setq-default use-package-always-defer t
+              use-package-always-ensure t)
+
+(use-package flx-ido)
+(use-package fzf)
+(use-package key-chord)
+(use-package markdown-mode)
+(use-package projectile)
+
+(use-package flycheck
+  :defer 1
+  :config
+  (global-flycheck-mode)
+  (setq-default flycheck-shellcheck-follow-sources nil) ; not supported in epel
+  (setq-default flycheck-disabled-checkers '(go-golint go-build
+				go-test go-errcheck go-unconvert go-megacheck
+				javascript-jshint))
+  (flycheck-add-mode 'javascript-eslint 'web-mode)
+
+  ;;(setq flycheck-global-modes '(rjsx-mode emacs-lisp-mode))
+  ;;https://github.com/flycheck/flycheck/issues/1129#issuecomment-319600923
+  (advice-add 'flycheck-eslint-config-exists-p :override (lambda() t)))
+
+(use-package company
+  :defer t
+  :init
+  (add-hook 'after-init-hook 'global-company-mode))
+
+(use-package company-go
+  :ensure t
+  :defer t
+  :init
+  (with-eval-after-load 'company
+    (add-to-list 'company-backends 'company-go)))
 
 ;;; Global modes
-(when (fboundp 'set-scroll-bar-mode) (set-scroll-bar-mode nil))
-(when (fboundp 'tool-bar-mode) (tool-bar-mode 0))
-(menu-bar-mode 0)
 (prefer-coding-system 'utf-8)
 (global-font-lock-mode t)               ; fontify when possible
 (column-number-mode t)
@@ -65,19 +86,20 @@
 (show-paren-mode t)                     ; Highlight matching paren
 (auto-compression-mode t)               ; Decompress gz-files etc.
 (windmove-default-keybindings)
-(winner-mode 1)
 (global-auto-revert-mode)
 (auto-fill-mode)
 (delete-selection-mode t)
 
 ;;; Extra packages installed
-(global-diff-hl-mode)
-(global-flycheck-mode)
-(setq-default flycheck-shellcheck-follow-sources nil) ; not supported in epel
+(use-package diff-hl
+  :init
+  (global-diff-hl-mode)
+  (unless (window-system)
+	(diff-hl-margin-mode)))
 
-(add-hook 'after-init-hook 'global-company-mode)
+(use-package yaml-mode)
 
-(add-hook 'yaml-mode-hook 'highlight-indent-guides-mode)
+;(add-hook 'yaml-mode-hook 'highlight-indent-guides-mode)
 (setq-default highlight-indent-guides-method 'character)
 (setq-default highlight-indent-guides-auto-character-face-perc 30)
 (setq-default highlight-indent-guides-character ?\│)
@@ -95,10 +117,12 @@
 (setq-default tab-width 4)
 
 (setq diff-switches "-u")               ; Unified diffs
-(eval-after-load 'ediff
-  '(progn
-     (setq ediff-split-window-function 'split-window-horizontally)
-     (setq ediff-window-setup-function 'ediff-setup-windows-plain)))
+
+(use-package ediff
+  :config
+  (progn
+    (setq ediff-split-window-function 'split-window-horizontally)
+    (setq ediff-window-setup-function 'ediff-setup-windows-plain)))
 
 (setq backup-by-copying t               ; don't clobber symlinks
       backup-directory-alist (list (cons "." (expand-file-name "~/.backups"))) ; don't litter my fs tree
@@ -107,8 +131,6 @@
       kept-old-versions 50
       vc-follow-symlinks t
       version-control t)                ; use versioned backups
-
-(setq gc-cons-threshold 15000000)       ; I have enough ram ;)
 
 (setq org-log-done t)
 
@@ -175,7 +197,10 @@ Goes backward if ARG is negative; error if CHAR not found."
   (recenter-top-bottom))
 (global-set-key (kbd "C-l") #'re-fontify)
 
-(global-set-key (kbd "C-x g") #'magit-status)
+(use-package magit
+  :defer 1
+  :ensure t
+  :bind ("C-x g" . magit-status))
 
 (defun chl/compilation-small-font-size ()
   "Use a condensed tiny font for the compilation window."
@@ -210,7 +235,7 @@ specified by `compilation-window-height'."
  '(ediff-odd-diff-B ((t (:background "gray30"))))
  '(flycheck-error ((t (:underline (:color "Red1" :style wave) :weight bold))))
  '(go-guru-hl-identifier-face ((t (:inherit nil :underline (:color "green" :style wave)))))
- '(magit-section-highlight ((t (:background "color-236"))) t)
+ '(magit-section-highlight ((t (:background "color-236"))))
  '(markdown-code-face ((t (:inherit fixed-pitch :background "gray20"))))
  '(secondary-selection ((t (:background "color-237" :foreground "#f6f3e8"))))
  '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta"))))
@@ -235,22 +260,32 @@ specified by `compilation-window-height'."
 			 (and (not is-git-root) (not (equal cur "/")))))
     root))
 
-(defun chl/go-mode ()
-  "Hook for go mode customizations."
-  (require 'company)
-  (require 'company-go)
-  (require 'projectile)
+(use-package go-eldoc
+  :ensure t
+  :defer 1
+  :init
+  (add-hook 'go-mode-hook 'go-eldoc-setup))
 
+(use-package go-guru)
+(use-package go-rename)
+
+(use-package go-mode
+  :init
+  (add-hook 'go-mode-hook 'chl/go-mode))
+
+(defun chl/go-mode ()
+  (interactive)
+  "Customize go-mode."
   (add-hook 'before-save-hook #'gofmt-before-save t t)
   (add-hook 'after-save-hook #'recompile t t)
   (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
-  (setq-default flycheck-disabled-checkers '(go-golint go-build go-test go-errcheck go-unconvert go-megacheck))
+  (add-hook 'prog-mode-hook 'turn-on-auto-fill t t)
 
   (setq-default gofmt-command "goimports")
   (set (make-local-variable 'company-backends) '(company-go company-files))
 
-  (setq projectile-globally-ignored-directories
-		(append projectile-globally-ignored-directories '("vendor")))
+  ;(setq projectile-globally-ignored-directories
+;		(append projectile-globally-ignored-directories '("vendor")))
 
 
   (local-set-key (kbd "C-x C-f") 'projectile-find-file)
@@ -258,7 +293,7 @@ specified by `compilation-window-height'."
 
   (flyspell-prog-mode)
   (subword-mode)
-  (go-eldoc-setup)
+  ;(go-eldoc-setup)
 
   (when (string-match "/\\(github.com/[^/]+/[^/]+\\)/" buffer-file-name)
     (setq bug-reference-bug-regexp "\\([Bb]ug ?#?\\|[Pp]atch ?#\\|RFE ?#\\|PR [a-z-+]+/\\|#\\)\\([0-9]+\\(?:#[0-9]+\\)?\\)")
@@ -278,15 +313,17 @@ specified by `compilation-window-height'."
   (go-guru-hl-identifier-mode)
   (setq compilation-always-kill t
         compilation-auto-jump-to-first-error t)
-
+  (setq go (if (chl/file-in-parent "go.mod")
+			   "vgo"
+			 "go"))
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
            (concat "cd " (chl/go-build-root) ";\n"
 				   ;; Don't build the Go project using go build
                    (if (string-prefix-p "/home/chlunde/src/go/" (chl/go-build-root))
 					   "(cd ~/src/go/src; GOROOT_BOOTSTRAP=~/opt/go ./make.bash --no-clean) && "
-					 (concat "if [[ -f Makefile ]]; then make; else GOGC=800 go build -i -v; fi && "
-							 "go test -v . && "))
+					 (concat "if [[ -f Makefile ]]; then make; else GOGC=800 " go " build -i -v; fi && "
+							 go " test -v . && "))
                    "megacheck $(type errfilt 2> /dev/null && errfilt || echo .)"
                    )))
   ;;| grep " (file-name-nondirectory (buffer-file-name)) "
@@ -296,52 +333,20 @@ specified by `compilation-window-height'."
 (eval-after-load 'go-mode '(add-hook 'go-mode-hook #'chl/go-mode))
 
 ;;;
-(add-hook 'yaml-mode-hook
-          (lambda ()
-            (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
-            (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+;(add-hook 'yaml-mode-hook
+;          (lambda ()
+;            (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
+;            (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
 
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
-(add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("/inventory" . conf-mode) 'append)
-
-;; disable jshint since we prefer eslint checking
-(setq-default flycheck-disabled-checkers
-  (append flycheck-disabled-checkers
-    '(javascript-jshint go-build go-errcheck)))
-(flycheck-add-mode 'javascript-eslint 'web-mode)
-
 (setq markdown-fontify-code-blocks-natively t)
 
-(defun chl/js-extract-with-imports ()
-  "Extract region (React component) to a new file, including any imports in the current file."
-  (interactive)
+(add-to-list 'auto-mode-alist '("/inventory" . conf-mode) 'append)
 
-  (let ((selected (buffer-substring-no-properties (mark) (point))))
-    (if (eq nil (string-match "^const \\([A-Z][A-Za-z]+\\)\s*=" selected))
-        (message "Didn't match ^const Function = ...")
-      (let ((component (match-string 1 selected))
-            (imports))
-        (save-excursion
-          (kill-region (mark) (point))
-          (goto-char 1)
-          (while (search-forward-regexp "^import .*" nil t 1)
-            (push (match-string 0) imports))
-          (insert "\nimport " component " from './" component "'")
-          (find-file-other-window (concat component ".js"))
-          (dolist (import imports)
-            (insert import "\n"))
-          (insert "\n")
-          (yank)
-          (insert "\n" "export default " component "\n")
-          (set-buffer-modified-p t))))))
-
-;(setq web-mode-content-types-alist
-;  '(("jsx"  . ".*\\.js\\'")))
-;(setq web-mode-content-types-alist
-;  '(("jsx" . "\\.js[x]?\\'")))
+(use-package web-mode)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
 
 (add-hook 'web-mode-hook
           (lambda ()
@@ -353,32 +358,27 @@ specified by `compilation-window-height'."
             (local-set-key (kbd "C-x C-f") 'projectile-find-file)
             (local-set-key (kbd "RET") 'newline-and-indent)))
 
-(add-hook 'window-setup-hook
-          (lambda ()
-            (set-background-color "black")
-            (set-foreground-color "white")))
+(defun chl/file-in-parent (fn)
+  (or (file-exists-p fn)
+      (file-exists-p (concat "../" fn))
+      (file-exists-p (concat "../../" fn))
+      (file-exists-p (concat "../../../" fn))))
 
 (defun chl/use-projectile-if-git ()
-  (when (or (file-exists-p ".git")
-            (file-exists-p "../.git")
-            (file-exists-p "../../.git")
-            (file-exists-p "../../../.git"))
+  (when (chl/file-in-parent ".git")
     (local-set-key (kbd "C-x C-f") 'projectile-find-file)))
 
 (add-hook 'find-file-hook #'chl/use-projectile-if-git)
 (add-hook 'dired-mode-hook #'chl/use-projectile-if-git)
 
 
-(require 'undo-tree)
-(global-undo-tree-mode t)
-(setq undo-tree-visualizer-diff t)
+;(require 'undo-tree)
+;(global-undo-tree-mode t)
+;(setq undo-tree-visualizer-diff t)
 
 (when (window-system)
-  ;; Terminal settings
-  (require 'eldoc)
   (set-face-attribute 'eldoc-highlight-function-argument nil
                       :underline t :foreground "green"
-                      :weight 'bold)
+                      :weight 'bold))
 
-  (diff-hl-margin-mode))
 ;;; emacs ends here
