@@ -149,47 +149,6 @@ cd() {
     fi
 }
 
-# My Python virtualenv helpers {{{
-# RH 5.x: wget http://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.7.2.tar.gz
-# easy_install pip==1.1
-create_venv() {
-    if [ -n "$1" ]
-    then
-	~/venv/virtualenv.py ~/venv/$1
-    else
-	echo "Usage: create_venv [name] # creates ~/venv/<name>, then try venv <Tab>"
-    fi
-}
-
-venv() {
-   local venv=~/venv/$1
-   if [ ! -d $venv ]
-   then
-	echo $venv does not exist
-	return 1
-   fi
-
-   source $venv/bin/activate
-}
-
-_venv_complete() {
-    if [ $COMP_CWORD -gt 1 ]
-    then
-	COMPREPLY=( )
-	return 0
-    fi
-
-    local cur="${COMP_WORDS[COMP_CWORD]}"
-    local envs=$(for x in $(cd ~/venv/; ls -1 -d */); do echo ${x%%/} ; done )
-    COMPREPLY=( $(compgen -W "${envs}" -- ${cur}) )
-
-    return 0
-}
-
-complete -F _venv_complete venv
-
-# }}}
-
 if [[ -x ~/bin/fzf ]]
 then
 
