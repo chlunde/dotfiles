@@ -313,19 +313,19 @@ specified by `compilation-window-height'."
   (go-guru-hl-identifier-mode)
   (setq compilation-always-kill t
         compilation-auto-jump-to-first-error t)
-  (setq go (if (chl/file-in-parent "go.mod")
-			   "vgo"
-			 "go"))
+  (setq go "go")
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
-           (concat "cd " (chl/go-build-root) ";\n"
-				   ;; Don't build the Go project using go build
-                   (if (string-prefix-p "/home/chlunde/src/go/" (chl/go-build-root))
-					   "(cd ~/src/go/src; GOROOT_BOOTSTRAP=~/opt/go ./make.bash --no-clean) && "
-					 (concat "if [[ -f Makefile ]]; then make; else GOGC=800 " go " build -i -v; fi && "
-							 go " test -v . && "))
-                   "staticcheck $(type errfilt 2> /dev/null && errfilt || echo .)"
-                   )))
+           (concat
+			"cd " (chl/go-build-root) ";\n"
+			;; Don't build the Go project using go build
+            (if (string-prefix-p "/home/chlunde/src/go/" (chl/go-build-root))
+				"(cd ~/src/go/src; GOROOT_BOOTSTRAP=~/opt/go ./make.bash --no-clean) "
+			  (concat
+			   (if (file-exists-p "Makefile")
+				   "make"
+				 (concat "GOGC=800 " go " build -v && " go " test -v ."))
+			   "&& staticcheck $(type errfilt &> /dev/null && errfilt || echo .)")))))
   ;;| grep " (file-name-nondirectory (buffer-file-name)) "
 
   (local-set-key (kbd "M-.") #'godef-jump))
