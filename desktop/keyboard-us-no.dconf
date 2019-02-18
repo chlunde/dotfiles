@@ -1,0 +1,4 @@
+[org/gnome/desktop/input-sources]
+current=uint32 0
+sources=[('xkb', 'us'), ('xkb', 'no')]
+xkb-options=@as []
