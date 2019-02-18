@@ -324,11 +324,12 @@ specified by `compilation-window-height'."
 					   "(cd ~/src/go/src; GOROOT_BOOTSTRAP=~/opt/go ./make.bash --no-clean) && "
 					 (concat "if [[ -f Makefile ]]; then make; else GOGC=800 " go " build -i -v; fi && "
 							 go " test -v . && "))
-                   "megacheck $(type errfilt 2> /dev/null && errfilt || echo .)"
+                   "staticcheck $(type errfilt 2> /dev/null && errfilt || echo .)"
                    )))
   ;;| grep " (file-name-nondirectory (buffer-file-name)) "
 
-  (local-set-key (kbd "M-.") #'go-guru-definition))
+  (local-set-key (kbd "M-.") #'godef-jump))
+
 
 (eval-after-load 'go-mode '(add-hook 'go-mode-hook #'chl/go-mode))
 
