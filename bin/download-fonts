@@ -11,7 +11,7 @@ do
 	fi
 done
 
-v=1.14.0
+v=2.1.0
 if [[ ! -f iosevka/$v.zip ]]
 then
         rm -Rf iosevka/
