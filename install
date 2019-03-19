@@ -1,0 +1,18 @@
+#!/bin/bash
+cd ~/
+for f in bash_profile bashrc emacs
+do
+test -f ~/.$f && mv ~/.$f ~/.${f}.OLD
+ln -s ~/dotfiles/$f .$f
+done
+
+    for f in gitconfig
+    do
+        test -f ~/.$f || cp ~/dotfiles/$f .$f
+    done
+
+mkdir -p ~/.emacs.d/straight/versions/
+ln -f -s ~/dotfiles/version-lock.el ~/.emacs.d/straight/versions/default.el
+
+mkdir -p ~/bin
+ln -f -s ~/dotfiles/bin/go-tool-install ~/bin/

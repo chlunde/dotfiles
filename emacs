@@ -25,28 +25,81 @@
 (when (< emacs-major-version 25)
   (message "too old"))
 
+;;; Bootstrap straight.el
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/4d2c3ab92c83a6d2a45ba8ef391dd01d555178fc/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
 ;;; Packages
-(require 'package)
-(package-initialize)
+(straight-use-package 'use-package)
+(setq package-enable-at-startup nil)
 
-(add-to-list 'package-archives
-             '("melpa" . "https://stable.melpa.org/packages/") t)
+;; When configuring a feature with `use-package', also tell
+;; straight.el to install a package of the same name, unless otherwise
+;; specified using the `:straight' keyword.
+(setq straight-use-package-by-default t)
 
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+;; (straight-use-package
+;;'(el-patch :type git :host github :repo "your-name/el-patch"))
 
 (eval-when-compile
   (require 'use-package))
 
-(setq-default use-package-always-defer t
-              use-package-always-ensure t)
+(setq-default use-package-always-defer t)
 
-(use-package flx-ido)
-(use-package fzf)
-(use-package key-chord)
-(use-package markdown-mode)
-(use-package projectile)
+(use-package evil
+  :demand)
+
+(use-package flx-ido
+  :demand
+  :config
+  (flx-ido-mode t))
+
+(use-package fzf
+  :commands fzf/start
+  :init
+  ;; less problems with fzf
+  (setq-default term-term-name "vt100"))
+
+(defun chl/fzf-projects ()
+  "Fuzzy find projects."
+  (interactive)
+  (fzf/start (getenv "HOME")
+			 "(find -L /git ~/src ~/go/src/ -maxdepth 3 \\( -path '*/\\.*' -o -fstype 'dev' -o -fstype 'proc' \\) -prune -o -type d -print 2> /dev/null; find -L /git ~/src ~/go/src/ -maxdepth 3 -type d -print) | grep -v /vendor/ | grep -v /node_modules/"))
+
+(defun chl/fzf-git ()
+  "Fuzzy find on the closest git repository."
+  (interactive)
+  (fzf/start (magit-toplevel)))
+
+(global-set-key (kbd "C-2") #'chl/fzf-git)
+(global-set-key (kbd "C-3") #'chl/fzf-projects)
+
+(defun chl/file-in-parent (fn)
+  (or (file-exists-p fn)
+      (file-exists-p (concat "../" fn))
+      (file-exists-p (concat "../../" fn))
+      (file-exists-p (concat "../../../" fn))))
+
+;; (defun chl/use-fzf-if-git ()
+;;   (when (chl/file-in-parent ".git")
+;;     (local-set-key (kbd "C-x C-f") #'chl/fzf-git)))
+
+;; (add-hook 'find-file-hook #'chl/use-fzf-if-git)
+;; (add-hook 'dired-mode-hook #'chl/use-fzf-if-git)
+
+(use-package markdown-mode
+  :config
+  (setq markdown-fontify-code-blocks-natively t))
 
 (use-package flycheck
   :defer 1
@@ -68,7 +121,6 @@
   (add-hook 'after-init-hook 'global-company-mode))
 
 (use-package company-go
-  :ensure t
   :defer t
   :init
   (with-eval-after-load 'company
@@ -81,7 +133,7 @@
 (line-number-mode t)
 (ido-mode)
 (ido-everywhere t)
-(flx-ido-mode t)
+
 (fset 'yes-or-no-p 'y-or-n-p)           ; Be consistent!
 (show-paren-mode t)                     ; Highlight matching paren
 (auto-compression-mode t)               ; Decompress gz-files etc.
@@ -89,20 +141,27 @@
 (global-auto-revert-mode)
 (auto-fill-mode)
 (delete-selection-mode t)
+(savehist-mode t) ; Save minibuffer history (for compile command etc.)
 
 ;;; Extra packages installed
 (use-package diff-hl
-  :init
+  :defer 0
+  :config
   (global-diff-hl-mode)
   (unless (window-system)
 	(diff-hl-margin-mode)))
 
-(use-package yaml-mode)
-
-;(add-hook 'yaml-mode-hook 'highlight-indent-guides-mode)
-(setq-default highlight-indent-guides-method 'character)
-(setq-default highlight-indent-guides-auto-character-face-perc 30)
-(setq-default highlight-indent-guides-character ?\│)
+(use-package yaml-mode
+  :config
+  ;;(add-hook 'yaml-mode-hook
+  ;;(lambda ()
+  ;; (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
+  ;; (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+  ;;(add-hook 'yaml-mode-hook 'highlight-indent-guides-mode)
+  ;;(setq-default highlight-indent-guides-method 'character)
+  ;;(setq-default highlight-indent-guides-auto-character-face-perc 30)
+  ;;(setq-default highlight-indent-guides-character ?\│)
+  )
 
 ;;; Props
 (setq user-full-name "Carl Henrik Lunde"
@@ -120,9 +179,8 @@
 
 (use-package ediff
   :config
-  (progn
-    (setq ediff-split-window-function 'split-window-horizontally)
-    (setq ediff-window-setup-function 'ediff-setup-windows-plain)))
+  (setq ediff-split-window-function 'split-window-horizontally)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain))
 
 (setq backup-by-copying t               ; don't clobber symlinks
       backup-directory-alist (list (cons "." (expand-file-name "~/.backups"))) ; don't litter my fs tree
@@ -173,23 +231,6 @@ Goes backward if ARG is negative; error if CHAR not found."
   (goto-char (match-beginning 0)))
 
 (global-set-key (kbd "M-i") #'move-to-char)
-(key-chord-mode 1)
-(key-chord-define-global "fd" #'fzf)
-(defun fzf-home ()
-  (interactive)
-  (fzf-directory "~"))
-(key-chord-define-global "er" #'fzf-home)
-
-(defun fzf-ffap ()
-  (interactive)
-  (setq fzf/args (concat "-x --color bw --print-query -q " (word-at-point)))
-  (fzf-directory "~")
-  (setq fzf/args "-x --color bw --print-query"))
-
-(key-chord-define-global "fp" #'fzf-ffap)
-
-;; less problems with fzf
-(setq-default term-term-name "vt100")
 
 (defun re-fontify ()
   (interactive)
@@ -199,7 +240,6 @@ Goes backward if ARG is negative; error if CHAR not found."
 
 (use-package magit
   :defer 1
-  :ensure t
   :bind ("C-x g" . magit-status))
 
 (defun chl/compilation-small-font-size ()
@@ -243,6 +283,18 @@ specified by `compilation-window-height'."
 
 
 ;;; Go mode
+(use-package go-eldoc
+  :defer 1
+  :straight (:type git :host github :repo "chlunde/emacs-go-eldoc")
+  :init
+  (add-hook 'go-mode-hook 'go-eldoc-setup))
+
+(use-package go-rename)
+
+(use-package go-mode
+  :init
+  (add-hook 'go-mode-hook 'chl/go-mode))
+
 (defun chl/go-build-root ()
   (interactive)
   (let ((cur default-directory)
@@ -260,22 +312,9 @@ specified by `compilation-window-height'."
 			 (and (not is-git-root) (not (equal cur "/")))))
     root))
 
-(use-package go-eldoc
-  :ensure t
-  :defer 1
-  :init
-  (add-hook 'go-mode-hook 'go-eldoc-setup))
-
-(use-package go-guru)
-(use-package go-rename)
-
-(use-package go-mode
-  :init
-  (add-hook 'go-mode-hook 'chl/go-mode))
-
 (defun chl/go-mode ()
-  (interactive)
   "Customize go-mode."
+  (interactive)
   (add-hook 'before-save-hook #'gofmt-before-save t t)
   (add-hook 'after-save-hook #'recompile t t)
   (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
@@ -284,16 +323,9 @@ specified by `compilation-window-height'."
   (setq-default gofmt-command "goimports")
   (set (make-local-variable 'company-backends) '(company-go company-files))
 
-  ;(setq projectile-globally-ignored-directories
-;		(append projectile-globally-ignored-directories '("vendor")))
-
-
-  (local-set-key (kbd "C-x C-f") 'projectile-find-file)
-  (set (make-local-variable 'projectile-require-project-root) nil)
-
   (flyspell-prog-mode)
   (subword-mode)
-  ;(go-eldoc-setup)
+  ;;(go-eldoc-setup)
 
   (when (string-match "/\\(github.com/[^/]+/[^/]+\\)/" buffer-file-name)
     (setq bug-reference-bug-regexp "\\([Bb]ug ?#?\\|[Pp]atch ?#\\|RFE ?#\\|PR [a-z-+]+/\\|#\\)\\([0-9]+\\(?:#[0-9]+\\)?\\)")
@@ -301,18 +333,10 @@ specified by `compilation-window-height'."
          (concat "https://" (match-string-no-properties 1 buffer-file-name) "/issues/%s"))
     (bug-reference-prog-mode))
 
-  (unless (featurep 'go-guru)
-    (dolist (guru '("$GOPATH/src/golang.org/x/tools/cmd/guru/go-guru.el"
-                    "~/opt/gotoolpath/src/golang.org/x/tools/cmd/guru/go-guru.el"))
-      (when (file-exists-p guru)
-        (add-to-list 'load-path (file-name-directory (directory-file-name guru)))
-        (require 'go-guru))))
   (when (file-exists-p "~/opt/gotoolpath/src/github.com/stapelberg/expanderr/lisp/go-expanderr.el")
 	(load "~/opt/gotoolpath/src/github.com/stapelberg/expanderr/lisp/go-expanderr.el")
 	(local-set-key (kbd "C-c C-e") #'go-expanderr))
-  (go-guru-hl-identifier-mode)
-  (setq compilation-always-kill t
-        compilation-auto-jump-to-first-error t)
+  (setq compilation-always-kill t)
   (setq go "go")
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
@@ -330,18 +354,22 @@ specified by `compilation-window-height'."
 
   (local-set-key (kbd "M-.") #'godef-jump))
 
+(when nil
+  (use-package lsp-mode
+	:commands lsp
+	:config
+	(add-hook 'lsp-mode-hook 'lsp-ui-mode)
+	(setq lsp-ui-doc-use-childframe nil)
+	(lsp-register-client
+	 (make-lsp-client :new-connection (lsp-stdio-connection "gopls")
+                      :major-modes '(go-mode)
+                      :server-id 'gopls)))
 
-(eval-after-load 'go-mode '(add-hook 'go-mode-hook #'chl/go-mode))
-
-;;;
-;(add-hook 'yaml-mode-hook
-;          (lambda ()
-;            (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
-;            (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+  (require 'lsp)
+  (require 'lsp-clients)
+  (use-package lsp-ui))
 
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
-
-(setq markdown-fontify-code-blocks-natively t)
 
 (add-to-list 'auto-mode-alist '("/inventory" . conf-mode) 'append)
 
@@ -356,26 +384,7 @@ specified by `compilation-window-height'."
             (message web-mode-content-type)
             (setq indent-tabs-mode nil)
             (add-to-list 'write-file-functions 'delete-trailing-whitespace)
-            (local-set-key (kbd "C-x C-f") 'projectile-find-file)
             (local-set-key (kbd "RET") 'newline-and-indent)))
-
-(defun chl/file-in-parent (fn)
-  (or (file-exists-p fn)
-      (file-exists-p (concat "../" fn))
-      (file-exists-p (concat "../../" fn))
-      (file-exists-p (concat "../../../" fn))))
-
-(defun chl/use-projectile-if-git ()
-  (when (chl/file-in-parent ".git")
-    (local-set-key (kbd "C-x C-f") 'projectile-find-file)))
-
-(add-hook 'find-file-hook #'chl/use-projectile-if-git)
-(add-hook 'dired-mode-hook #'chl/use-projectile-if-git)
-
-
-;(require 'undo-tree)
-;(global-undo-tree-mode t)
-;(setq undo-tree-visualizer-diff t)
 
 (when (window-system)
   (set-face-attribute 'eldoc-highlight-function-argument nil
