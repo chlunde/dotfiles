@@ -82,7 +82,9 @@
   (fzf/start (magit-toplevel)))
 
 (global-set-key (kbd "C-2") #'chl/fzf-git)
+(global-set-key (kbd "C-c 2") (kbd "C-2")) ; alias for emacs -nw
 (global-set-key (kbd "C-3") #'chl/fzf-projects)
+(global-set-key (kbd "C-c 3") (kbd "C-3"))
 
 (defun chl/file-in-parent (fn)
   (or (file-exists-p fn)
