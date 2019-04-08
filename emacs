@@ -74,7 +74,7 @@
   "Fuzzy find projects."
   (interactive)
   (fzf/start (getenv "HOME")
-			 "(find -L /git ~/src ~/go/src/ -maxdepth 3 \\( -path '*/\\.*' -o -fstype 'dev' -o -fstype 'proc' \\) -prune -o -type d -print 2> /dev/null; find -L /git ~/src ~/go/src/ -maxdepth 3 -type d -print) | grep -v /vendor/ | grep -v /node_modules/"))
+			 "(find -L /git ~/src ~/go/src/ -maxdepth 3 \\( -path '*/\\.*' -o -fstype 'dev' -o -fstype 'proc' \\) -prune -o -type d -print 2> /dev/null; find -L /git ~/src ~/go/src/ -maxdepth 3 -type d -print 2> /dev/null) | grep -v /vendor/ | grep -v /node_modules/"))
 
 (defun chl/fzf-git ()
   "Fuzzy find on the closest git repository."

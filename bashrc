@@ -149,7 +149,7 @@ then
     __fzf_proj__() {
         local dir
         dir=$( (command find -L /git ~/src ~/go/src/ -maxdepth 3 \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
-            -o -type d -print 2> /dev/null; command find -L ~/ -maxdepth 1 -type d) | fzf +m) && printf 'cd %q' "$dir"
+            -o -type d -print 2> /dev/null; command find -L ~/ -maxdepth 1 -type d 2> /dev/null) | fzf +m) && printf 'cd %q' "$dir"
     }
     # alt-c
     bind '"\ec": " \C-e\C-u$(__fzf_proj__)\e\C-e\C-m"'
