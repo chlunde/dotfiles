@@ -99,6 +99,10 @@
 ;; (add-hook 'find-file-hook #'chl/use-fzf-if-git)
 ;; (add-hook 'dired-mode-hook #'chl/use-fzf-if-git)
 
+(use-package dockerfile-mode)
+
+(use-package groovy-mode) ; jenkinsfile
+
 (use-package markdown-mode
   :config
   (setq markdown-fontify-code-blocks-natively t))
