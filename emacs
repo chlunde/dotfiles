@@ -213,6 +213,7 @@
 (global-set-key (kbd "TAB") #'indent-or-complete)
 (global-set-key (kbd "<f5>") #'recompile)
 (global-set-key (kbd "<f6>") #'next-error)
+(global-set-key (kbd "C-x |") #'next-error) ; C-x | and C-x ` - same key in US/NO layout
 (global-set-key (kbd "C-x ,") #'comment-line) ; C-x C-; unavailable in terminal
 
 (define-key isearch-mode-map [(control return)] #'isearch-exit-other-end)
