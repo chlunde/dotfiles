@@ -247,6 +247,7 @@ Goes backward if ARG is negative; error if CHAR not found."
 
 (use-package magit
   :defer 1
+  :commands magit-toplevel
   :bind ("C-x g" . magit-status))
 
 (defun chl/compilation-small-font-size ()
