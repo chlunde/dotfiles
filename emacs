@@ -394,6 +394,14 @@ specified by `compilation-window-height'."
             (add-to-list 'write-file-functions 'delete-trailing-whitespace)
             (local-set-key (kbd "RET") 'newline-and-indent)))
 
+(with-eval-after-load 'subr-x
+  (setq-default mode-line-buffer-identification
+                '(:eval (format-mode-line (propertized-buffer-identification (or (when-let* ((buffer-file-truename buffer-file-truename)
+                                                                                             (prj (cdr-safe (project-current)))
+                                                                                             (prj-parent (file-name-directory (directory-file-name (expand-file-name prj)))))
+                                                                                   (concat (file-relative-name (file-name-directory buffer-file-truename) prj-parent) (file-name-nondirectory buffer-file-truename)))
+                                                                                 "%b"))))))
+
 (when (window-system)
   (set-face-attribute 'eldoc-highlight-function-argument nil
                       :underline t :foreground "green"
