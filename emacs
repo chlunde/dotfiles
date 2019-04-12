@@ -57,8 +57,7 @@
 
 (setq-default use-package-always-defer t)
 
-(use-package evil
-  :demand)
+(use-package evil)
 
 (use-package flx-ido
   :demand
