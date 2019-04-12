@@ -26,6 +26,7 @@
   (message "too old"))
 
 ;;; Bootstrap straight.el
+(setq-default straight-check-for-modifications '(check-on-save find-when-checking))
 (defvar bootstrap-version)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
