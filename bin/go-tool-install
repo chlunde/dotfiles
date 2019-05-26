@@ -16,12 +16,10 @@ if [[ $# == 0 ]]
 then
     go get -u \
        github.com/junegunn/fzf \
-       github.com/stamblerre/gocode \
        golang.org/x/tools/cmd/goimports \
        golang.org/x/tools/cmd/gopls \
        golang.org/x/tools/cmd/gorename \
        golang.org/x/lint/golint \
-       github.com/rogpeppe/godef \
        honnef.co/go/tools/cmd/staticcheck
 else
     go get -u $@
