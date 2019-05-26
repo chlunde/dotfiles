@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-v=26.1
+v=26.2
 
 mkdir -p ~/Downloads
 cd ~/Downloads
