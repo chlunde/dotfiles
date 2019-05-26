@@ -126,12 +126,6 @@
   :init
   (add-hook 'after-init-hook 'global-company-mode))
 
-(use-package company-go
-  :defer t
-  :init
-  (with-eval-after-load 'company
-    (add-to-list 'company-backends 'company-go)))
-
 ;;; Global modes
 (prefer-coding-system 'utf-8)
 (global-font-lock-mode t)               ; fontify when possible
@@ -283,6 +277,7 @@ specified by `compilation-window-height'."
  '(ediff-odd-diff-B ((t (:background "gray30"))))
  '(flycheck-error ((t (:underline (:color "Red1" :style wave) :weight bold))))
  '(go-guru-hl-identifier-face ((t (:inherit nil :underline (:color "green" :style wave)))))
+ '(lsp-face-highlight-textual ((t (:weight bold))))
  '(magit-section-highlight ((t (:background "color-236"))))
  '(markdown-code-face ((t (:inherit fixed-pitch :background "gray20"))))
  '(secondary-selection ((t (:background "color-237" :foreground "#f6f3e8"))))
@@ -291,12 +286,6 @@ specified by `compilation-window-height'."
 
 
 ;;; Go mode
-(use-package go-eldoc
-  :defer 1
-  :straight (:type git :host github :repo "chlunde/emacs-go-eldoc")
-  :init
-  (add-hook 'go-mode-hook 'go-eldoc-setup))
-
 (use-package go-rename)
 
 (use-package go-mode
@@ -329,7 +318,6 @@ specified by `compilation-window-height'."
   (add-hook 'prog-mode-hook 'turn-on-auto-fill t t)
 
   (setq-default gofmt-command "goimports")
-  (set (make-local-variable 'company-backends) '(company-go company-files))
 
   (flyspell-prog-mode)
   (subword-mode)
@@ -362,20 +350,21 @@ specified by `compilation-window-height'."
 
   (local-set-key (kbd "M-.") #'godef-jump))
 
-(when nil
-  (use-package lsp-mode
-	:commands lsp
-	:config
-	(add-hook 'lsp-mode-hook 'lsp-ui-mode)
-	(setq lsp-ui-doc-use-childframe nil)
-	(lsp-register-client
-	 (make-lsp-client :new-connection (lsp-stdio-connection "gopls")
-                      :major-modes '(go-mode)
-                      :server-id 'gopls)))
+(use-package lsp-mode
+  :commands lsp
+  :config
+  (setq lsp-prefer-flymake nil)
+  (setq lsp-enable-snippet nil)
+  (setq lsp-ui-sideline-enable nil)
+  (setq lsp-ui-doc-use-childframe nil))
 
-  (require 'lsp)
-  (require 'lsp-clients)
-  (use-package lsp-ui))
+(add-hook 'go-mode-hook #'lsp)
+
+(use-package lsp-ui
+  :commands lsp-ui-mode)
+
+(use-package company-lsp
+  :commands company-lsp)
 
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
