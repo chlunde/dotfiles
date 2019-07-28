@@ -369,7 +369,7 @@ specified by `compilation-window-height'."
 			   "&& staticcheck $(type errfilt &> /dev/null && errfilt || echo .)")))))
   ;;| grep " (file-name-nondirectory (buffer-file-name)) "
 
-  (local-set-key (kbd "M-.") #'godef-jump))
+  (local-set-key (kbd "M-.") #'lsp-find-definition))
 
 (use-package lsp-mode
   :commands lsp
