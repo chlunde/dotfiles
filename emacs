@@ -103,6 +103,16 @@
 
 (use-package groovy-mode) ; jenkinsfile
 
+(defun shell-pop-projectroot (orig-fun &rest args)
+  (let ((default-directory (car (project-roots (project-current)))))
+	(apply orig-fun args)))
+
+(use-package shell-pop
+  :config
+  (setq shell-pop-universal-key "C-t")
+  (advice-add 'shell-pop :around #'shell-pop-projectroot)
+  (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
+  :bind ("C-t" . shell-pop))
 (use-package markdown-mode
   :config
   (setq markdown-fontify-code-blocks-natively t))
