@@ -103,6 +103,16 @@
 
 (use-package groovy-mode) ; jenkinsfile
 
+(use-package swiper)
+
+(use-package counsel)
+
+(global-set-key (kbd "C-4") #'counsel-rg)
+(global-set-key (kbd "C-c 4") #'counsel-rg)
+
+;; https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/
+;; C-4, C-c C-o; C-x C-q (ivy-wgrep-change-to-wgrep-mode)
+
 (defun shell-pop-projectroot (orig-fun &rest args)
   (let ((default-directory (car (project-roots (project-current)))))
 	(apply orig-fun args)))
@@ -113,6 +123,7 @@
   (advice-add 'shell-pop :around #'shell-pop-projectroot)
   (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
   :bind ("C-t" . shell-pop))
+
 (use-package markdown-mode
   :config
   (setq markdown-fontify-code-blocks-natively t))
