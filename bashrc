@@ -46,6 +46,7 @@ pathmunge "$HOME/bin"
 pathmunge "$HOME/opt/bin"
 pathmunge "$HOME/opt/emacs/bin"
 pathmunge "$HOME/opt/git/bin"
+pathmunge "$HOME/opt/ripgrep"
 test -d /opt/rh/rh-git218 && source scl_source enable rh-git218
 
 alias vi=vim

@@ -1,0 +1,23 @@
+#!/bin/bash
+v=11.0.1
+hash=ce74cabac9b39b1ad55837ec01e2c670fa7e965772ac2647b209e31ead19008c
+
+export PATH="~/opt/ripgrep/:$PATH"
+if [[ "$(rg --version | head -n 1 2> /dev/null)" == "ripgrep ${v} "* ]]
+then
+    echo "Already updated"
+    exit 0
+fi
+
+mkdir -p ~/Downloads/
+curl -L -o ~/Downloads/rg-${v}.tar.gz https://github.com/BurntSushi/ripgrep/releases/download/${v}/ripgrep-${v}-x86_64-unknown-linux-musl.tar.gz
+
+if [[ "$(sha256sum ~/Downloads/rg-${v}.tar.gz | cut -d ' ' -f1)" != "$hash" ]]
+then
+	echo "Checksum mismatch"
+	exit 1
+fi
+
+mkdir -p ~/opt
+rm -Rf ~/opt/ripgrep
+tar -v --xform 's,ripgrep-[^/]*/\?,ripgrep/,' -C ~/opt -xzf ~/Downloads/rg-${v}.tar.gz
