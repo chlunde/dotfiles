@@ -143,7 +143,7 @@ cover() {
     go test $COVERFLAGS -coverprofile=$t $@ && go tool cover -func=$t && unlink $t
 }
 
-if [[ -x ~/bin/fzf ]]
+if [[ -x ~/bin/fzf ]] && [[ -z "$INSIDE_EMACS" ]]
 then
 
     __fzf_proj__() {
