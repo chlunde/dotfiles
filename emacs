@@ -353,6 +353,7 @@ specified by `compilation-window-height'."
 (use-package lsp-mode
   :commands lsp
   :config
+  (setq lsp-enable-links nil)
   (setq lsp-prefer-flymake nil)
   (setq lsp-enable-snippet nil)
   (setq lsp-ui-sideline-enable nil)
