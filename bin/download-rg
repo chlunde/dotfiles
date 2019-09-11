@@ -1,6 +1,6 @@
 #!/bin/bash
-v=11.0.1
-hash=ce74cabac9b39b1ad55837ec01e2c670fa7e965772ac2647b209e31ead19008c
+v=11.0.2
+hash=2e7978e346553fbc45c0940d9fa11e12f9afbae8213b261aad19b698150e169a
 
 export PATH="~/opt/ripgrep/:$PATH"
 if [[ "$(rg --version | head -n 1 2> /dev/null)" == "ripgrep ${v} "* ]]
@@ -14,7 +14,7 @@ curl -L -o ~/Downloads/rg-${v}.tar.gz https://github.com/BurntSushi/ripgrep/rele
 
 if [[ "$(sha256sum ~/Downloads/rg-${v}.tar.gz | cut -d ' ' -f1)" != "$hash" ]]
 then
-	echo "Checksum mismatch"
+	echo "Checksum mismatch $(sha256sum ~/Downloads/rg-${v}.tar.gz)"
 	exit 1
 fi
 
