@@ -1,6 +1,6 @@
 #!/bin/bash
-v=1.12.6
-hash=dbcf71a3c1ea53b8d54ef1b48c85a39a6c9a935d01fc8291ff2b92028e59913c
+v=1.13
+hash=68a2297eb099d1a76097905a2ce334e3155004ec08cdea85f24527be3c48e856
 
 if [[ "$(go version 2> /dev/null)" == "go version go$v "* ]]
 then
