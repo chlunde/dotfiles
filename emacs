@@ -187,6 +187,17 @@
   ;;(setq-default highlight-indent-guides-character ?\│)
   )
 
+(use-package mmm-mode
+  :commands mmm-add-mode-ext-class mmm-mode
+  :init
+  (setq mmm-global-mode 'maybe))
+
+(use-package mmm-jinja2
+  :mode ("\\.ya?ml\\.j2\\'" . (lambda () (require 'mmm-jinja2) (yaml-mode)))
+  :config
+  (mmm-add-mode-ext-class 'yaml-mode "\\.ya?ml\\.j2\\'" 'jinja2))
+
+
 ;;; Props
 (setq user-full-name "Carl Henrik Lunde"
       user-mail-address (concat "chlunde" "@" "ifi.uio.no"))
