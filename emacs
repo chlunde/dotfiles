@@ -132,6 +132,9 @@
   :defer 1
   :config
   (global-flycheck-mode)
+  (when (not (window-system))
+	(set-face-attribute 'flycheck-error nil :foreground "red"))
+
   (setq-default flycheck-shellcheck-follow-sources nil) ; not supported in epel
   (setq-default flycheck-disabled-checkers '(go-golint go-build
 				go-test go-errcheck go-unconvert go-megacheck
@@ -296,7 +299,6 @@ specified by `compilation-window-height'."
  '(ediff-even-diff-B ((t (:background "gray30"))))
  '(ediff-odd-diff-A ((t (:background "gray30"))))
  '(ediff-odd-diff-B ((t (:background "gray30"))))
- '(flycheck-error ((t (:underline (:color "Red1" :style wave) :weight bold))))
  '(go-guru-hl-identifier-face ((t (:inherit nil :underline (:color "green" :style wave)))))
  '(lsp-face-highlight-textual ((t (:weight bold))))
  '(magit-section-highlight ((t (:background "color-236"))))
@@ -307,11 +309,11 @@ specified by `compilation-window-height'."
 
 
 ;;; Go mode
-(use-package go-rename)
-
 (use-package go-mode
   :init
   (add-hook 'go-mode-hook 'chl/go-mode))
+
+(use-package gotest)
 
 (defun chl/go-build-root ()
   (interactive)
@@ -333,12 +335,14 @@ specified by `compilation-window-height'."
 (defun chl/go-mode ()
   "Customize go-mode."
   (interactive)
-  (add-hook 'before-save-hook #'gofmt-before-save t t)
+  ;; (add-hook 'before-save-hook #'gofmt-before-save t t)
+  (add-hook 'before-save-hook 'lsp-organize-imports nil t)
   (add-hook 'after-save-hook #'recompile t t)
   (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
   (add-hook 'prog-mode-hook 'turn-on-auto-fill t t)
+  (define-key go-mode-map (kbd "C-c C-t") 'go-test-current-test)
 
-  (setq-default gofmt-command "goimports")
+;  (setq-default gofmt-command "goimports")
 
   (flyspell-prog-mode)
   (subword-mode)
