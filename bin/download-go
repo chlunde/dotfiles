@@ -1,6 +1,6 @@
 #!/bin/bash
-v=1.13
-hash=68a2297eb099d1a76097905a2ce334e3155004ec08cdea85f24527be3c48e856
+v=1.13.5
+hash=512103d7ad296467814a6e3f635631bd35574cab3369a97a323c9a585ccaa569
 
 if [[ "$(go version 2> /dev/null)" == "go version go$v "* ]]
 then
@@ -9,14 +9,17 @@ then
 fi
 
 mkdir -p ~/Downloads/
-curl -o ~/Downloads/go$v.linux-amd64.tar.gz https://storage.googleapis.com/golang/go$v.linux-amd64.tar.gz
+declare -r binary=~/Downloads/go$v.linux-amd64.tar.gz
+curl -o "$binary" https://storage.googleapis.com/golang/go$v.linux-amd64.tar.gz
 
-if [[ "$(sha256sum ~/Downloads/go$v.linux-amd64.tar.gz | cut -d ' ' -f1)" != "$hash" ]]
+found="$(sha256sum $binary | cut -d ' ' -f1)"
+
+if [[ "$found" != "$hash" ]]
 then
-	echo "Checksum mismatch"
+	echo "Checksum mismatch: ${found}"
 	exit 1
 fi
 
 mkdir -p ~/opt
 rm -Rf ~/opt/go
-tar -C ~/opt -xzf ~/Downloads/go$v.linux-amd64.tar.gz
+tar -C ~/opt -xzf $binary
