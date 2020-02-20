@@ -346,6 +346,10 @@ specified by `compilation-window-height'."
 (defun chl/go-mode ()
   "Customize go-mode."
   (interactive)
+  ;; Set up before-save hooks to format buffer and add/delete imports.
+  ;; Make sure you don't have other gofmt/goimports hooks enabled.
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t)
   ;; (add-hook 'before-save-hook #'gofmt-before-save t t)
   (add-hook 'before-save-hook 'lsp-organize-imports nil t)
   (add-hook 'after-save-hook #'recompile t t)
