@@ -457,6 +457,8 @@ specified by `compilation-window-height'."
             (add-to-list 'write-file-functions 'delete-trailing-whitespace)
             (local-set-key (kbd "RET") 'newline-and-indent)))
 
+(use-package kotlin-mode)
+
 (with-eval-after-load 'subr-x
   (setq-default mode-line-buffer-identification
                 '(:eval (format-mode-line (propertized-buffer-identification (or (when-let* ((buffer-file-truename buffer-file-truename)
