@@ -350,8 +350,6 @@ specified by `compilation-window-height'."
   ;; Make sure you don't have other gofmt/goimports hooks enabled.
   (add-hook 'before-save-hook #'lsp-format-buffer t t)
   (add-hook 'before-save-hook #'lsp-organize-imports t t)
-  ;; (add-hook 'before-save-hook #'gofmt-before-save t t)
-  (add-hook 'before-save-hook 'lsp-organize-imports nil t)
   (add-hook 'after-save-hook #'recompile t t)
   (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
   (add-hook 'prog-mode-hook 'turn-on-auto-fill t t)
