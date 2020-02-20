@@ -5,7 +5,6 @@ set -e
 export GOPATH=~/opt/gotoolpath
 
 test -d $GOPATH/ || mkdir -p $GOPATH
-cd $GOPATH
 test -d ~/bin || mkdir -p ~/bin
 
 if ! [[ -L $GOPATH/bin ]]
@@ -13,15 +12,17 @@ then
     ln -s ~/bin/ $GOPATH/bin
 fi
 
+export GO111MODULE=on
+
 if [[ $# == 0 ]]
 then
-    GO111MODULE=on go get -u \
-       github.com/junegunn/fzf \
-       golang.org/x/tools/cmd/goimports \
-       golang.org/x/tools/cmd/gopls \
-       golang.org/x/tools/cmd/gorename \
-       golang.org/x/lint/golint \
-       honnef.co/go/tools/cmd/staticcheck
+    go get golang.org/x/tools/gopls@latest
+    go get github.com/junegunn/fzf@latest
+    go get golang.org/x/tools/cmd/goimports@latest
+    go get golang.org/x/tools/cmd/gorename@latest
+    go get golang.org/x/lint/golint@latest
+    go get honnef.co/go/tools/cmd/staticcheck@latest
+    go get github.com/cweill/gotests/gotests@v1.5.3
 else
-    GO111MODULE=on go get -u $@
+    go $@
 fi
