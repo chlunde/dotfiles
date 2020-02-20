@@ -391,6 +391,9 @@ specified by `compilation-window-height'."
 (use-package lsp-mode
   :commands lsp
   :config
+  (lsp-register-custom-settings
+   '(("gopls.completeUnimported" t t)
+	 ("gopls.staticcheck" t t)))
   (setq lsp-enable-links nil)
   (setq lsp-prefer-flymake nil)
   (setq lsp-enable-snippet nil)
