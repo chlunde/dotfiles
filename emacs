@@ -74,27 +74,22 @@
   :config
   (flx-ido-mode t))
 
-(use-package fzf
-  :commands fzf/start
-  :init
-  ;; less problems with fzf
-  (setq-default term-term-name "vt100"))
-
 (defun chl/fzf-projects ()
   "Fuzzy find projects."
   (interactive)
-  (fzf/start (getenv "HOME")
-			 "(find -L /git ~/src ~/go/src/ -maxdepth 3 \\( -path '*/\\.*' -o -fstype 'dev' -o -fstype 'proc' \\) -prune -o -type d -print 2> /dev/null; find -L /git ~/src ~/go/src/ -maxdepth 3 -type d -print 2> /dev/null) | grep -v /vendor/ | grep -v /node_modules/"))
+  (let ((counsel-fzf-cmd "find -L src/ go/src/ git/ -maxdepth 3 -name vendor -a  -prune -o -name node_modules -prune -o -name \".*\" -a -prune -o -type d -a -print | fzf -f \"%s\""))
+	(counsel-fzf "" (getenv "HOME") "")))
+
 
 (defun chl/fzf-git ()
   "Fuzzy find on the closest git repository."
   (interactive)
-  (fzf/start (magit-toplevel)))
+  (counsel-fzf "" (magit-toplevel) (magit-toplevel)))
 
 (global-set-key (kbd "C-2") #'chl/fzf-git)
-(global-set-key (kbd "C-c 2") (kbd "C-2")) ; alias for emacs -nw
+(global-set-key (kbd "C-c 2") #'chl/fzf-git) ; alias for emacs -nw
 (global-set-key (kbd "C-3") #'chl/fzf-projects)
-(global-set-key (kbd "C-c 3") (kbd "C-3"))
+(global-set-key (kbd "C-c 3") #'chl/fzf-projects)
 
 (defun chl/file-in-parent (fn)
   (or (file-exists-p fn)
