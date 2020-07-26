@@ -58,7 +58,14 @@
 (eval-when-compile
   (require 'use-package))
 
+(setq vc-handled-backends '(Git))
+
 (setq-default use-package-always-defer t)
+
+(use-package tramp
+  :config
+  ;; get magit to use git from SCL
+  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 (use-package evil)
 
