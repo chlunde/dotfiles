@@ -25,6 +25,9 @@
 (when (< emacs-major-version 25)
   (message "too old"))
 
+;; Emoji: 😄, 🤦, 🏴󠁧󠁢󠁳󠁣󠁴󠁿
+(set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
+
 ;;; Bootstrap straight.el
 (setq-default straight-check-for-modifications '(check-on-save find-when-checking))
 (defvar bootstrap-version)
