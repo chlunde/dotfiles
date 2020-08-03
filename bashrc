@@ -56,7 +56,6 @@ export EDITOR=vim
 export ALTERNATE_EDITOR=""
 alias e='emacsclient -t'
 
-export MAKEFLAGS='-j6'
 [ -e ~/.pystartup ] && export PYTHONSTARTUP=~/.pystartup
 
 HISTTIMEFORMAT='%FT%T '
