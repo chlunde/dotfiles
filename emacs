@@ -394,6 +394,7 @@ specified by `compilation-window-height'."
 
 ;  (setq-default gofmt-command "goimports")
 
+;  (flycheck-mode -1)
   (flyspell-prog-mode)
   (subword-mode)
   ;;(go-eldoc-setup)
@@ -419,8 +420,7 @@ specified by `compilation-window-height'."
 			  (concat
 			   (if (file-exists-p "Makefile")
 				   "make"
-				 (concat "GOGC=800 " go " build -v && " go " test -v ."))
-			   "&& staticcheck $(type errfilt &> /dev/null && errfilt || echo .)")))))
+				 (concat "GOGC=800 " go " build -v $(go list ./... | grep cmd/) . && " go " test -v .")))))))
   ;;| grep " (file-name-nondirectory (buffer-file-name)) "
 
   (local-set-key (kbd "M-.") #'lsp-find-definition))
