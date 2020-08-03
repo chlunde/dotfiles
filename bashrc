@@ -42,7 +42,9 @@ pathmunge "$HOME/opt/go/bin"
 test -L /sbin || pathmunge /sbin
 pathmunge /usr/sbin
 pathmunge /local/bin after
+pathmunge "$HOME/.local/bin"
 pathmunge "$HOME/bin"
+pathmunge "$HOME/go/bin"
 pathmunge "$HOME/opt/bin"
 pathmunge "$HOME/opt/emacs/bin"
 pathmunge "$HOME/opt/git/bin"
