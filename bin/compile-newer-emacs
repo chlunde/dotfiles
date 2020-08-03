@@ -1,11 +1,13 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 if [[ -d ~/src/emacs ]]
 then
 	cd ~/src/emacs
-	git pull
-	sudo yum -y install autoconf
+	if nmcli network connectivity | grep -q full; then
+		git pull
+		test -x /usr/bin/autoconf || sudo yum -y install autoconf
+	fi
 	./autogen.sh
 else
 	v=26.3
@@ -21,7 +23,8 @@ fi
 
 #sudo yum -y install alsa-lib-devel atk-devel bzip2 cairo cairo-devel dbus-devel desktop-file-utils fontconfig-devel freetype-devel GConf2-devel giflib-devel glibc-devel gnutls-devel gpm-devel gtk3-devel gzip ImageMagick-devel libjpeg-turbo-devel liblockfile-devel libotf-devel libpng-devel librsvg2-devel libselinux-devel libtiff-devel libX11-devel libXau-devel libXdmcp-devel libxml2-devel libXpm-devel libXrender-devel libXt-devel m17n-lib-devel ncurses-devel python-devel texinfo xorg-x11-proto-devel zlib-devel gcc
 #sudo yum -y install gcc gnutls-devel ncurses-devel
-./configure --prefix=$HOME/opt/emacs --with-gif=no --with-json --without-makeinfo
+./configure --prefix="$HOME/opt/emacs" --with-gif=no --with-json --without-makeinfo --with-cairo
 make
 rm -Rf ~/opt/emacs
 make install
+git clean -f -x -d
