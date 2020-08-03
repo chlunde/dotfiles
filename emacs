@@ -435,7 +435,7 @@ specified by `compilation-window-height'."
   (setq lsp-prefer-flymake nil)
   (setq lsp-enable-snippet nil)
   (setq lsp-ui-sideline-enable nil)
-  (setq lsp-ui-doc-use-childframe nil))
+  (setq lsp-ui-doc-use-childframe t))
 
 (add-hook 'go-mode-hook #'lsp)
 
