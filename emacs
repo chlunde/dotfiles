@@ -234,6 +234,15 @@
   :config
   (mmm-add-mode-ext-class 'yaml-mode "\\.ya?ml\\.j2\\'" 'jinja2))
 
+(use-package company-quickhelp)
+(use-package company-terraform)
+
+(use-package terraform-mode
+  :config
+  (company-terraform-init)
+  (company-quickhelp-mode)
+  (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
+  :mode ("\\.tf\\'" . terraform-mode))
 
 ;;; Props
 (setq user-full-name "Carl Henrik Lunde"
