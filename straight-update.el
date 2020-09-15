@@ -29,7 +29,8 @@
 			(insert (shell-command-to-string (concat "git -C " repo-root repo " diff master..origin/master")))
 			(insert "#+END_SRC\n")
 			(previous-line)
-			(org-hide-block-toggle t)
+			(ignore-errors
+			  (org-hide-block-toggle t))
 			(next-line)
 
 			))))
