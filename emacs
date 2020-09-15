@@ -473,6 +473,13 @@ specified by `compilation-window-height'."
             (add-to-list 'write-file-functions 'delete-trailing-whitespace)
             (local-set-key (kbd "RET") 'newline-and-indent)))
 
+(use-package vue-mode
+  :mode "\\.vue\\'"
+  :config
+  (add-hook 'vue-mode-hook #'lsp))
+
+(use-package typescript-mode)
+
 (use-package kotlin-mode)
 
 (with-eval-after-load 'subr-x
