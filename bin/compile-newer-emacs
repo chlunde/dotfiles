@@ -10,11 +10,11 @@ then
 	fi
 	./autogen.sh
 else
-	v=26.3
+	v=27.1
 
 	mkdir -p ~/Downloads
 	cd ~/Downloads
-	test -f ~/Downloads/emacs-${v}.tar.xz || curl -O http://gnuftp.uib.no/emacs/emacs-${v}.tar.xz
+	test -f ~/Downloads/emacs-${v}.tar.xz || curl -O https://gnuftp.uib.no/emacs/emacs-${v}.tar.xz
 	mkdir -p ~/tmp
 	#rm -Rf ~/tmp/emacs-${v}
 	#tar -C ~/tmp -xf emacs-${v}.tar.xz
