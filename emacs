@@ -26,6 +26,7 @@
   (message "too old"))
 
 ;; Emoji: 😄, 🤦, 🏴󠁧󠁢󠁳󠁣󠁴󠁿
+;; Only install google-noto-emoji-color-fonts - not BW
 (set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
 
 ;;; Bootstrap straight.el
