@@ -27,7 +27,7 @@
 
 ;; Emoji: 😄, 🤦, 🏴󠁧󠁢󠁳󠁣󠁴󠁿
 ;; Only install google-noto-emoji-color-fonts - not BW
-(set-fontset-font t 'symbol "Noto Color Emoji" nil 'append)
+(when (fboundp 'set-fontset-font) (set-fontset-font t 'symbol "Noto Color Emoji" nil 'append))
 
 ;;; Bootstrap straight.el
 (setq-default straight-check-for-modifications '(check-on-save find-when-checking))
