@@ -23,6 +23,7 @@ then
     go get golang.org/x/lint/golint@latest
     go get honnef.co/go/tools/cmd/staticcheck@latest
     go get github.com/cweill/gotests/gotests@v1.5.3
+    go get github.com/rogpeppe/gohack@latest
 else
     go $@
 fi
