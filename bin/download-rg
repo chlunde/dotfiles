@@ -1,6 +1,6 @@
 #!/bin/bash
-v=11.0.2
-hash=2e7978e346553fbc45c0940d9fa11e12f9afbae8213b261aad19b698150e169a
+v=12.1.1
+hash=88d3b735e43f6f16a0181a8fec48847693fae80168d5f889fdbdeb962f1fc804
 
 export PATH="~/opt/ripgrep/:$PATH"
 if [[ "$(rg --version | head -n 1 2> /dev/null)" == "ripgrep ${v} "* ]]
@@ -12,9 +12,11 @@ fi
 mkdir -p ~/Downloads/
 curl -L -o ~/Downloads/rg-${v}.tar.gz https://github.com/BurntSushi/ripgrep/releases/download/${v}/ripgrep-${v}-x86_64-unknown-linux-musl.tar.gz
 
-if [[ "$(sha256sum ~/Downloads/rg-${v}.tar.gz | cut -d ' ' -f1)" != "$hash" ]]
+new_hash="$(sha256sum ~/Downloads/rg-${v}.tar.gz | cut -d ' ' -f1)"
+if [[ "$new_hash"  != "$hash" ]]
 then
 	echo "Checksum mismatch $(sha256sum ~/Downloads/rg-${v}.tar.gz)"
+	echo "sed -i 's/$hash/$new_hash/' $0"
 	exit 1
 fi
 
