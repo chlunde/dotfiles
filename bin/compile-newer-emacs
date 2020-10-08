@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+#cd ~/src; git clone --depth=1 --branch emacs-27 --single-branch https://github.com/emacs-mirror/emacs.git
+
 if [[ -d ~/src/emacs ]]
 then
 	cd ~/src/emacs
