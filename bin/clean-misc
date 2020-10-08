@@ -1,0 +1,15 @@
+#!/bin/bash
+
+go clean -testcache
+go clean -modcache
+go clean -cache
+
+rm -Rf ~/.cache ~/.config/google-chrome/Default/Service\ Worker/CacheStorage/
+
+if [[ -d ~/src/emacs ]]
+then
+	cd ~/src/emacs
+	git clean -f -x -d
+	git repack -a -d
+fi
+
