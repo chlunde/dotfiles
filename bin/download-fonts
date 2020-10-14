@@ -7,17 +7,50 @@ for font in Go-Bold-Italic.ttf Go-Bold.ttf Go-Italic.ttf Go-Medium-Italic.ttf Go
 do
 	if [[ ! -f $font ]]
 	then
-		curl --output $font https://raw.githubusercontent.com/golang/image/master/font/gofont/ttfs/$font
+		curl --location --output $font https://raw.githubusercontent.com/golang/image/master/font/gofont/ttfs/$font
 	fi
 done
 
-v=2.1.0
+for font in iAWriterMonoS-Bold.ttf iAWriterMonoS-Italic.ttf iAWriterMonoS-BoldItalic.ttf iAWriterMonoS-Regular.ttf
+do
+	if [[ ! -f $font ]]
+	then
+		curl --location --output $font https://github.com/iaolo/iA-Fonts/raw/master/iA%20Writer%20Mono/Static/$font
+	fi
+done
+
+for font in iAWriterMonoV-Italic.ttf iAWriterMonoV.ttf
+do
+	if [[ ! -f $font ]]
+	then
+		curl --location --output $font https://github.com/iaolo/iA-Fonts/raw/master/iA%20Writer%20Mono/Variable/$font
+	fi
+done
+
+for font in iAWriterQuattroS-Bold.ttf iAWriterQuattroS-Italic.ttf iAWriterQuattroS-BoldItalic.ttf iAWriterQuattroS-Regular.ttf
+do
+	if [[ ! -f $font ]]
+	then
+		curl --location --output $font https://github.com/iaolo/iA-Fonts/raw/master/iA%20Writer%20Quattro/Static/$font
+	fi
+done
+
+for font in iAWriterQuattroV-Italic.ttf iAWriterQuattroV.ttf
+do
+	if [[ ! -f $font ]]
+	then
+		curl --location --output $font https://github.com/iaolo/iA-Fonts/raw/master/iA%20Writer%20Quattro/Variable/$font
+	fi
+done
+
+v=3.6.3
 if [[ ! -f iosevka/$v.zip ]]
 then
         rm -Rf iosevka/
         mkdir -p iosevka/
         cd iosevka/
-	curl --location --output $v.zip https://github.com/be5invis/Iosevka/releases/download/v$v/06-iosevka-term-slab-$v.zip
+		curl --location --output $v.zip https://github.com/be5invis/Iosevka/releases/download/v3.6.3/ttf-iosevka-term-slab-${v}.zip
+#	curl --location --output $v.zip https://github.com/be5invis/Iosevka/releases/download/v$v/06-iosevka-term-slab-$v.zip
 	#curl --location --output $v.zip https://github.com/be5invis/Iosevka/releases/download/v$v/02-iosevka-term-$v.zip
 	unzip $v.zip
         cd ..

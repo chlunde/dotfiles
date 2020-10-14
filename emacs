@@ -20,7 +20,9 @@
 (when (window-system)
   (set-cursor-color "red")
   ;;(set-frame-font "Go Mono-13")
-  (set-frame-font "Iosevka Term Slab Light-13"))
+  (set-frame-font "iA Writer Mono V-12")
+  ;(set-frame-font "Iosevka Term Slab Light-13")
+  )
 
 (when (< emacs-major-version 25)
   (message "too old"))
