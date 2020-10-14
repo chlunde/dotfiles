@@ -337,6 +337,8 @@ Goes backward if ARG is negative; error if CHAR not found."
   :commands magit-toplevel
   :bind ("C-x g" . magit-status))
 
+(use-package magit-todos)
+
 (defun chl/compilation-small-font-size ()
   "Use a condensed tiny font for the compilation window."
   (setq buffer-face-mode-face '(:family "DejaVu Sans Moo" :height 80 :width semi-condensed))
