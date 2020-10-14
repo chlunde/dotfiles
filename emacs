@@ -59,6 +59,8 @@
 (eval-when-compile
   (require 'use-package))
 
+(use-package diminish :straight t)
+
 (setq vc-handled-backends '(Git))
 
 (setq-default use-package-always-defer t)
@@ -153,6 +155,7 @@
 
 (use-package company
   :defer t
+  :diminish company-mode
   :init
   (add-hook 'after-init-hook 'global-company-mode))
 
@@ -405,8 +408,15 @@ specified by `compilation-window-height'."
 ;  (setq-default gofmt-command "goimports")
 
 ;  (flycheck-mode -1)
+
+  (diminish 'eldoc-mode)
+  (diminish 'lsp-mode)
+
   (flyspell-prog-mode)
+  (diminish 'flyspell-mode)
+
   (subword-mode)
+  (diminish 'subword-mode)
   ;;(go-eldoc-setup)
 
   (when (string-match "/\\(github.com/[^/]+/[^/]+\\)/" buffer-file-name)
