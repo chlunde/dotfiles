@@ -465,6 +465,7 @@ specified by `compilation-window-height'."
   (setq lsp-enable-links nil)
   (setq lsp-prefer-flymake nil)
   (setq lsp-enable-snippet nil)
+  (setq lsp-modeline-diagnostics-enable nil)
   (setq lsp-ui-sideline-enable nil)
   (setq lsp-ui-doc-use-childframe t))
 
