@@ -140,7 +140,9 @@
 
 (use-package markdown-mode
   :config
-  (setq markdown-fontify-code-blocks-natively t))
+;  (set-face-background 'markdown-code-face nil)
+  ;(setq markdown-fontify-code-blocks-natively t)
+  )
 
 (use-package flycheck
   :defer 1
@@ -369,8 +371,8 @@ specified by `compilation-window-height'."
  '(go-guru-hl-identifier-face ((t (:inherit nil :underline (:color "green" :style wave)))))
  '(lsp-face-highlight-textual ((t (:weight bold))))
  '(magit-section-highlight ((t (:background "color-236"))))
- '(markdown-code-face ((t (:inherit fixed-pitch :background "gray20"))))
- '(secondary-selection ((t (:background "color-237" :foreground "#f6f3e8"))))
+; '(markdown-code-face ((t (:inherit fixed-pitch :background "gray20"))))
+; '(secondary-selection ((t (:background "color-237" :foreground "#f6f3e8"))))
  '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta"))))
  '(web-mode-html-tag-face ((t (:foreground "color-213")))))
 
@@ -467,7 +469,12 @@ specified by `compilation-window-height'."
 (add-hook 'go-mode-hook #'lsp)
 
 (use-package lsp-ui
-  :commands lsp-ui-mode)
+  :commands lsp-ui-mode
+  :config
+  (set-face-background 'lsp-ui-doc-background nil)
+  ;; (set-face-background 'fixed-pitch nil)
+  ;; (set-face-foreground 'fixed-pitch nil)
+  )
 
 (use-package company-lsp
   :commands company-lsp)
