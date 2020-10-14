@@ -72,12 +72,16 @@
   ;; get magit to use git from SCL
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
+(use-package selectrum
+  :init
+  (selectrum-mode +1))
+
 (use-package evil)
 
-(use-package flx-ido
-  :demand
-  :config
-  (flx-ido-mode t))
+;(use-package flx-ido
+;  :demand
+;  :config
+;  (flx-ido-mode t))
 
 (defun chl/fzf-projects ()
   "Fuzzy find projects."
@@ -166,8 +170,8 @@
 (global-font-lock-mode t)               ; fontify when possible
 (column-number-mode t)
 (line-number-mode t)
-(ido-mode)
-(ido-everywhere t)
+;(ido-mode)
+;(ido-everywhere t)
 
 (fset 'yes-or-no-p 'y-or-n-p)           ; Be consistent!
 (show-paren-mode t)                     ; Highlight matching paren
