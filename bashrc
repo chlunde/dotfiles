@@ -56,6 +56,8 @@ export EDITOR=vim
 export ALTERNATE_EDITOR=""
 alias e='emacsclient -t'
 
+em() { emacsclient -a 'emacs' -n "$@" 2>/dev/null || command emacs; }
+
 [ -e ~/.pystartup ] && export PYTHONSTARTUP=~/.pystartup
 
 HISTTIMEFORMAT='%FT%T '

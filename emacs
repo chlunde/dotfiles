@@ -61,6 +61,12 @@
 (eval-when-compile
   (require 'use-package))
 
+(use-package server
+  :straight nil
+  :config
+  (unless (server-running-p)
+    (server-start)))
+
 (use-package diminish :straight t)
 
 (setq vc-handled-backends '(Git))
