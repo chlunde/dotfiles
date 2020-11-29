@@ -12,6 +12,10 @@
 (when (fboundp 'tool-bar-mode) (tool-bar-mode 0))
 (menu-bar-mode 0)
 
+(when (>= 27 emacs-major-version)
+  (global-tab-line-mode 1)
+  (add-to-list 'tab-line-exclude-modes 'compilation-mode))
+
 (add-hook 'window-setup-hook
           (lambda ()
             (set-background-color "black")
