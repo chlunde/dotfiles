@@ -90,17 +90,11 @@
 
 (use-package evil)
 
-;(use-package flx-ido
-;  :demand
-;  :config
-;  (flx-ido-mode t))
-
 (defun chl/fzf-projects ()
   "Fuzzy find projects."
   (interactive)
   (let ((counsel-fzf-cmd "find -L src/ go/src/ git/ -maxdepth 3 -name vendor -a  -prune -o -name node_modules -prune -o -name \".*\" -a -prune -o -type d -a -print | fzf -f \"%s\""))
 	(counsel-fzf "" (getenv "HOME") "")))
-
 
 (defun chl/fzf-git ()
   "Fuzzy find on the closest git repository."
@@ -184,8 +178,6 @@
 (global-font-lock-mode t)               ; fontify when possible
 (column-number-mode t)
 (line-number-mode t)
-;(ido-mode)
-;(ido-everywhere t)
 
 (fset 'yes-or-no-p 'y-or-n-p)           ; Be consistent!
 (show-paren-mode t)                     ; Highlight matching paren
