@@ -198,38 +198,6 @@
 
 (use-package yaml-mode
   :config
-  (require 'mmm-vars)
-
-  (setq mmm-submode-decoration-level 2)
-  (setq mmm-parse-when-idle t)
-  (mmm-add-group
-   'varz
-   `((varz-variable
-	  :submode text-mode
-	  :front-face font-lock-comment-face
-	  :back-face font-lock-comment-face
-	  :face font-lock-constant-face
-	  :front "${"
-	  :front-delim 0
-	  :back-delim 0
-	  :back "}"
-	  ;; :insert ((?{ varz-{{-}} nil @ "${" @ " " _ " " @ "}" @))
-	  )
-	 (varz-variable2
-	  :submode shell-mode
-	  :front-face font-lock-comment-face
-	  :back-face font-lock-comment-face
-	  :face font-lock-constant-face
-	  :front "$("
-	  :back ")"
-	  :front-delim 0
-	  :back-delim 0
-	  ;; :insert ((?{ varz-{{-}} nil @ "$(" @ " " _ " " @ ")" @))))
-	  )))
-
-  (require 'mmm-mode)
-  (mmm-add-mode-ext-class 'yaml-mode nil 'varz)
-
   ;;(add-hook 'yaml-mode-hook
   ;;(lambda ()
   ;; (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
@@ -239,16 +207,6 @@
   ;;(setq-default highlight-indent-guides-auto-character-face-perc 30)
   ;;(setq-default highlight-indent-guides-character ?\│)
   )
-
-(use-package mmm-mode
-  :commands mmm-add-mode-ext-class mmm-mode
-  :init
-  (setq mmm-global-mode 'maybe))
-
-(use-package mmm-jinja2
-  :mode ("\\.ya?ml\\.j2\\'" . (lambda () (require 'mmm-jinja2) (yaml-mode)))
-  :config
-  (mmm-add-mode-ext-class 'yaml-mode "\\.ya?ml\\.j2\\'" 'jinja2))
 
 (use-package company-quickhelp)
 (use-package company-terraform)
