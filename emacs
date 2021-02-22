@@ -85,7 +85,8 @@
 
 (use-package selectrum
   :init
-  (selectrum-mode +1))
+  (selectrum-mode +1)
+  (setq completion-styles '(flex substring partial-completion)))
 
 (use-package evil)
 
