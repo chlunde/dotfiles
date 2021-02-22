@@ -384,17 +384,7 @@ specified by `compilation-window-height'."
 
   (subword-mode)
   (diminish 'subword-mode)
-  ;;(go-eldoc-setup)
 
-  (when (string-match "/\\(github.com/[^/]+/[^/]+\\)/" buffer-file-name)
-    (setq bug-reference-bug-regexp "\\([Bb]ug ?#?\\|[Pp]atch ?#\\|RFE ?#\\|PR [a-z-+]+/\\|#\\)\\([0-9]+\\(?:#[0-9]+\\)?\\)")
-    (set (make-local-variable 'bug-reference-url-format)
-         (concat "https://" (match-string-no-properties 1 buffer-file-name) "/issues/%s"))
-    (bug-reference-prog-mode))
-
-  (when (file-exists-p "~/opt/gotoolpath/src/github.com/stapelberg/expanderr/lisp/go-expanderr.el")
-	(load "~/opt/gotoolpath/src/github.com/stapelberg/expanderr/lisp/go-expanderr.el")
-	(local-set-key (kbd "C-c C-e") #'go-expanderr))
   (setq compilation-always-kill t)
   (setq go "go")
   (if (not (string-match "go" compile-command))
