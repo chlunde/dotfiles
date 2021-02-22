@@ -376,10 +376,6 @@ specified by `compilation-window-height'."
   (add-hook 'prog-mode-hook 'turn-on-auto-fill t t)
   (define-key go-mode-map (kbd "C-c C-t") 'go-test-current-test)
 
-;  (setq-default gofmt-command "goimports")
-
-;  (flycheck-mode -1)
-
   (diminish 'eldoc-mode)
   (diminish 'lsp-mode)
 
