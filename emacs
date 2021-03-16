@@ -385,7 +385,9 @@ specified by `compilation-window-height'."
 			(if (file-exists-p "Makefile")
 				"make"
 			  "go build ./...")
-			" && cd " default-directory " && go test -v .")))
+			" && cd " default-directory " && go test .")))
+
+  (add-to-list 'compilation-search-path default-directory)
 
   (local-set-key (kbd "M-.") #'lsp-find-definition))
 
