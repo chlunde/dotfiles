@@ -112,13 +112,6 @@
       (file-exists-p (concat "../../" fn))
       (file-exists-p (concat "../../../" fn))))
 
-;; (defun chl/use-fzf-if-git ()
-;;   (when (chl/file-in-parent ".git")
-;;     (local-set-key (kbd "C-x C-f") #'chl/fzf-git)))
-
-;; (add-hook 'find-file-hook #'chl/use-fzf-if-git)
-;; (add-hook 'dired-mode-hook #'chl/use-fzf-if-git)
-
 (use-package dockerfile-mode)
 
 (use-package groovy-mode) ; jenkinsfile
@@ -335,8 +328,6 @@ specified by `compilation-window-height'."
  '(go-guru-hl-identifier-face ((t (:inherit nil :underline (:color "green" :style wave)))))
  '(lsp-face-highlight-textual ((t (:weight bold))))
  '(magit-section-highlight ((t (:background "color-236"))))
-; '(markdown-code-face ((t (:inherit fixed-pitch :background "gray20"))))
-; '(secondary-selection ((t (:background "color-237" :foreground "#f6f3e8"))))
  '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta"))))
  '(web-mode-html-tag-face ((t (:foreground "color-213")))))
 
