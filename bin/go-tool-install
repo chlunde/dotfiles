@@ -24,6 +24,7 @@ then
     go install honnef.co/go/tools/cmd/staticcheck@latest
     go install github.com/cweill/gotests/gotests@v1.5.3
     go install github.com/rogpeppe/gohack@latest
+    go install github.com/charmbracelet/glow@v1.4.0
 else
     go $@
 fi
