@@ -121,22 +121,37 @@
 
 (use-package counsel)
 
+;(put 'dired-find-alternate-file 'disabled nil)
+;(add-hook 'dired-mode-hook (lambda () (local-set-key (kbd "<mouse-2>") #'dired-find-alternate-file)))
+
 (global-set-key (kbd "C-4") #'counsel-rg)
 (global-set-key (kbd "C-c 4") #'counsel-rg)
 
 ;; https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/
 ;; C-4, C-c C-o; C-x C-q (ivy-wgrep-change-to-wgrep-mode)
 
-(defun shell-pop-projectroot (orig-fun &rest args)
-  (let ((default-directory (car (project-roots (project-current)))))
-	(apply orig-fun args)))
+(require 'cl-lib)
 
-(use-package shell-pop
-  :config
-  (setq shell-pop-universal-key "C-t")
-  (advice-add 'shell-pop :around #'shell-pop-projectroot)
-  (setq shell-pop-shell-type (quote ("ansi-term" "*ansi-term*" (lambda nil (ansi-term shell-pop-term-shell)))))
-  :bind ("C-t" . shell-pop))
+(defun shell-at-dir (dir)
+  "Open a shell at DIR.
+If a shell buffer visiting DIR already exists, show that one."
+  (interactive (list default-directory))
+  (let ((buf (car (cl-remove-if-not
+                   (lambda (it)
+                     (with-current-buffer it
+                       (and (derived-mode-p 'shell-mode)
+                            (equal default-directory dir))))
+                   (buffer-list)))))
+    (if buf
+        (display-buffer buf 'in-previous-window)
+      (shell (generate-new-buffer-name "*shell*")))))
+
+(defun chl/shell-project-root ()
+  "Open shell in project root."
+  (interactive)
+  (shell-at-dir (car (project-roots (project-current)))))
+
+(global-set-key (kbd "C-t") #'chl/shell-project-root)
 
 (use-package markdown-mode
   :config
