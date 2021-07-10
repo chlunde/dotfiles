@@ -25,6 +25,7 @@ then
     go install github.com/cweill/gotests/gotests@v1.5.3
     go install github.com/rogpeppe/gohack@latest
     go install github.com/charmbracelet/glow@v1.4.0
+    go install go.mozilla.org/sops/v3/cmd/sops@latest
 else
     go $@
 fi
