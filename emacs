@@ -69,6 +69,7 @@
 (use-package server
   :straight nil
   :config
+  (add-hook 'server-switch-hook #'raise-frame)
   (unless (server-running-p)
     (server-start)))
 
