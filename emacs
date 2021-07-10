@@ -60,9 +60,6 @@
 ;; specified using the `:straight' keyword.
 (setq straight-use-package-by-default t)
 
-;; (straight-use-package
-;;'(el-patch :type git :host github :repo "your-name/el-patch"))
-
 (eval-when-compile
   (require 'use-package))
 
@@ -88,8 +85,6 @@
   :init
   (selectrum-mode +1)
   (setq completion-styles '(flex substring partial-completion)))
-
-(use-package evil)
 
 (defun chl/fzf-projects ()
   "Fuzzy find projects."
@@ -280,7 +275,6 @@ If a shell buffer visiting DIR already exists, show that one."
   (if (and (fboundp 'company-complete-common) (looking-at "\\_>"))
       (company-complete-common)
     (indent-according-to-mode)))
-
 
 ;;; Keyboard bindings
 (global-set-key (kbd "TAB") #'indent-or-complete)
