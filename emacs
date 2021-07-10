@@ -320,12 +320,12 @@ Goes backward if ARG is negative; error if CHAR not found."
 
 (defun chl/compilation-small-font-size ()
   "Use a condensed tiny font for the compilation window."
-  (setq buffer-face-mode-face '(:family "DejaVu Sans Moo" :height 80 :width semi-condensed))
+  (setq buffer-face-mode-face '(:family "DejaVu Sans Mono" :height 120 :width semi-condensed))
   (buffer-face-mode))
 
 (add-hook 'compilation-mode-hook #'chl/compilation-small-font-size)
 
-(setq compilation-window-height 9)
+;(setq compilation-window-height 12)
 (defun chl/compilation-shrink-maybe (buf status)
   "Shrink compilation window for `BUF'.  `STATUS' is unused.
 Make sure it's no larger than need, and at most as high as
@@ -335,7 +335,68 @@ specified by `compilation-window-height'."
       (set-window-text-height win compilation-window-height)
       (shrink-window-if-larger-than-buffer win))))
 
-(add-hook 'compilation-finish-functions #'chl/compilation-shrink-maybe)
+(add-hook 'flycheck-after-syntax-check-hook #'chl/auto-flycheck-win)
+
+(defun chl/auto-flycheck-win ()
+  (interactive)
+  (when flycheck-current-errors
+    (flycheck-list-errors)))
+
+  ;; (save-window-excursion
+  ;; 	(when (get-buffer-window "*compilation*")
+  ;; 	  (when (not (eq (get-buffer-window "*Flycheck errors*")
+  ;; 					 (window-in-direction 'right (get-buffer-window "*compilation*"))))
+  ;; 		(when (get-buffer-window "*Flycheck errors*")
+  ;; 		  (delete-window (get-buffer-window "*Flycheck errors*")))
+  ;; 		(unless (window-in-direction 'right (get-buffer-window "*compilation*"))
+  ;; 		  (split-window (get-buffer-window "*compilation*") nil 'right nil))
+  ;; 		(select-window (get-buffer-window "*compilation*"))
+  ;; 		(select-window (window-in-direction 'right))
+  ;; 		(display-buffer (get-buffer "*Flycheck errors*") )))))
+
+
+
+
+
+(require 'rx)
+
+;; Configure `display-buffer' behaviour for some special buffers.
+;; see http://www.lunaryorn.com/2015/04/29/the-power-of-display-buffer-alist.html
+;; and https://github.com/lunaryorn/.emacs.d/blob/2233f7dc277453b7eaeb447b00d8cb8d72435318/init.el#L420-L439
+(setq display-buffer-alist
+      `(
+		(,(rx bos (or (or "*Apropos*" "*Help*" "*helpful" "*info*" "*Summary*" ) (0+ not-newline))
+			  ".el.gz")
+		 (display-buffer-reuse-window display-buffer-in-side-window)
+		 (side            . right)
+		 (window-width    . fit-window-to-buffer)
+		 (reusable-frames . visible)
+		 (slot            . 0)
+         (mode apropos-mode help-mode helpful-mode Info-mode Man-mode elisp-mode))
+        ;; Put REPLs and error lists into the bottom side window
+        (,(rx bos (or "*Flycheck errors*" ; Flycheck error list
+                      "*compilation"      ; Compilation buffers
+                      "*Warnings*"        ; Emacs warnings
+                      "*shell"            ; Shell window
+					  "*Backtrace*"
+                      ))
+         (display-buffer-reuse-window
+          display-buffer-in-side-window)
+         (side            . bottom)
+         (reusable-frames . visible)
+         (window-height   . 0.22))
+        ;; Let `display-buffer' reuse visible frames for all buffers.  This must
+        ;; be the last entry in `display-buffer-alist', because it overrides any
+        ;; later entry with more specific actions.
+        ("." nil (reusable-frames . visible))))
+
+
+;(add-to-list 'display-buffer-alist             '("*Apropos*" display-buffer-same-window))
+;(add-to-list 'display-buffer-alist             '("*Help*" display-buffer-same-window))
+
+
+;(setq split-height-threshold 35)
+;(add-hook 'compilation-finish-functions #'chl/compilation-shrink-maybe)
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
