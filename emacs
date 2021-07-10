@@ -211,6 +211,14 @@ If a shell buffer visiting DIR already exists, show that one."
   ;;(lambda ()
   ;; (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
   ;; (define-key yaml-mode-map "\C-m" 'newline-and-indent)))
+
+  (add-hook 'yaml-mode-hook
+			(lambda ()
+			  (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
+	          ;;; avoid issue where previous line is re-indenten on newline
+			  (define-key yaml-mode-map "\C-m" 'newline-and-indent)
+			  (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))))
+
   ;;(add-hook 'yaml-mode-hook 'highlight-indent-guides-mode)
   ;;(setq-default highlight-indent-guides-method 'character)
   ;;(setq-default highlight-indent-guides-auto-character-face-perc 30)
