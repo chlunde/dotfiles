@@ -264,6 +264,9 @@ If a shell buffer visiting DIR already exists, show that one."
 
 (setq org-log-done t)
 
+(org-babel-do-load-languages 'org-babel-load-languages
+							 '((shell . t)))
+
 (defadvice backward-page (after chl-page-start-at-top activate)
   "Recenter window with page break at top."
   (recenter 0))
