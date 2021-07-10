@@ -56,7 +56,7 @@ export EDITOR=vim
 export ALTERNATE_EDITOR=""
 alias e='emacsclient -t'
 
-em() { emacsclient -a 'emacs' -n "$@" 2>/dev/null || command emacs; }
+em() { emacsclient -a 'emacs' -n "$@" 2>/dev/null; }
 
 [ -e ~/.pystartup ] && export PYTHONSTARTUP=~/.pystartup
 
