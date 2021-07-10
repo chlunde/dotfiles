@@ -413,7 +413,6 @@ specified by `compilation-window-height'."
  '(ediff-even-diff-B ((t (:background "gray30"))))
  '(ediff-odd-diff-A ((t (:background "gray30"))))
  '(ediff-odd-diff-B ((t (:background "gray30"))))
- '(go-guru-hl-identifier-face ((t (:inherit nil :underline (:color "green" :style wave)))))
  '(lsp-face-highlight-textual ((t (:weight bold))))
  '(magit-section-highlight ((t (:background "color-236"))))
  '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta"))))
