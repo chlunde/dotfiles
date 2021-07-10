@@ -484,6 +484,8 @@ specified by `compilation-window-height'."
   (lsp-register-custom-settings
    '(("gopls.completeUnimported" t t)
 	 ("gopls.staticcheck" t t)))
+  (push "[/\\\\]\\.cache$" lsp-file-watch-ignored)
+  (push "[/\\\\]\\.work$" lsp-file-watch-ignored)
   (setq lsp-file-watch-threshold 5000)
   (setq lsp-enable-links nil)
   (setq lsp-prefer-flymake nil)
