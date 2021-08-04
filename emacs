@@ -327,37 +327,27 @@ specified by `compilation-window-height'."
   (when flycheck-current-errors
     (flycheck-list-errors)))
 
-  ;; (save-window-excursion
-  ;; 	(when (get-buffer-window "*compilation*")
-  ;; 	  (when (not (eq (get-buffer-window "*Flycheck errors*")
-  ;; 					 (window-in-direction 'right (get-buffer-window "*compilation*"))))
-  ;; 		(when (get-buffer-window "*Flycheck errors*")
-  ;; 		  (delete-window (get-buffer-window "*Flycheck errors*")))
-  ;; 		(unless (window-in-direction 'right (get-buffer-window "*compilation*"))
-  ;; 		  (split-window (get-buffer-window "*compilation*") nil 'right nil))
-  ;; 		(select-window (get-buffer-window "*compilation*"))
-  ;; 		(select-window (window-in-direction 'right))
-  ;; 		(display-buffer (get-buffer "*Flycheck errors*") )))))
-
-
-
-
-
 (require 'rx)
 
 ;; Configure `display-buffer' behaviour for some special buffers.
-;; see http://www.lunaryorn.com/2015/04/29/the-power-of-display-buffer-alist.html
-;; and https://github.com/lunaryorn/.emacs.d/blob/2233f7dc277453b7eaeb447b00d8cb8d72435318/init.el#L420-L439
 (setq display-buffer-alist
       `(
-		(,(rx bos (or (or "*Apropos*" "*Help*" "*helpful" "*info*" "*Summary*" ) (0+ not-newline))
-			  ".el.gz")
+		;; keep help, elisp source, etc in the same window
+		;; on the right side if we need to create it
+		(,(rx bos
+			  (or (seq (or "*Apropos*" "*Help*" "*helpful" "*info*" "*Summary*" "magit:") (0+ not-newline))
+				  (seq (0+ not-newline) (or ".el.gz" ".el") string-end)))
 		 (display-buffer-reuse-window display-buffer-in-side-window)
 		 (side            . right)
 		 (window-width    . fit-window-to-buffer)
 		 (reusable-frames . visible)
 		 (slot            . 0)
-         (mode apropos-mode help-mode helpful-mode Info-mode Man-mode elisp-mode))
+         (mode apropos-mode help-mode helpful-mode Info-mode Man-mode elisp-mode magit-mode dired-mode))
+		;; magit -> dired: reuse dired window
+;		(,(rx bos (seq "magit:" (0+ not-newline)))
+;		 (display-buffer-same-window display-buffer-reuse-window)
+;		 (inhibit-same-window . nil)
+;		 (mode dired-mode magit-status-mode))
         ;; Put REPLs and error lists into the bottom side window
         (,(rx bos (or "*Flycheck errors*" ; Flycheck error list
                       "*compilation"      ; Compilation buffers
@@ -375,13 +365,8 @@ specified by `compilation-window-height'."
         ;; later entry with more specific actions.
         ("." nil (reusable-frames . visible))))
 
-
-;(add-to-list 'display-buffer-alist             '("*Apropos*" display-buffer-same-window))
-;(add-to-list 'display-buffer-alist             '("*Help*" display-buffer-same-window))
-
-
-;(setq split-height-threshold 35)
-;(add-hook 'compilation-finish-functions #'chl/compilation-shrink-maybe)
+(put 'dired-find-alternate-file 'disabled nil)
+(add-hook 'dired-mode-hook (lambda () (local-set-key (kbd "<mouse-2>") #'dired-find-alternate-file)))
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
