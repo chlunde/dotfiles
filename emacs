@@ -108,6 +108,9 @@
 (global-set-key (kbd "C-c y") #'consult-yank-from-kill-ring)
 (global-set-key (kbd "M-g M-g") #'consult-goto-line)
 
+(use-package dumb-jump)
+(global-set-key (kbd "M-.") #'dumb-jump-go)
+
 ;(use-package dockerfile-mode)
 
 ;(use-package groovy-mode) ; jenkinsfile
