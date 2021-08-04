@@ -169,4 +169,13 @@ fi
 #shopt -s progcomp
 #[ -f /etc/bash_completion.d/git ] && source /etc/bash_completion.d/git
 
+# go install github.com/dty1er/kubecolor/cmd/kubecolor@v0.0.12
+if command -v kubecolor >/dev/null 2>&1
+then
+    alias kubectl="kubecolor"
+    complete -o default -F __start_kubectl k
+fi
+
+# . <(kubectl completion bash)
+
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local

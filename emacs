@@ -8,26 +8,25 @@
 (setq gc-cons-threshold 15000000)
 
 ;; Configure basic look and feel first, to avoid flickering
-(when (fboundp 'set-scroll-bar-mode) (set-scroll-bar-mode nil))
-(when (fboundp 'tool-bar-mode) (tool-bar-mode 0))
-(menu-bar-mode 0)
+(push '(vertical-scroll-bars . nil) default-frame-alist)
+(push '(tool-bar-lines . 0) default-frame-alist)
+(push '(menu-bar-lines . 0) default-frame-alist)
 
-(when (>= 27 emacs-major-version)
-  (global-tab-line-mode 1)
-  (add-to-list 'tab-line-exclude-modes 'compilation-mode))
-
+(setq-default comp-deferred-compilation-deny-list nil)
 (add-hook 'window-setup-hook
           (lambda ()
             (set-background-color "black")
             (set-foreground-color "white")))
-
+(frame-parameters)
 (when (window-system)
   (set-cursor-color "red")
   (setq-default cursor-type '(hbar . 5))
-  ;;(set-frame-font "Go Mono-13")
-  (set-frame-font "iA Writer Mono V-12")
-  ;(set-frame-font "Iosevka Term Slab Light-13")
+  ;(set-frame-font "Go Mono-15")
+  ;;(set-frame-font "iA Writer Mono V-14")
+  (set-frame-font "Iosevka Term Slab Light-15")
   )
+
+(setq-default warning-suppress-types '((comp)))
 
 (when (< emacs-major-version 25)
   (message "too old"))
@@ -86,41 +85,41 @@
   (selectrum-mode +1)
   (setq completion-styles '(flex substring partial-completion)))
 
+(setq consult-project-root-function (lambda () (car (project-roots (project-current)))))
 (defun chl/fzf-projects ()
   "Fuzzy find projects."
   (interactive)
-  (let ((counsel-fzf-cmd "find -L src/ go/src/ git/ -maxdepth 3 -name vendor -a  -prune -o -name node_modules -prune -o -name \".*\" -a -prune -o -type d -a -print | fzf -f \"%s\""))
-	(counsel-fzf "" (getenv "HOME") "")))
+  (consult-find (concat (getenv "HOME") "/src")))
+;  (let ((counsel-fzf-cmd "find -L src/ go/src/ git/ -maxdepth 3 -name vendor -a  -prune -o -name node_modules -prune -o -name \".*\" -a -prune -o -type d -a -print | fzf -f \"%s\""))
+;	(counsel-fzf "" (getenv "HOME") "")))
 
 (defun chl/fzf-git ()
   "Fuzzy find on the closest git repository."
   (interactive)
-  (counsel-fzf "" (magit-toplevel) (magit-toplevel)))
+  (consult-find (magit-toplevel)))
 
 (global-set-key (kbd "C-2") #'chl/fzf-git)
 (global-set-key (kbd "C-c 2") #'chl/fzf-git) ; alias for emacs -nw
 (global-set-key (kbd "C-3") #'chl/fzf-projects)
 (global-set-key (kbd "C-c 3") #'chl/fzf-projects)
 
-(defun chl/file-in-parent (fn)
-  (or (file-exists-p fn)
-      (file-exists-p (concat "../" fn))
-      (file-exists-p (concat "../../" fn))
-      (file-exists-p (concat "../../../" fn))))
+(global-set-key (kbd "C-x b") #'consult-buffer)
+(global-set-key (kbd "C-c f") #'consult-imenu)
+(global-set-key (kbd "C-c y") #'consult-yank-from-kill-ring)
+(global-set-key (kbd "M-g M-g") #'consult-goto-line)
 
-(use-package dockerfile-mode)
+;(use-package dockerfile-mode)
 
-(use-package groovy-mode) ; jenkinsfile
+;(use-package groovy-mode) ; jenkinsfile
 
-(use-package swiper)
+(use-package consult)
 
-(use-package counsel)
+(recentf-mode)
+(global-set-key (kbd "C-4") #'consult-ripgrep)
+(global-set-key (kbd "C-c 4") #'consult-ripgrep)
 
-;(put 'dired-find-alternate-file 'disabled nil)
-;(add-hook 'dired-mode-hook (lambda () (local-set-key (kbd "<mouse-2>") #'dired-find-alternate-file)))
-
-(global-set-key (kbd "C-4") #'counsel-rg)
-(global-set-key (kbd "C-c 4") #'counsel-rg)
+(global-set-key (kbd "C-5") #'consult-line)
+(global-set-key (kbd "C-c 5") #'consult-line)
 
 ;; https://sam217pa.github.io/2016/09/11/nuclear-power-editing-via-ivy-and-ag/
 ;; C-4, C-c C-o; C-x C-q (ivy-wgrep-change-to-wgrep-mode)
@@ -148,11 +147,7 @@ If a shell buffer visiting DIR already exists, show that one."
 
 (global-set-key (kbd "C-t") #'chl/shell-project-root)
 
-(use-package markdown-mode
-  :config
-;  (set-face-background 'markdown-code-face nil)
-  ;(setq markdown-fontify-code-blocks-natively t)
-  )
+;(use-package markdown-mode)
 
 (use-package flycheck
   :defer 1
@@ -219,16 +214,6 @@ If a shell buffer visiting DIR already exists, show that one."
   ;;(setq-default highlight-indent-guides-auto-character-face-perc 30)
   ;;(setq-default highlight-indent-guides-character ?\│)
   )
-
-(use-package company-quickhelp)
-(use-package company-terraform)
-
-(use-package terraform-mode
-  :config
-  (company-terraform-init)
-  (company-quickhelp-mode)
-  (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode)
-  :mode ("\\.tf\\'" . terraform-mode))
 
 ;;; Props
 (setq user-full-name "Carl Henrik Lunde"
@@ -451,8 +436,8 @@ specified by `compilation-window-height'."
   (diminish 'eldoc-mode)
   (diminish 'lsp-mode)
 
-  (flyspell-prog-mode)
-  (diminish 'flyspell-mode)
+  ;(flyspell-prog-mode)
+  ;(diminish 'flyspell-mode)
 
   (subword-mode)
   (diminish 'subword-mode)
@@ -481,6 +466,7 @@ specified by `compilation-window-height'."
   (push "[/\\\\]\\.cache$" lsp-file-watch-ignored)
   (push "[/\\\\]\\.work$" lsp-file-watch-ignored)
   (setq lsp-file-watch-threshold 5000)
+  (push "\\.work" lsp-file-watch-ignored)
   (setq lsp-enable-links nil)
   (setq lsp-prefer-flymake nil)
   (setq lsp-enable-snippet nil)
@@ -518,14 +504,14 @@ specified by `compilation-window-height'."
             (add-to-list 'write-file-functions 'delete-trailing-whitespace)
             (local-set-key (kbd "RET") 'newline-and-indent)))
 
-(use-package vue-mode
-  :mode "\\.vue\\'"
-  :config
-  (add-hook 'vue-mode-hook #'lsp))
+;(use-package vue-mode
+;  :mode "\\.vue\\'"
+;  :config
+;  (add-hook 'vue-mode-hook #'lsp))
 
-(use-package typescript-mode)
+;(use-package typescript-mode)
 
-(use-package kotlin-mode)
+;(use-package kotlin-mode)
 
 (with-eval-after-load 'subr-x
   (setq-default mode-line-buffer-identification
@@ -539,5 +525,7 @@ specified by `compilation-window-height'."
   (set-face-attribute 'eldoc-highlight-function-argument nil
                       :underline t :foreground "green"
                       :weight 'bold))
+
+;(use-package esup)
 
 ;;; emacs ends here
