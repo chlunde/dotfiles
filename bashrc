@@ -7,7 +7,25 @@
 [ -z "$PS1" ] && return # Not interactive
 unset command_not_found_handle
 
+__ctx() {
+    local x=$?
+    if [[ $x -ne 0 ]]; then
+      echo -n "⚠️ $x "
+    fi
+
+    if [[ -n $AWS_ACCESS_KEY_ID ]]; then
+      echo -n "[$AWS_ACCESS_KEY_ID] "
+    fi
+
+    if [[ -n $AWS_PROFILE ]]; then
+      echo -n "[$AWS_PROFILE] "
+    fi
+}
+
 shorthost_prompt() {
+    local GREEN="\[$(tput setaf 2)\]"
+    local RESET="\[$(tput sgr0)\]"
+
     local opt=$(shopt -p extglob)
     shopt -s extglob
     local host=${HOSTNAME/%.+([a-z0-9]).no/}
@@ -15,7 +33,20 @@ shorthost_prompt() {
     eval "$opt"
 
     PROMPT_DIRTRIM=2
-    PS1="\u@${host} \w\\$ "
+    if [[ -f /usr/share/doc/git/contrib/completion/git-prompt.sh ]]; then
+        . /usr/share/doc/git/contrib/completion/git-prompt.sh
+		# shellcheck disable=SC2034
+		GIT_PS1_SHOWDIRTYSTATE="true"
+		# shellcheck disable=SC2034
+		GIT_PS1_SHOWUNTRACKEDFILES="true"
+		# shellcheck disable=SC2034
+		GIT_PS1_SHOWUPSTREAM="true"
+    else
+        __git_ps1() {
+                echo
+        }
+    fi
+    PS1="\u@${host} \$(__ctx)$x${GREEN}\w${RESET}\$(__git_ps1 \" (%s)\")\\$ "
 }
 
 shorthost_prompt
