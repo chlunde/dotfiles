@@ -1,6 +1,6 @@
 #!/bin/bash
 cd ~/
-for f in bash_profile bashrc emacs
+for f in bash_profile bashrc emacs inputrc
 do
 test -f ~/.$f && mv ~/.$f ~/.${f}.OLD
 ln -s ~/dotfiles/$f .$f
