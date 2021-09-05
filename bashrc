@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# mind the loading time :-)
+#
+# time bash -i -c exit
+
 [ -z "$PS1" ] && return # Not interactive
 unset command_not_found_handle
 
@@ -168,6 +172,35 @@ fi
 
 #shopt -s progcomp
 #[ -f /etc/bash_completion.d/git ] && source /etc/bash_completion.d/git
+
+
+__update-completions() {
+	local -r compdir=$HOME/.local/share/bash-completion/
+	test -d $compdir || mkdir -p $compdir
+
+	. /usr/share/bash-completion/bash_completion
+
+	if type kubectl &>/dev/null; then
+	  if test $compdir/kubectl -ot $(which kubectl); then
+	    kubectl completion bash > $compdir/kubectl
+	  fi
+	fi
+
+	if type gh &>/dev/null; then
+	  if test $compdir/gh -ot $(which gh); then
+	    gh completion -s bash > $compdir/gh
+	  fi
+	fi
+
+	if type kind &>/dev/null; then
+	  if test $compdir/kind -ot $(which kind); then
+	    kind completion bash > $compdir/kind
+	  fi
+	fi
+}
+
+__update-completions
+alias k=kubecolor
 
 # go install github.com/dty1er/kubecolor/cmd/kubecolor@v0.0.12
 if command -v kubecolor >/dev/null 2>&1
