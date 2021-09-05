@@ -85,7 +85,12 @@
   (selectrum-mode +1)
   (setq completion-styles '(flex substring partial-completion)))
 
-(setq consult-project-root-function (lambda () (car (project-roots (project-current)))))
+
+(setq consult-project-root-function
+	  (lambda ()
+		(ignore-errors
+			(car (project-roots (project-current))))))
+
 (defun chl/fzf-projects ()
   "Fuzzy find projects."
   (interactive)
