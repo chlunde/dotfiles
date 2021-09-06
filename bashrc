@@ -240,6 +240,7 @@ then
     complete -o default -F __start_kubectl k
 fi
 
-# . <(kubectl completion bash)
-
+if tail -n 1 $HOME/.bashrc | grep -q opt/etc/shrc; then
+	sed --follow-symlinks -i '$d' $HOME/.bashrc
+fi
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
