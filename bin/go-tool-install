@@ -26,6 +26,7 @@ then
     go install github.com/rogpeppe/gohack@latest
     go install github.com/charmbracelet/glow@v1.4.0
     go install go.mozilla.org/sops/v3/cmd/sops@latest
+    go install github.com/sachaos/viddy@v0.1.6
 else
     go $@
 fi
