@@ -489,8 +489,6 @@ specified by `compilation-window-height'."
 
 (add-to-list 'auto-mode-alist '("/inventory" . conf-mode) 'append)
 
-(use-package dumb-jump)
-
 (use-package web-mode)
 (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
