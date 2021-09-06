@@ -13,6 +13,7 @@ done
 
 mkdir -p ~/.emacs.d/straight/versions/
 ln -f -s ~/dotfiles/version-lock.el ~/.emacs.d/straight/versions/default.el
+echo '(setq package-enable-at-startup nil)' > ~/.emacs.d/early-init.el
 
 mkdir -p ~/bin
 ln -f -s ~/dotfiles/bin/go-tool-install ~/bin/
