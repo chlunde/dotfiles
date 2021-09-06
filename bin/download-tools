@@ -1,0 +1,6 @@
+#!/bin/bash
+npm config set prefix $HOME/opt
+
+npm install -g yaml-language-server
+
+yum install https://github.com/cli/cli/releases/download/v2.0.0/gh_2.0.0_linux_amd64.rpm
