@@ -200,6 +200,11 @@ If a shell buffer visiting DIR already exists, show that one."
   :defer 0
   :config
   (global-diff-hl-mode)
+
+  (set-face-background 'diff-hl-insert "#336633")
+  (set-face-background 'diff-hl-delete "#663333")
+  (set-face-background 'diff-hl-change "blue2")
+
   (unless (window-system)
 	(diff-hl-margin-mode)))
 
