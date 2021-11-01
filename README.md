@@ -21,3 +21,5 @@
 
     mkdir -p ~/bin
     ln -s ~/dotfiles/bin/go-tool-install ~/bin/
+
+gh config set git_protocol ssh -h github.com

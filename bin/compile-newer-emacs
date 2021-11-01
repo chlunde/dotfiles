@@ -1,28 +1,21 @@
 #!/bin/bash
 set -e
 
-#cd ~/src; git clone --depth=1 --branch emacs-27 --single-branch https://github.com/emacs-mirror/emacs.git
-test -d ~/src/emacs || cd ~/src; git clone --depth=1 --branch master --single-branch https://github.com/emacs-mirror/emacs.git
+branch=emacs-28
 
-if [[ -d ~/src/emacs ]]
-then
+if test -d ~/src/emacs; then
 	cd ~/src/emacs
-	if nmcli network connectivity | grep -q full; then
-		git pull
-		test -x /usr/bin/autoconf || sudo yum -y install autoconf
-	fi
-	./autogen.sh
+	git config remote.origin.fetch "+refs/heads/$branch:refs/remotes/origin/$branch"
+	git checkout $branch
+	git pull
 else
-	v=27.2
-
-	mkdir -p ~/Downloads
-	cd ~/Downloads
-	test -f ~/Downloads/emacs-${v}.tar.xz || curl -O https://gnuftp.uib.no/emacs/emacs-${v}.tar.xz
-	mkdir -p ~/tmp
-	#rm -Rf ~/tmp/emacs-${v}
-	#tar -C ~/tmp -xf emacs-${v}.tar.xz
-	cd ~/tmp/emacs-${v}
+	git clone --depth=1 --branch $branch --single-branch https://github.com/emacs-mirror/emacs.git ~/src/emacs
+	cd ~/src/emacs
 fi
+
+test -x /usr/bin/autoconf || sudo yum -y install autoconf
+
+./autogen.sh
 
 #sudo yum -y install alsa-lib-devel atk-devel bzip2 cairo cairo-devel dbus-devel desktop-file-utils fontconfig-devel freetype-devel GConf2-devel giflib-devel glibc-devel gnutls-devel gpm-devel gtk3-devel gzip ImageMagick-devel libjpeg-turbo-devel liblockfile-devel libotf-devel libpng-devel librsvg2-devel libselinux-devel libtiff-devel libX11-devel libXau-devel libXdmcp-devel libxml2-devel libXpm-devel libXrender-devel libXt-devel m17n-lib-devel ncurses-devel python-devel texinfo xorg-x11-proto-devel zlib-devel gcc
 #sudo yum -y install gcc gnutls-devel ncurses-devel

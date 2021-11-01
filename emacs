@@ -23,7 +23,7 @@
   (setq-default cursor-type '(hbar . 5))
   ;(set-frame-font "Go Mono-15")
   ;;(set-frame-font "iA Writer Mono V-14")
-  (set-frame-font "Iosevka Term Slab Light-15")
+  (set-frame-font "Iosevka Term Slab Light-11")
   )
 
 (setq-default warning-suppress-types '((comp)))
@@ -460,6 +460,7 @@ specified by `compilation-window-height'."
   :config
   (lsp-register-custom-settings
    '(("gopls.completeUnimported" t t)
+	 ("gopls.buildFlags" ["-tags=codegen"])
 	 ("gopls.staticcheck" t t)))
   (push "[/\\\\]\\.cache$" lsp-file-watch-ignored)
   (push "[/\\\\]\\.work$" lsp-file-watch-ignored)
