@@ -10,7 +10,7 @@ unset command_not_found_handle
 __ctx() {
     local x=$?
     if [[ $x -ne 0 ]]; then
-      echo -n "⚠️ $x "
+      echo -n "! $x "
     fi
 
     if [[ -n $AWS_ACCESS_KEY_ID ]]; then
