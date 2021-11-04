@@ -29,7 +29,11 @@ shorthost_prompt() {
     local opt=$(shopt -p extglob)
     shopt -s extglob
     local host=${HOSTNAME/%.+([a-z0-9]).no/}
-    local host=${host/%.localdomain/}
+    local host="\u@${host/%.localdomain/} "
+    if [[ $host = *client* ]]
+    then
+	    local host=""
+    fi
     eval "$opt"
 
     PROMPT_DIRTRIM=2
@@ -46,7 +50,7 @@ shorthost_prompt() {
                 echo
         }
     fi
-    PS1="\u@${host} \$(__ctx)$x${GREEN}\w${RESET}\$(__git_ps1 \" (%s)\")\\$ "
+    PS1="${host}\$(__ctx)$x${GREEN}\w${RESET}\$(__git_ps1 \" (%s)\")\\$ "
 }
 
 shorthost_prompt
