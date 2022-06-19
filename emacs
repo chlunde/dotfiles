@@ -142,10 +142,14 @@ If a shell buffer visiting DIR already exists, show that one."
                    (lambda (it)
                      (with-current-buffer it
                        (and (derived-mode-p 'shell-mode)
-                            (equal default-directory dir))))
+                            (equal (expand-file-name default-directory) (expand-file-name dir)))))
                    (buffer-list)))))
     (if buf
-        (display-buffer buf 'in-previous-window)
+		(progn
+		  (if (eq (selected-window) (get-buffer-window buf))
+			  (pop-to-buffer (other-buffer (current-buffer) t))
+			(display-buffer buf 'in-previous-window)
+			(select-window (get-buffer-window buf))))
       (shell (generate-new-buffer-name "*shell*")))))
 
 (defun chl/shell-project-root ()
