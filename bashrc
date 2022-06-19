@@ -237,6 +237,10 @@ __update-completions() {
 __update-completions
 alias k=kubecolor
 
+t() {
+    echo -ne "\033]0;$(basename "$PWD")\007"
+}
+
 # go install github.com/dty1er/kubecolor/cmd/kubecolor@v0.0.12
 if command -v kubecolor >/dev/null 2>&1
 then
