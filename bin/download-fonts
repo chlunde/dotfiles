@@ -11,6 +11,26 @@ do
 	fi
 done
 
+for font in MartialIcons-Regulat.ttf
+do
+	if [[ ! -f "$font" ]]
+	then
+		curl --location --output $font https://github.com/google/material-design-icons/raw/master/font/$font
+	fi
+done
+
+# Material Design Icons
+git clone --depth 1 https://github.com/google/material-design-icons
+
+# Community Fork
+git clone --depth 1 https://github.com/Templarian/MaterialDesign-Webfont
+
+# FontAwesome
+git clone --depth 1 https://github.com/FortAwesome/Font-Awesome
+
+# Typicons
+git clone --depth 1 https://github.com/stephenhutchings/typicons.font
+
 for font in iAWriterMonoS-Bold.ttf iAWriterMonoS-Italic.ttf iAWriterMonoS-BoldItalic.ttf iAWriterMonoS-Regular.ttf
 do
 	if [[ ! -f $font ]]
@@ -58,5 +78,17 @@ then
 		
         cd ..
 fi
+
+v=2.242
+if [[ ! -f jetbrainsmono/$v.zip ]]; then
+       rm -Rf jetbrainsmono
+       mkdir -p jetbrainsmono
+       cd jetbrainsmono
+       curl --fail -SsL -o $v.zip https://download.jetbrains.com/fonts/JetBrainsMono-$v.zip
+       unzip $v.zip
+       cd ..
+fi
+
+
 
 fc-cache -f -v
