@@ -17,11 +17,8 @@ test -x /usr/bin/autoconf || sudo yum -y install autoconf
 
 ./autogen.sh
 
-#sudo yum -y install alsa-lib-devel atk-devel bzip2 cairo cairo-devel dbus-devel desktop-file-utils fontconfig-devel freetype-devel GConf2-devel giflib-devel glibc-devel gnutls-devel gpm-devel gtk3-devel gzip ImageMagick-devel libjpeg-turbo-devel liblockfile-devel libotf-devel libpng-devel librsvg2-devel libselinux-devel libtiff-devel libX11-devel libXau-devel libXdmcp-devel libxml2-devel libXpm-devel libXrender-devel libXt-devel m17n-lib-devel ncurses-devel python-devel texinfo xorg-x11-proto-devel zlib-devel gcc
-#sudo yum -y install gcc gnutls-devel ncurses-devel
-test -f /usr/lib64/libgccjit.so.0 || yum -y install libgccjit-devel
+sudo yum -y install alsa-lib-devel atk-devel bzip2 cairo cairo-devel dbus-devel desktop-file-utils fontconfig-devel freetype-devel GConf2-devel giflib-devel glibc-devel gnutls-devel gpm-devel gtk3-devel gzip ImageMagick-devel libjpeg-turbo-devel liblockfile-devel  libpng-devel librsvg2-devel libselinux-devel libtiff-devel libX11-devel libXau-devel libXdmcp-devel libxml2-devel libXpm-devel libXrender-devel libXt-devel  ncurses-devel python3-devel texinfo xorg-x11-proto-devel zlib-devel gcc gnutls-devel ncurses-devel libgccjit-devel /usr/bin/makeinfo jansson-devel #libotf-devel m17n-lib-devel
 # sudo yum -y install alsa-lib-devel atk-devel bzip2 cairo cairo-devel dbus-devel desktop-file-utils fontconfig-devel freetype-devel GConf2-devel giflib-devel glibc-devel gnutls-devel gpm-devel gtk3-devel gzip ImageMagick-devel libjpeg-turbo-devel liblockfile-devel  libpng-devel librsvg2-devel libselinux-devel libtiff-devel libX11-devel libXau-devel libXdmcp-devel libxml2-devel libXpm-devel libXrender-devel libXt-devel  ncurses-devel  texinfo xorg-x11-proto-devel zlib-devel gcc aspell-en
-pkg-config jansson || sudo yum -y install jansson-devel
 ./configure --prefix="$HOME/opt/emacs" --with-gif=no --with-json --without-makeinfo --with-cairo --with-json --with-harfbuzz --with-native-compilation
 
 make
