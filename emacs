@@ -85,6 +85,14 @@
   (selectrum-mode +1)
   (setq completion-styles '(flex substring partial-completion)))
 
+(defun chl-project-go (dir)
+  (let ((override (locate-dominating-file dir "go.mod")))
+    (if override
+	(cons 'vc override)
+      nil)))
+
+(require 'project)
+(add-hook 'project-find-functions #'chl-project-go)
 
 (setq consult-project-root-function
 	  (lambda ()
