@@ -97,7 +97,7 @@
 (setq consult-project-root-function
 	  (lambda ()
 		(ignore-errors
-			(car (project-roots (project-current))))))
+		  (project-root (project-current)))))
 
 (defun chl/fzf-projects ()
   "Fuzzy find projects."
@@ -163,7 +163,7 @@ If a shell buffer visiting DIR already exists, show that one."
 (defun chl/shell-project-root ()
   "Open shell in project root."
   (interactive)
-  (shell-at-dir (car (project-roots (project-current)))))
+  (shell-at-dir (project-root (project-current))))
 
 (global-set-key (kbd "C-t") #'chl/shell-project-root)
 
