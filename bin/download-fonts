@@ -11,16 +11,13 @@ do
 	fi
 done
 
-for font in MartialIcons-Regulat.ttf
+for font in MaterialIcons-Regular.ttf
 do
 	if [[ ! -f "$font" ]]
 	then
 		curl --location --output $font https://github.com/google/material-design-icons/raw/master/font/$font
 	fi
 done
-
-# Material Design Icons
-git clone --depth 1 https://github.com/google/material-design-icons
 
 # Community Fork
 git clone --depth 1 https://github.com/Templarian/MaterialDesign-Webfont
