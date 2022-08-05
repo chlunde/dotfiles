@@ -106,11 +106,19 @@
 ;  (let ((counsel-fzf-cmd "find -L src/ go/src/ git/ -maxdepth 3 -name vendor -a  -prune -o -name node_modules -prune -o -name \".*\" -a -prune -o -type d -a -print | fzf -f \"%s\""))
 ;	(counsel-fzf "" (getenv "HOME") "")))
 
+
 (defun chl/fzf-git ()
   "Fuzzy find on the closest git repository."
   (interactive)
   (consult-find (magit-toplevel)))
 
+(defun chl/treemacs-current-project ()
+  "Ensure current project is in treemacs, toggle treemacs"
+  (interactive)
+  (unless (eq major-mode 'treemacs-mode)
+	(treemacs-add-and-display-current-project)))
+
+(global-set-key (kbd "s-/") #'chl/treemacs-current-project)
 (global-set-key (kbd "C-2") #'chl/fzf-git)
 (global-set-key (kbd "C-c 2") #'chl/fzf-git) ; alias for emacs -nw
 (global-set-key (kbd "C-3") #'chl/fzf-projects)
@@ -324,6 +332,9 @@ Goes backward if ARG is negative; error if CHAR not found."
   :bind ("C-x g" . magit-status))
 
 (use-package magit-todos)
+
+(use-package treemacs)
+(use-package lsp-treemacs)
 
 (defun chl/compilation-small-font-size ()
   "Use a condensed tiny font for the compilation window."
