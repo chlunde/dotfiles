@@ -1,0 +1,15 @@
+#!/bin/sh
+disp=eDP-1
+#288mm x 180mm
+# 1920x1200
+xrandr --setmonitor $disp~1 960/144x1200/180+0+0 $disp
+xrandr --setmonitor $disp~2 960/144x1200/180+960+0 none
+#xrandr --fb 1921x1200
+#xrandr --fb 1920x1200
+
+
+if [[ $1 == off ]]; then
+	xrandr --delmonitor eDP-1~2
+	sleep 0.1
+	xrandr --setmonitor $disp~1 1920/288x1200/180+0+0 $disp
+fi
