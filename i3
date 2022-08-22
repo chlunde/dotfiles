@@ -16,11 +16,6 @@ set $mod Mod4
 #font pango:monospace 8
 font pango:Iosevka Term Slab Light 18
 
-
-# This font is widely installed, provides lots of unicode glyphs, right-to-left
-# text rendering and scalability on retina/hidpi displays (thanks to pango).
-#font pango:DejaVu Sans Mono 8
-
 # Start XDG autostart .desktop files using dex. See also
 # https://wiki.archlinux.org/index.php/XDG_Autostart
 exec --no-startup-id dex-autostart --autostart --environment i3
@@ -38,9 +33,9 @@ exec --no-startup-id /usr/bin/gnome-keyring-daemon --start --components=ssh,secr
 exec --no-startup-id nm-applet
 exec --no-startup-id xfce4-power-manager
 
-
 exec --no-startup-id xinput set-prop 'VEN_04F3:00 04F3:31D1 Touchpad' 'libinput Tapping Enabled' 1
 exec --no-startup-id google-chrome --password-store=gnome
+exec setxkbmap -option grp:alt_space_toggle,grp:rctrl_toggle,compose:menu,ctrl:nocaps,grp_led:num -layout us,no
 
 # Use pactl to adjust volume in PulseAudio.
 set $refresh_i3status killall -SIGUSR1 i3status
@@ -68,6 +63,8 @@ bindsym $mod+d exec "rofi -modi drun,run -show drun"
 
 # mail on mod-m (pinned tab 1 in chrome)
 bindsym $mod+m [class="Google-chrome"] focus, exec "xdotool search --onlyvisible --class Chrome windowfocus --sync key --clearmodifiers 'alt+1' sleep 0.3 key --clearmodifiers 'alt+1'"
+
+for_window [class="Google-chrome"] border none
 
 # change focus
 bindsym $mod+j focus left
