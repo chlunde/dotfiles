@@ -347,9 +347,6 @@ Goes backward if ARG is negative; error if CHAR not found."
 
 (use-package magit-todos)
 
-(use-package treemacs)
-(use-package lsp-treemacs)
-
 (defun chl/compilation-small-font-size ()
   "Use a condensed tiny font for the compilation window."
   (setq buffer-face-mode-face '(:family "DejaVu Sans Mono" :height 120 :width semi-condensed))
@@ -427,7 +424,6 @@ specified by `compilation-window-height'."
  '(ediff-even-diff-B ((t (:background "gray30"))))
  '(ediff-odd-diff-A ((t (:background "gray30"))))
  '(ediff-odd-diff-B ((t (:background "gray30"))))
- '(lsp-face-highlight-textual ((t (:weight bold))))
  '(magit-section-highlight ((t (:background "color-236"))))
  '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta"))))
  '(web-mode-html-tag-face ((t (:foreground "color-213")))))
@@ -440,36 +436,44 @@ specified by `compilation-window-height'."
 
 (use-package gotest)
 
-(defun chl/go-build-root ()
+(require 'project)
+
+(defun chl/go-build-root (dir)
   (interactive)
-  (let ((cur default-directory)
-        (last-go-directory default-directory)
-        (root nil))
-    (while (let ((is-git-root (file-exists-p (concat cur ".git")))
-				 (is-go-root (file-exists-p (concat cur "go.mod"))))
-             (when (directory-files cur nil "^.*\\.go$" t)
-			   (setq last-go-directory cur))
-			 (when (or is-go-root is-git-root)
-			   (setq root cur))
-             (setq cur (file-name-directory (directory-file-name cur)))
-			 (and (not root)
-				  (not (equal cur "/")))))
-	(or root last-go-directory)))
+  (when-let ((root (locate-dominating-file dir "go.mod")))
+	(cons 'go-module root)))
+
+(cl-defmethod project-root ((project (head go-module)))
+  (cdr project))
+
+(add-hook 'project-find-functions #'chl/go-build-root)
+
+(use-package yasnippet)
+
+(use-package eglot)
+(add-hook 'go-mode-hook 'eglot-ensure)
+
+(setq-default eglot-workspace-configuration
+    '((:gopls .
+        ((staticcheck . t)
+         (matcher . "CaseSensitive")))))
 
 (defun chl/go-mode ()
   "Customize go-mode."
   (interactive)
   ;; Set up before-save hooks to format buffer and add/delete imports.
   ;; Make sure you don't have other gofmt/goimports hooks enabled.
-  (add-hook 'before-save-hook #'lsp-format-buffer t t)
-  (add-hook 'before-save-hook #'lsp-organize-imports t t)
   (add-hook 'after-save-hook #'recompile t t)
   (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
   (add-hook 'prog-mode-hook 'turn-on-auto-fill t t)
+
+  ;; The depth of -10 places this before eglot's willSave notification,
+  ;; so that that notification reports the actual contents that will be saved.
+  (add-hook 'before-save-hook #'eglot-format-buffer -10 t)
+
   (define-key go-mode-map (kbd "C-c C-t") 'go-test-current-test)
 
   (diminish 'eldoc-mode)
-  (diminish 'lsp-mode)
 
   ;(flyspell-prog-mode)
   ;(diminish 'flyspell-mode)
@@ -481,7 +485,7 @@ specified by `compilation-window-height'."
   (if (not (string-match "go" compile-command))
       (set (make-local-variable 'compile-command)
            (concat
-			"cd " (chl/go-build-root) ";\n"
+			"cd " (project-root (project-current)) ";\n"
 			;; Don't build the Go project using go build
 			(if (file-exists-p "Makefile")
 				"make"
@@ -490,38 +494,8 @@ specified by `compilation-window-height'."
 
   (add-to-list 'compilation-search-path default-directory)
 
-  (local-set-key (kbd "M-.") #'lsp-find-definition))
+  (local-set-key (kbd "M-.") #'xref-find-definitions))
 
-(use-package lsp-mode
-  :commands lsp
-  :config
-  (lsp-register-custom-settings
-   '(("gopls.completeUnimported" t t)
-	 ("gopls.buildFlags" ["-tags=codegen"])
-	 ("gopls.staticcheck" t t)))
-  (push "[/\\\\]\\.cache$" lsp-file-watch-ignored)
-  (push "[/\\\\]\\.work$" lsp-file-watch-ignored)
-  (setq lsp-file-watch-threshold 5000)
-  (push "\\.work" lsp-file-watch-ignored)
-  (setq lsp-enable-links nil)
-  (setq lsp-prefer-flymake nil)
-  (setq lsp-enable-snippet nil)
-  (setq lsp-modeline-diagnostics-enable nil)
-  (setq lsp-ui-sideline-enable nil)
-  (setq lsp-ui-doc-use-childframe t))
-
-(add-hook 'go-mode-hook #'lsp)
-
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  :config
-  (set-face-background 'lsp-ui-doc-background nil)
-  ;; (set-face-background 'fixed-pitch nil)
-  ;; (set-face-foreground 'fixed-pitch nil)
-  )
-
-(use-package company-lsp
-  :commands company-lsp)
 
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
