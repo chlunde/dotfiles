@@ -279,6 +279,16 @@ If a shell buffer visiting DIR already exists, show that one."
       version-control t)                ; use versioned backups
 
 (setq org-log-done t)
+(setq org-agenda-files '("todo.org"))
+
+(define-key global-map (kbd "C-c A") 'org-agenda)
+(define-key global-map (kbd "C-c c") 'org-capture)
+
+(setq org-capture-templates
+      `(("t" "TODO" entry (file+headline "todo.org" "Tasks")
+         ,(concat "* %? (%a) :capture:\n"
+                  "<%<%Y-%m-%d %a %H:00>>\n"
+                  "/Entered on/ %U\n"))))
 
 (org-babel-do-load-languages 'org-babel-load-languages
 							 '((shell . t)))
