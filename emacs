@@ -313,6 +313,7 @@ If a shell buffer visiting DIR already exists, show that one."
 (global-set-key (kbd "<f6>") #'next-error)
 (global-set-key (kbd "C-x |") #'next-error) ; C-x | and C-x ` - same key in US/NO layout
 (global-set-key (kbd "C-x ,") #'comment-line) ; C-x C-; unavailable in terminal
+(global-set-key (kbd "C-x j") #'avy-goto-char-timer)
 
 (define-key isearch-mode-map [(control return)] #'isearch-exit-other-end)
 
