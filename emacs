@@ -471,6 +471,7 @@ specified by `compilation-window-height'."
   ;; so that that notification reports the actual contents that will be saved.
   (add-hook 'before-save-hook #'eglot-format-buffer -10 t)
 
+  (require 'dap-dlv-go)
   (define-key go-mode-map (kbd "C-c C-t") 'go-test-current-test)
 
   (diminish 'eldoc-mode)
@@ -496,6 +497,10 @@ specified by `compilation-window-height'."
 
   (local-set-key (kbd "M-.") #'xref-find-definitions))
 
+(use-package dap-mode
+  :config
+  (add-hook 'dap-stopped-hook
+          (lambda (arg) (call-interactively #'dap-hydra))))
 
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
