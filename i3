@@ -35,6 +35,7 @@ exec --no-startup-id xfce4-power-manager
 
 exec --no-startup-id xinput set-prop 'VEN_04F3:00 04F3:31D1 Touchpad' 'libinput Tapping Enabled' 1
 exec --no-startup-id google-chrome --password-store=gnome
+exec --no-startup-id /usr/libexec/gnome-terminal-server
 exec setxkbmap -option grp:alt_space_toggle,grp:rctrl_toggle,compose:menu,ctrl:nocaps,grp_led:num -layout us,no
 
 # Use pactl to adjust volume in PulseAudio.

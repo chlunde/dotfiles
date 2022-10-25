@@ -75,6 +75,9 @@
 
 (setq-default use-package-always-defer t)
 
+(use-package acme-theme)
+(load-theme 'acme t)
+
 (use-package tramp
   :config
   ;; get magit to use git from SCL
