@@ -13,17 +13,17 @@
 (push '(menu-bar-lines . 0) default-frame-alist)
 
 (setq-default comp-deferred-compilation-deny-list nil)
-(add-hook 'window-setup-hook
-          (lambda ()
-            (set-background-color "black")
-            (set-foreground-color "white")))
-(frame-parameters)
+;(add-hook 'window-setup-hook
+;          (lambda ()
+;            (set-background-color "black")
+;            (set-foreground-color "white")))
+;(frame-parameters)
 (when (window-system)
   (set-cursor-color "red")
   (setq-default cursor-type '(hbar . 5))
   ;(set-frame-font "Go Mono-15")
   ;;(set-frame-font "iA Writer Mono V-14")
-  (set-frame-font "Iosevka Term Slab Light-11")
+  (set-frame-font "Iosevka Term Slab Light-18")
   )
 
 (setq-default warning-suppress-types '((comp)))
@@ -83,10 +83,10 @@
   ;; get magit to use git from SCL
   (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
-(use-package selectrum
+(use-package vertico
   :init
-  (selectrum-mode +1)
-  (setq completion-styles '(flex substring partial-completion)))
+  (vertico-mode +1)
+  (setq completion-styles '(substring flex partial-completion)))
 
 (defun chl-project-go (dir)
   (let ((override (locate-dominating-file dir "go.mod")))
@@ -446,12 +446,35 @@ specified by `compilation-window-height'."
 (cl-defmethod project-root ((project (head go-module)))
   (cdr project))
 
+(cl-defmethod project-root ((project (head eglot-project)))
+  (cdr project))
+
+(use-package typescript-mode)
+
 (add-hook 'project-find-functions #'chl/go-build-root)
 
 (use-package yasnippet)
 
-(use-package eglot)
+(use-package eglot
+  :config
+  (add-to-list 'eglot-server-programs
+             '((typescript-mode) "typescript-language-server" "--stdio"))
+  )
 (add-hook 'go-mode-hook 'eglot-ensure)
+(add-hook 'typescript-mode-hook 'eglot-ensure)
+
+(use-package tree-sitter)
+(use-package tree-sitter-langs)
+(add-hook 'typescript-mode-hook #'tree-sitter-mode)
+(add-hook 'typescript-mode-hook #'tree-sitter-hl-mode)
+
+
+(defun my-project-try-tsconfig-json (dir)
+  (when-let* ((found (locate-dominating-file dir "tsconfig.json")))
+    (cons 'eglot-project found)))
+
+(add-hook 'project-find-functions
+          'my-project-try-tsconfig-json nil nil)
 
 (setq-default eglot-workspace-configuration
     '((:gopls .
@@ -471,7 +494,6 @@ specified by `compilation-window-height'."
   ;; so that that notification reports the actual contents that will be saved.
   (add-hook 'before-save-hook #'eglot-format-buffer -10 t)
 
-  (require 'dap-dlv-go)
   (define-key go-mode-map (kbd "C-c C-t") 'go-test-current-test)
 
   (diminish 'eldoc-mode)
@@ -496,11 +518,6 @@ specified by `compilation-window-height'."
   (add-to-list 'compilation-search-path default-directory)
 
   (local-set-key (kbd "M-.") #'xref-find-definitions))
-
-(use-package dap-mode
-  :config
-  (add-hook 'dap-stopped-hook
-          (lambda (arg) (call-interactively #'dap-hydra))))
 
 (add-hook 'emacs-lisp-mode-hook #'eldoc-mode)
 
