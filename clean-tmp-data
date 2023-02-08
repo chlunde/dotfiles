@@ -1,0 +1,52 @@
+#!/bin/bash
+df -h ~
+
+go clean -cache -modcache -testcache
+
+cd ~
+rm -Rf .android
+rm -Rf .aws
+rm -Rf .cache
+rm -Rf .docker
+rm -Rf .dotnet
+rm -Rf .ecr
+rm -Rf .emacs.d/eln-cache/ .emacs.d/straight
+rm -Rf .esd_auth
+rm -Rf .fzf
+rm -Rf .gnome
+rm -Rf .java
+rm -Rf .jira.d
+rm -Rf .jrebel
+rm -Rf .kube
+rm -f .lesshst
+rm -Rf .local
+rm -Rf .m2
+rm -Rf .mozilla
+rm -Rf .npm
+rm -Rf .pip
+rm -Rf .pki
+rm -Rf .puppetlabs
+rm -Rf .skaffold
+rm -Rf .testcontainers.properties
+rm -f .viminfo
+rm -Rf .vscode
+rm -Rf .vuerc
+rm -Rf .yarn
+
+rm -Rf .config/google-chrome/Default/Extensions .config/google-chrome/Default/IndexedDB '.config/google-chrome/Default/File System' '.config/google-chrome/Default/Service Worker'
+
+if [[ -d .local/share/kubebuilder-envtest ]]; then
+    chown -R $USER .local/share/kubebuilder-envtest
+    chmod -R u+rw .local/share/kubebuilder-envtest
+    rm -Rf .local/share/kubebuilder-envtest
+fi
+
+rm -Rf tmp
+mkdir -p tmp
+
+rm -Rf Downloads
+mkdir -p Downloads
+
+cd ~/.config
+rm -Rf autostart/ evolution/ gnome-session/ gtk-4.0/ menus/ pavucontrol.ini yarn/ Code/ gconf/ go/ helm/ mimeapps.list procps/ yelp/ configstore/ gedit/ goa-1.0/ i3/ pulse/ dconf/ ibus/ monitors.xml user-dirs.dirs enchant/ git/ google-cloud-tools-java/ JetBrains/ user-dirs.locale eog/ gnome-boxes/ gtk-3.0/ libreoffice/ nautilus/ xfce4/ 
+
