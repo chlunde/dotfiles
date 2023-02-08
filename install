@@ -18,10 +18,5 @@ echo '(setq package-enable-at-startup nil)' > ~/.emacs.d/early-init.el
 mkdir -p ~/bin
 ln -f -s ~/dotfiles/bin/go-tool-install ~/bin/
 
-if test -x /opt/rh/rh-git218/root/usr/share/git-core/contrib/diff-highlight; then
-	cp /opt/rh/rh-git218/root/usr/share/git-core/contrib/diff-highlight ~/bin/
-	git config --global pager.log 'diff-highlight | less'
-	git config --global pager.show 'diff-highlight | less'
-	git config --global pager.diff 'diff-highlight | less'
-	git config --global interactive.diffFilter diff-highlight
-fi
+mkdir -p ~/.config/i3
+ln -s ~/dotfiles/i3 ~/.config/i3/config
