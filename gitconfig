@@ -25,4 +25,9 @@
 [log]
   decorate = short
 [push]
-	default = simple
+	default = current
+[fetch]
+	prune = true
+
+[pull]
+    rebase = true
