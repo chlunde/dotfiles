@@ -1,22 +1,6 @@
-[legacy]
-dark-theme=true
-new-terminal-mode='tab'
-default-show-menubar=false
-schema-version=uint32 3
-theme-variant='dark'
-
-[legacy/keybindings]
-close-tab='disabled'
-close-window='disabled'
-help='disabled'
-
-[legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
-foreground-color='rgb(170,170,170)'
-palette=['rgb(0,0,0)', 'rgb(205,0,0)', 'rgb(0,205,0)', 'rgb(205,205,0)', 'rgb(30,144,255)', 'rgb(205,0,205)', 'rgb(0,205,205)', 'rgb(229,229,229)', 'rgb(76,76,76)', 'rgb(255,0,0)', 'rgb(0,255,0)', 'rgb(255,255,0)', 'rgb(70,130,180)', 'rgb(255,0,255)', 'rgb(0,255,255)', 'rgb(255,255,255)']
-use-system-font=false
+[org/gnome/terminal/legacy/profiles:/:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
+background-color='rgb(26,27,27)'
 use-theme-colors=false
-font='Monospace 12'
-background-color='rgb(0,0,0)'
-scrollbar-policy='never'
-scrollback-lines=32768
-audible-bell=false
+foreground-color='rgb(211,215,207)'
+use-system-font=false
+font='Iosevka Term Slab Light 16'
