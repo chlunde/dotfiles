@@ -11,9 +11,8 @@ xrandr --setmonitor $disp~2 1920/446x1200/280+1520+0 none
 #xrandr --fb 1921x1200
 #xrandr --fb 1920x1200
 
-
 if [[ $1 == off ]]; then
-	xrandr --delmonitor $disp~2
-	sleep 0.1
-	xrandr --setmonitor $disp~1 3440/800x1440/335+0+0 $disp
+    xrandr --delmonitor $disp~2
+    sleep 0.1
+    xrandr --setmonitor $disp~1 3440/800x1440/335+0+0 $disp
 fi

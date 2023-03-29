@@ -7,10 +7,10 @@ rm -f bin/*
 for a in opt/*-*; do
     p="${a%%-*}"
     if [[ -L "$p" ]]; then
-       v=$(readlink "$p")
+        v=$(readlink "$p")
 
-       if [[ "$v" != *"$a" ]]; then
-       	  rm -rf "$a"
-       fi
+        if [[ "$v" != *"$a" ]]; then
+            rm -rf "$a"
+        fi
     fi
 done

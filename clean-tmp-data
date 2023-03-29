@@ -48,5 +48,4 @@ rm -Rf Downloads
 mkdir -p Downloads
 
 cd ~/.config
-rm -Rf autostart/ evolution/ gnome-session/ gtk-4.0/ menus/ pavucontrol.ini yarn/ Code/ gconf/ go/ helm/ mimeapps.list procps/ yelp/ configstore/ gedit/ goa-1.0/ i3/ pulse/ dconf/ ibus/ monitors.xml user-dirs.dirs enchant/ git/ google-cloud-tools-java/ JetBrains/ user-dirs.locale eog/ gnome-boxes/ gtk-3.0/ libreoffice/ nautilus/ xfce4/ 
-
+rm -Rf autostart/ evolution/ gnome-session/ gtk-4.0/ menus/ pavucontrol.ini yarn/ Code/ gconf/ go/ helm/ mimeapps.list procps/ yelp/ configstore/ gedit/ goa-1.0/ i3/ pulse/ dconf/ ibus/ monitors.xml user-dirs.dirs enchant/ git/ google-cloud-tools-java/ JetBrains/ user-dirs.locale eog/ gnome-boxes/ gtk-3.0/ libreoffice/ nautilus/ xfce4/
