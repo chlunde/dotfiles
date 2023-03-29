@@ -6,13 +6,14 @@
 ;;; Code:
 
 (setq gc-cons-threshold 15000000)
+;; (setq debug-on-error t)
 
 ;; Configure basic look and feel first, to avoid flickering
 (push '(vertical-scroll-bars . nil) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(menu-bar-lines . 0) default-frame-alist)
 
-(setq-default comp-deferred-compilation-deny-list nil)
+;(setq-default comp-deferred-compilation-deny-list nil)
 ;(add-hook 'window-setup-hook
 ;          (lambda ()
 ;            (set-background-color "black")
@@ -36,15 +37,18 @@
 (when (fboundp 'set-fontset-font) (set-fontset-font t 'symbol "Noto Color Emoji" nil 'append))
 
 ;;; Bootstrap straight.el
+
 (setq-default straight-check-for-modifications '(check-on-save find-when-checking))
+
 (defvar bootstrap-version)
+(setq native-comp-deferred-compilation-deny-list nil)
 (let ((bootstrap-file
        (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
+      (bootstrap-version 6))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/4d2c3ab92c83a6d2a45ba8ef391dd01d555178fc/install.el"
+	 "https://raw.githubusercontent.com/radian-software/straight.el/da48615f293960d37829a2d8cb1f0bb9d0524a7a/install.el"
          'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
@@ -77,11 +81,6 @@
 
 (use-package acme-theme)
 (load-theme 'acme t)
-
-(use-package tramp
-  :config
-  ;; get magit to use git from SCL
-  (add-to-list 'tramp-remote-path 'tramp-own-remote-path))
 
 (use-package vertico
   :init
@@ -126,6 +125,8 @@
 (global-set-key (kbd "C-c 2") #'chl/fzf-git) ; alias for emacs -nw
 (global-set-key (kbd "C-3") #'chl/fzf-projects)
 (global-set-key (kbd "C-c 3") #'chl/fzf-projects)
+
+(global-set-key (kbd "C-c ! l") #'flymake-show-buffer-diagnostics)
 
 (global-set-key (kbd "C-x b") #'consult-buffer)
 (global-set-key (kbd "C-c f") #'consult-imenu)
@@ -180,22 +181,6 @@ If a shell buffer visiting DIR already exists, show that one."
 
 ;(use-package markdown-mode)
 
-(use-package flycheck
-  :defer 1
-  :config
-  (global-flycheck-mode)
-  (when (not (window-system))
-	(set-face-attribute 'flycheck-error nil :foreground "red"))
-
-  (setq-default flycheck-shellcheck-follow-sources nil) ; not supported in epel
-  (setq-default flycheck-disabled-checkers '(go-golint go-build
-				go-test go-errcheck go-unconvert go-megacheck
-				javascript-jshint))
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
-
-  ;;(setq flycheck-global-modes '(rjsx-mode emacs-lisp-mode))
-  ;;https://github.com/flycheck/flycheck/issues/1129#issuecomment-319600923
-  (advice-add 'flycheck-eslint-config-exists-p :override (lambda() t)))
 
 (use-package company
   :defer t
@@ -241,6 +226,7 @@ If a shell buffer visiting DIR already exists, show that one."
   (add-hook 'yaml-mode-hook
 			(lambda ()
 			  (add-hook 'write-file-functions #'delete-trailing-whitespace t t)
+
 	          ;;; avoid issue where previous line is re-indenten on newline
 			  (define-key yaml-mode-map "\C-m" 'newline-and-indent)
 			  (when (fboundp 'electric-indent-mode) (electric-indent-mode -1))))
@@ -364,12 +350,15 @@ specified by `compilation-window-height'."
       (set-window-text-height win compilation-window-height)
       (shrink-window-if-larger-than-buffer win))))
 
-(add-hook 'flycheck-after-syntax-check-hook #'chl/auto-flycheck-win)
+;(add-hook 'flycheck-after-syntax-check-hook #'chl/auto-flycheck-win)
 
-(defun chl/auto-flycheck-win ()
-  (interactive)
-  (when flycheck-current-errors
-    (flycheck-list-errors)))
+;; (flymake-mode t)						
+(display-battery-mode t)
+
+;; (defun chl/auto-flycheck-win ()
+;;   (interactive)
+;;   (when (flymake-running-backends)
+;;     (flymake-show-buffer-diagnostics)))
 
 (require 'rx)
 
@@ -393,7 +382,7 @@ specified by `compilation-window-height'."
 ;		 (inhibit-same-window . nil)
 ;		 (mode dired-mode magit-status-mode))
         ;; Put REPLs and error lists into the bottom side window
-        (,(rx bos (or "*Flycheck errors*" ; Flycheck error list
+        (,(rx bos (or "*Flymake diagnostics"
                       "*compilation"      ; Compilation buffers
                       "*Warnings*"        ; Emacs warnings
                       "*shell"            ; Shell window
@@ -417,16 +406,7 @@ specified by `compilation-window-height'."
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-variable-tag ((t (:foreground "color-45" :weight bold))))
- '(diff-file-header ((t (:background "brightmagenta" :weight bold))))
- '(diff-header ((t (:background "magenta"))))
- '(ediff-even-diff-A ((t (:background "gray30"))))
- '(ediff-even-diff-B ((t (:background "gray30"))))
- '(ediff-odd-diff-A ((t (:background "gray30"))))
- '(ediff-odd-diff-B ((t (:background "gray30"))))
- '(magit-section-highlight ((t (:background "color-236"))))
- '(web-mode-html-tag-bracket-face ((t (:foreground "brightmagenta"))))
- '(web-mode-html-tag-face ((t (:foreground "color-213")))))
+ '(eglot-highlight-symbol-face ((t (:inherit bold :underline (:color "lightgreen" :style wave :position nil))))))
 
 
 ;;; Go mode
@@ -512,8 +492,9 @@ specified by `compilation-window-height'."
 			;; Don't build the Go project using go build
 			(if (file-exists-p "Makefile")
 				"make"
-			  "go build ./...")
-			" && cd " default-directory " && go test .")))
+			  "go build ."
+			  )
+			" && cd " default-directory " && go build .")))
 
   (add-to-list 'compilation-search-path default-directory)
 
@@ -535,11 +516,6 @@ specified by `compilation-window-height'."
             (setq indent-tabs-mode nil)
             (add-to-list 'write-file-functions 'delete-trailing-whitespace)
             (local-set-key (kbd "RET") 'newline-and-indent)))
-
-;(use-package vue-mode
-;  :mode "\\.vue\\'"
-;  :config
-;  (add-hook 'vue-mode-hook #'lsp))
 
 ;(use-package typescript-mode)
 

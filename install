@@ -1,5 +1,9 @@
 #!/bin/bash
 cd ~/
+
+ln -s ~/dotfiles/i3 ~/.config/i3/config
+
+
 for f in bash_profile bashrc emacs inputrc
 do
 	test -f ~/.$f && mv ~/.$f ~/.${f}.OLD
