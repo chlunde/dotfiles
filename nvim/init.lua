@@ -98,6 +98,12 @@ require("lazy").setup({
     {
         'tpope/vim-fugitive',
     },
+    {
+        'github/copilot.vim',
+    },
+    {
+        'crispgm/nvim-go',
+    },
 }
 )
 
