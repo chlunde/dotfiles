@@ -1,16 +1,12 @@
 --- print("hello, world");
 vim.g.mapleader = " "
 
-vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
+vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "Browse files" })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 
 --- vim.keymap.set("n", "<leader>p", [["_dP]])
-
-vim.keymap.set("n", "<leader><leader>", function()
-    vim.cmd("so")
-end)
 
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
@@ -27,42 +23,54 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-    {"folke/which-key.nvim"},
+    {
+        'folke/which-key.nvim',
+        event = 'VeryLazy',
+        init = function()
+            vim.o.timeout = true
+            vim.o.timeoutlen = 300
+        end,
+        opts = {
+            -- your configuration comes here
+            -- or leave it empty to use the default settings
+            -- refer to the configuration section below
+        }
+    },
     {
         'VonHeikemen/lsp-zero.nvim',
-        commit = "e04f88174bf1ea439e40b02d9dd5158b3c0bb7ec",
+        commit = 'e04f88174bf1ea439e40b02d9dd5158b3c0bb7ec',
         lazy = true,
         config = false,
     },
     {
         'neovim/nvim-lspconfig',
-        commit = "bfdf2e91e7297a54bcc09d3e092a12bff69a1cf4",
+        commit = 'bfdf2e91e7297a54bcc09d3e092a12bff69a1cf4',
         dependencies = {
             {
                 'hrsh7th/cmp-nvim-lsp',
-                commit = "44b16d11215dce86f253ce0c30949813c0a90765",
+                commit = '44b16d11215dce86f253ce0c30949813c0a90765',
             },
         }
     },
     -- Autocompletion
     {
         'hrsh7th/nvim-cmp',
-        commit = "5dce1b778b85c717f6614e3f4da45e9f19f54435",
+        commit = '5dce1b778b85c717f6614e3f4da45e9f19f54435',
         dependencies = {
             {
                 'L3MON4D3/LuaSnip',
-                commit = "480b032f6708573334f4437d3f83307d143f1a72",
+                commit = '480b032f6708573334f4437d3f83307d143f1a72',
             }
         },
     },
     { 
         'rose-pine/neovim',
         name = 'rose-pine',
-        commit = "e29002cbee4854a9c8c4b148d8a52fae3176070f",
+        commit = 'e29002cbee4854a9c8c4b148d8a52fae3176070f',
     },
     {
         'nvim-telescope/telescope.nvim',
-        commit = "54930e1abfc94409e1bb9266e752ef8379008592",
+        commit = '54930e1abfc94409e1bb9266e752ef8379008592',
         dependencies = {
             {
                 'nvim-lua/plenary.nvim',
@@ -72,7 +80,7 @@ require("lazy").setup({
     },
     {
         'nvim-treesitter/nvim-treesitter',
-        commit = "69388e84c34d40c3d5c7d2f310db13276f2179e1",
+        commit = '69388e84c34d40c3d5c7d2f310db13276f2179e1',
 	-- TSUpdate
     },
     {
@@ -81,11 +89,14 @@ require("lazy").setup({
     },
     {
         'mbbill/undotree',
-        commit = "0e11ba7325efbbb3f3bebe06213afa3e7ec75131",
+        commit = '0e11ba7325efbbb3f3bebe06213afa3e7ec75131',
     },
     {
         'theprimeagen/harpoon',
-        commit = "21f4c47c6803d64ddb934a5b314dcb1b8e7365dc",
+        commit = '21f4c47c6803d64ddb934a5b314dcb1b8e7365dc',
+    },
+    {
+        'tpope/vim-fugitive',
     },
 }
 )
@@ -121,12 +132,15 @@ require('lspconfig').rust_analyzer.setup({})
 require("set")
 
 local builtin = require('telescope.builtin')
-vim.keymap.set('n', '<leader>pf', builtin.find_files, {})
+vim.keymap.set('n', '<leader>pf', builtin.find_files, { desc = "Find Files" })
+vim.keymap.set('n', '<leader>pg', builtin.live_grep, { desc = "Live Grep"})
+vim.keymap.set('n', '<leader>pb', builtin.buffers, { desc = "Find Buffers"})
+vim.keymap.set('n', '<leader>pB', builtin.git_branches, { desc = "Branches"})
 vim.keymap.set('n', '<C-p>', builtin.git_files, {})
 vim.keymap.set('n', '<leader>ps', function()
 	builtin.grep_string({ search = vim.fn.input("Grep > ") })
-end)
-vim.keymap.set('n', '<leader>vh', builtin.help_tags, {})
+end, { desc = "Grep files" })
+vim.keymap.set('n', '<leader>vh', builtin.help_tags, { desc = "Browse Help" })
 
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all"
@@ -151,7 +165,7 @@ require'nvim-treesitter.configs'.setup {
   },
 }
 
-vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle)
+vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Undo tree" })
 
 local lsp = require("lsp-zero")
 
@@ -185,29 +199,35 @@ local augroup = vim.api.nvim_create_augroup('LspFormatting', {})
 local lsp_format_on_save = function(bufnr)
   vim.api.nvim_clear_autocmds({group = augroup, buffer = bufnr})
   vim.api.nvim_create_autocmd('BufWritePre', {
-    group = augroup,
-    buffer = bufnr,
-    callback = function()
-      vim.lsp.buf.format()
-    end,
+      group = augroup,
+      buffer = bufnr,
+      callback = function()
+          vim.lsp.buf.format()
+      end,
   })
 end
 
 lsp.on_attach(function(client, bufnr)
-  local opts = {buffer = bufnr, remap = false}
+    local opts = {buffer = bufnr, remap = false}
 
-  lsp_format_on_save(bufnr)
+    lsp_format_on_save(bufnr)
 
-  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
+    function opts_with_desc(desc)
+        opts.desc = desc
+        return opts
+    end
+
+  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts_with_desc("Go to definition"))
   vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-  vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts)
-  vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts)
-  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts)
-  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts)
-  vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
-  vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
-  vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
-  vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
+  vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts_with_desc("Workspace symbol"))
+  vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts_with_desc("Diagnostics"))
+
+  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts_with_desc("Next diagnostics"))
+  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts_with_desc("Prev diagnostics"))
+  vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts_with_desc("Code Action"))
+  vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts_with_desc("References"))
+  vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts_with_desc("Rename"))
+  vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts_with_desc("Signature help"))
 end)
 
 lsp.setup()
@@ -219,10 +239,12 @@ vim.diagnostic.config({
 local mark = require("harpoon.mark")
 local ui = require("harpoon.ui")
 
-vim.keymap.set("n", "<leader>a", mark.add_file)
-vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu)
+vim.keymap.set("n", "<leader>a", mark.add_file, {desc = "Add file to harpoon"})
+vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu, {desc = "Toggle harpoon menu"})
 
-vim.keymap.set("n", "<C-1>", function() ui.nav_file(1) end)
-vim.keymap.set("n", "<C-2>", function() ui.nav_file(2) end)
-vim.keymap.set("n", "<C-3>", function() ui.nav_file(3) end)
-vim.keymap.set("n", "<C-4>", function() ui.nav_file(4) end)
+vim.keymap.set("n", "<leader>1", function() ui.nav_file(1) end, {desc="Harpoon 1"})
+vim.keymap.set("n", "<leader>2", function() ui.nav_file(2) end, {desc="Harpoon 2"})
+vim.keymap.set("n", "<leader>3", function() ui.nav_file(3) end, {desc="Harpoon 3"})
+vim.keymap.set("n", "<leader>4", function() ui.nav_file(4) end, {desc="Harpoon 4"})
+vim.keymap.set("n", "<leader>]", function() ui.nav_next() end, {desc="Harpoon next"})
+vim.keymap.set("n", "<leader>[", function() ui.nav_prev() end, {desc="Harpoon prev"})
