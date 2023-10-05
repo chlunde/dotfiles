@@ -109,6 +109,10 @@ require("lazy").setup({
 
 vim.cmd('colorscheme rose-pine')
 
+require('go').setup({
+    linter = 'staticcheck',
+    formatter = 'gofumpt',
+})
 
 local lsp_zero = require('lsp-zero')
 
