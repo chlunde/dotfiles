@@ -63,7 +63,7 @@ require("lazy").setup({
             }
         },
     },
-    { 
+    {
         'rose-pine/neovim',
         name = 'rose-pine',
         commit = 'e29002cbee4854a9c8c4b148d8a52fae3176070f',
@@ -81,7 +81,7 @@ require("lazy").setup({
     {
         'nvim-treesitter/nvim-treesitter',
         commit = '69388e84c34d40c3d5c7d2f310db13276f2179e1',
-	-- TSUpdate
+        -- TSUpdate
     },
     {
         'nvim-treesitter/nvim-treesitter-context',
@@ -111,7 +111,7 @@ vim.cmd('colorscheme rose-pine')
 
 require('go').setup({
     linter = 'staticcheck',
-    formatter = 'gofumpt',
+    formatter = 'lsp',
 })
 
 local lsp_zero = require('lsp-zero')
@@ -119,7 +119,7 @@ local lsp_zero = require('lsp-zero')
 lsp_zero.on_attach(function(client, bufnr)
     -- see :help lsp-zero-keybindings
     -- to learn the available actions
-    lsp_zero.default_keymaps({buffer = bufnr})
+    lsp_zero.default_keymaps({ buffer = bufnr })
 end)
 
 require('lspconfig').gopls.setup({
@@ -138,41 +138,42 @@ require('lspconfig').gopls.setup({
 })
 require('lspconfig').tsserver.setup({})
 require('lspconfig').rust_analyzer.setup({})
+require('lspconfig').lua_ls.setup({})
 
 require("set")
 
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>pf', builtin.find_files, { desc = "Find Files" })
-vim.keymap.set('n', '<leader>pg', builtin.live_grep, { desc = "Live Grep"})
-vim.keymap.set('n', '<leader>pb', builtin.buffers, { desc = "Find Buffers"})
-vim.keymap.set('n', '<leader>pB', builtin.git_branches, { desc = "Branches"})
+vim.keymap.set('n', '<leader>pg', builtin.live_grep, { desc = "Live Grep" })
+vim.keymap.set('n', '<leader>pb', builtin.buffers, { desc = "Find Buffers" })
+vim.keymap.set('n', '<leader>pB', builtin.git_branches, { desc = "Branches" })
 vim.keymap.set('n', '<C-p>', builtin.git_files, {})
 vim.keymap.set('n', '<leader>ps', function()
-	builtin.grep_string({ search = vim.fn.input("Grep > ") })
+    builtin.grep_string({ search = vim.fn.input("Grep > ") })
 end, { desc = "Grep files" })
 vim.keymap.set('n', '<leader>vh', builtin.help_tags, { desc = "Browse Help" })
 
-require'nvim-treesitter.configs'.setup {
-  -- A list of parser names, or "all"
-  ensure_installed = { "go", "javascript", "typescript", "c", "lua", "rust" },
+require 'nvim-treesitter.configs'.setup {
+    -- A list of parser names, or "all"
+    ensure_installed = { "go", "javascript", "typescript", "c", "lua", "rust" },
 
-  -- Install parsers synchronously (only applied to `ensure_installed`)
-  sync_install = false,
+    -- Install parsers synchronously (only applied to `ensure_installed`)
+    sync_install = false,
 
-  -- Automatically install missing parsers when entering buffer
-  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-  auto_install = true,
+    -- Automatically install missing parsers when entering buffer
+    -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
+    auto_install = true,
 
-  highlight = {
-    -- `false` will disable the whole extension
-    enable = true,
+    highlight = {
+        -- `false` will disable the whole extension
+        enable = true,
 
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
-  },
+        -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+        -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+        -- Using this option may slow down your editor, and you may see some duplicate highlights.
+        -- Instead of true it can also be a list of languages
+        additional_vim_regex_highlighting = false,
+    },
 }
 
 vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Undo tree" })
@@ -180,19 +181,19 @@ vim.keymap.set("n", "<leader>u", vim.cmd.UndotreeToggle, { desc = "Undo tree" })
 local lsp = require("lsp-zero")
 
 local cmp = require('cmp')
-local cmp_select = {behavior = cmp.SelectBehavior.Select}
+local cmp_select = { behavior = cmp.SelectBehavior.Select }
 local cmp_mappings = lsp.defaults.cmp_mappings({
-  ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
-  ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
-  ['<C-y>'] = cmp.mapping.confirm({ select = true }),
-  ["<C-x>"] = cmp.mapping.complete(),
+    ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
+    ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
+    ['<C-y>'] = cmp.mapping.confirm({ select = true }),
+    ["<C-x>"] = cmp.mapping.complete(),
 })
 
 cmp_mappings['<Tab>'] = nil
 cmp_mappings['<S-Tab>'] = nil
 
 lsp.setup({
-  mapping = cmp.mapping.preset.insert(cmp_mappings),
+    mapping = cmp.mapping.preset.insert(cmp_mappings),
 })
 
 lsp.set_preferences({
@@ -207,18 +208,36 @@ lsp.set_preferences({
 
 local augroup = vim.api.nvim_create_augroup('LspFormatting', {})
 local lsp_format_on_save = function(bufnr)
-  vim.api.nvim_clear_autocmds({group = augroup, buffer = bufnr})
-  vim.api.nvim_create_autocmd('BufWritePre', {
-      group = augroup,
-      buffer = bufnr,
-      callback = function()
-          vim.lsp.buf.format()
-      end,
-  })
+    vim.api.nvim_clear_autocmds({ group = augroup, buffer = bufnr })
+    vim.api.nvim_create_autocmd('BufWritePre', {
+        group = augroup,
+        buffer = bufnr,
+        callback = function()
+            local params = vim.lsp.util.make_range_params()
+            params.context = { only = { "source.organizeImports" } }
+            -- buf_request_sync defaults to a 1000ms timeout. Depending on your
+            -- machine and codebase, you may want longer. Add an additional
+            -- argument after params if you find that you have to write the file
+            -- twice for changes to be saved.
+            -- E.g., vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 3000)
+            local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
+            for cid, res in pairs(result or {}) do
+                for _, r in pairs(res.result or {}) do
+                    if r.edit then
+                        local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or "utf-16"
+                        vim.lsp.util.apply_workspace_edit(r.edit, enc)
+                    end
+                end
+            end
+            vim.lsp.buf.format({ async = false })
+
+            --        vim.lsp.buf.format()
+        end,
+    })
 end
 
 lsp.on_attach(function(client, bufnr)
-    local opts = {buffer = bufnr, remap = false}
+    local opts = { buffer = bufnr, remap = false }
 
     lsp_format_on_save(bufnr)
 
@@ -227,17 +246,17 @@ lsp.on_attach(function(client, bufnr)
         return opts
     end
 
-  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts_with_desc("Go to definition"))
-  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-  vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts_with_desc("Workspace symbol"))
-  vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts_with_desc("Diagnostics"))
+    vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts_with_desc("Go to definition"))
+    vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
+    vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts_with_desc("Workspace symbol"))
+    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts_with_desc("Diagnostics"))
 
-  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts_with_desc("Next diagnostics"))
-  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts_with_desc("Prev diagnostics"))
-  vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts_with_desc("Code Action"))
-  vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts_with_desc("References"))
-  vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts_with_desc("Rename"))
-  vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts_with_desc("Signature help"))
+    vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts_with_desc("Next diagnostics"))
+    vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts_with_desc("Prev diagnostics"))
+    vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts_with_desc("Code Action"))
+    vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts_with_desc("References"))
+    vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts_with_desc("Rename"))
+    vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts_with_desc("Signature help"))
 end)
 
 lsp.setup()
@@ -249,12 +268,12 @@ vim.diagnostic.config({
 local mark = require("harpoon.mark")
 local ui = require("harpoon.ui")
 
-vim.keymap.set("n", "<leader>a", mark.add_file, {desc = "Add file to harpoon"})
-vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu, {desc = "Toggle harpoon menu"})
+vim.keymap.set("n", "<leader>a", mark.add_file, { desc = "Add file to harpoon" })
+vim.keymap.set("n", "<C-e>", ui.toggle_quick_menu, { desc = "Toggle harpoon menu" })
 
-vim.keymap.set("n", "<leader>1", function() ui.nav_file(1) end, {desc="Harpoon 1"})
-vim.keymap.set("n", "<leader>2", function() ui.nav_file(2) end, {desc="Harpoon 2"})
-vim.keymap.set("n", "<leader>3", function() ui.nav_file(3) end, {desc="Harpoon 3"})
-vim.keymap.set("n", "<leader>4", function() ui.nav_file(4) end, {desc="Harpoon 4"})
-vim.keymap.set("n", "<leader>]", function() ui.nav_next() end, {desc="Harpoon next"})
-vim.keymap.set("n", "<leader>[", function() ui.nav_prev() end, {desc="Harpoon prev"})
+vim.keymap.set("n", "<leader>1", function() ui.nav_file(1) end, { desc = "Harpoon 1" })
+vim.keymap.set("n", "<leader>2", function() ui.nav_file(2) end, { desc = "Harpoon 2" })
+vim.keymap.set("n", "<leader>3", function() ui.nav_file(3) end, { desc = "Harpoon 3" })
+vim.keymap.set("n", "<leader>4", function() ui.nav_file(4) end, { desc = "Harpoon 4" })
+vim.keymap.set("n", "<leader>]", function() ui.nav_next() end, { desc = "Harpoon next" })
+vim.keymap.set("n", "<leader>[", function() ui.nav_prev() end, { desc = "Harpoon prev" })
