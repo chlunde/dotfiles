@@ -99,6 +99,9 @@ require("lazy").setup({
         'tpope/vim-fugitive',
     },
     {
+        'lewis6991/gitsigns.nvim'
+    },
+    {
         'github/copilot.vim',
     },
     {
@@ -109,9 +112,33 @@ require("lazy").setup({
 
 vim.cmd('colorscheme rose-pine')
 
+require('gitsigns').setup({
+    on_attach = function(bufnr)
+        local gs = package.loaded.gitsigns
+
+        local function map(mode, l, r, opts)
+            opts = opts or {}
+            opts.buffer = bufnr
+            vim.keymap.set(mode, l, r, opts)
+        end
+
+        map('n', '<leader>hs', gs.stage_hunk, { desc = "Stage hunk" })
+        map('n', '<leader>hr', gs.reset_hunk, { desc = "Reset hunk" })
+
+        map('v', '<leader>hs', function() gs.stage_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
+            { desc = "Stage hunk" })
+        map('v', '<leader>hr', function() gs.reset_hunk { vim.fn.line('.'), vim.fn.line('v') } end,
+            { desc = "Reset hunk" })
+
+        map('n', '<leader>hb', function() gs.blame_line { full = true } end, { desc = "Blame line" })
+        map('n', '<leader>tb', gs.toggle_current_line_blame, { desc = "Toggle blame" })
+    end
+})
+
 require('go').setup({
     linter = 'staticcheck',
     formatter = 'lsp',
+    lint_prompt_style = 'vt',
 })
 
 local lsp_zero = require('lsp-zero')
@@ -145,6 +172,7 @@ require("set")
 local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>pf', builtin.find_files, { desc = "Find Files" })
 vim.keymap.set('n', '<leader>pg', builtin.live_grep, { desc = "Live Grep" })
+vim.keymap.set('n', '<C-S-f>', builtin.live_grep, { desc = "Live Grep" })
 vim.keymap.set('n', '<leader>pb', builtin.buffers, { desc = "Find Buffers" })
 vim.keymap.set('n', '<leader>pB', builtin.git_branches, { desc = "Branches" })
 vim.keymap.set('n', '<C-p>', builtin.git_files, {})
@@ -236,8 +264,23 @@ local lsp_format_on_save = function(bufnr)
     })
 end
 
+local function lsp_highlight_document(client)
+    if client.server_capabilities.documentHighlightProvider then
+        vim.api.nvim_exec([[
+            augroup lsp_document_highlight
+                autocmd! * <buffer>
+                autocmd CursorHold <buffer> lua vim.lsp.buf.document_highlight()
+                autocmd CursorMoved <buffer> lua vim.lsp.buf.clear_references()
+            augroup END
+            ]],
+            false)
+    end
+end
+
 lsp.on_attach(function(client, bufnr)
     local opts = { buffer = bufnr, remap = false }
+
+    lsp_highlight_document(client)
 
     lsp_format_on_save(bufnr)
 
@@ -249,14 +292,35 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts_with_desc("Go to definition"))
     vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
     vim.keymap.set("n", "<leader>vws", function() vim.lsp.buf.workspace_symbol() end, opts_with_desc("Workspace symbol"))
-    vim.keymap.set("n", "<leader>vd", function() vim.diagnostic.open_float() end, opts_with_desc("Diagnostics"))
+    vim.keymap.set("n", "<leader>e", function() vim.diagnostic.open_float() end, opts_with_desc("Diagnostics"))
 
     vim.keymap.set("n", "[d", function() vim.diagnostic.goto_next() end, opts_with_desc("Next diagnostics"))
     vim.keymap.set("n", "]d", function() vim.diagnostic.goto_prev() end, opts_with_desc("Prev diagnostics"))
+    vim.keymap.set("n", "[q", function() vim.cmd(":cnext") end, opts_with_desc("Next diagnostics"))
+    vim.keymap.set("n", "]q", function() vim.cmd(":cprevious") end, opts_with_desc("Prev diagnostics"))
+
     vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts_with_desc("Code Action"))
     vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts_with_desc("References"))
     vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts_with_desc("Rename"))
     vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts_with_desc("Signature help"))
+
+    local nmap = function(keys, func, desc)
+        if desc then
+            desc = 'LSP: ' .. desc
+        end
+
+        vim.keymap.set('n', keys, func, { buffer = bufnr, desc = desc })
+    end
+
+    nmap('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+    nmap('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+
+    nmap('gd', vim.lsp.buf.definition, '[G]oto [D]efinition')
+    nmap('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+    nmap('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
+    nmap('<leader>D', vim.lsp.buf.type_definition, 'Type [D]efinition')
+    nmap('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+    nmap('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
 end)
 
 lsp.setup()
