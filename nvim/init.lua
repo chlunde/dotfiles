@@ -1,6 +1,8 @@
 --- print("hello, world");
 vim.g.mapleader = " "
 
+vim.opt.mouse = ""
+
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex, { desc = "Browse files" })
 
 vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv")
@@ -173,6 +175,7 @@ local builtin = require('telescope.builtin')
 vim.keymap.set('n', '<leader>pf', builtin.find_files, { desc = "Find Files" })
 vim.keymap.set('n', '<leader>pg', builtin.live_grep, { desc = "Live Grep" })
 vim.keymap.set('n', '<C-S-f>', builtin.live_grep, { desc = "Live Grep" })
+vim.keymap.set('n', '<C-F>', builtin.live_grep, { desc = "Live Grep" })
 vim.keymap.set('n', '<leader>pb', builtin.buffers, { desc = "Find Buffers" })
 vim.keymap.set('n', '<leader>pB', builtin.git_branches, { desc = "Branches" })
 vim.keymap.set('n', '<C-p>', builtin.git_files, {})

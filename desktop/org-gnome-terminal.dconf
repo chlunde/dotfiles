@@ -4,3 +4,6 @@ use-theme-colors=false
 foreground-color='rgb(211,215,207)'
 use-system-font=false
 font='Iosevka Term Slab Light 16'
+
+[org/gnome/terminal/legacy/keybindings]
+find='disabled'
