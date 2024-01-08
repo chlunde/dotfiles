@@ -303,8 +303,10 @@ lsp.on_attach(function(client, bufnr)
     vim.keymap.set("n", "]q", function() vim.cmd(":cprevious") end, opts_with_desc("Prev diagnostics"))
 
     vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts_with_desc("Code Action"))
+    vim.keymap.set("n", "<C-.>", function() vim.lsp.buf.code_action() end, opts_with_desc("Code Action"))
     vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts_with_desc("References"))
     vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts_with_desc("Rename"))
+    vim.keymap.set("n", "<F2>", function() vim.lsp.buf.rename() end, opts_with_desc("Rename"))
     vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts_with_desc("Signature help"))
 
     local nmap = function(keys, func, desc)
