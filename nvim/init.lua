@@ -109,8 +109,13 @@ require("lazy").setup({
     {
         'crispgm/nvim-go',
     },
+    { 'kosayoda/nvim-lightbulb' }
 }
 )
+
+require("nvim-lightbulb").setup({
+    autocmd = { enabled = true },
+})
 
 vim.cmd('colorscheme rose-pine')
 
