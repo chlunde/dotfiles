@@ -1,6 +1,16 @@
 #!/bin/bash
-npm config set prefix $HOME/opt
+
+# Set prefix to allow rootless global npm install
+if ! npm config get prefix | grep -Eq "(/.npm|$HOME/opt)\$"; then
+	npm config set prefix "$HOME/opt"
+fi
 
 npm install -g yaml-language-server
+# yum install https://github.com/cli/cli/releases/download/v2.0.0/gh_2.0.0_linux_amd64.rpm
 
-yum install https://github.com/cli/cli/releases/download/v2.0.0/gh_2.0.0_linux_amd64.rpm
+nvim_version=0.9.5
+curl --fail -SsL -o nvim.tar.gz "https://github.com/neovim/neovim/releases/download/v${nvim_version}/nvim-linux64.tar.gz"
+rm -Rf "$HOME/opt/nvim"
+tar -xzf nvim.tar.gz -C "$HOME/opt"
+mv "$HOME/opt/nvim-linux64" "$HOME/opt/nvim"
+rm -f nvim.tar.gz
