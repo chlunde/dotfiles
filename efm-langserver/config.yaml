@@ -1,0 +1,19 @@
+version: 2
+root-markers:
+  - .git/
+lint-debounce: 1s
+tools:
+  sh-shellcheck: &sh-shellcheck
+    lint-command: 'shellcheck -f gcc -x'
+    lint-source: 'shellcheck'
+    lint-formats:
+      - '%f:%l:%c: %trror: %m'
+      - '%f:%l:%c: %tarning: %m'
+      - '%f:%l:%c: %tote: %m'
+  sh-shfmt: &sh-shfmt
+    format-command: 'shfmt -ci -i=4 -s -bn'
+    format-stdin: true
+languages:
+  sh:
+    - <<: *sh-shellcheck
+    - <<: *sh-shfmt
