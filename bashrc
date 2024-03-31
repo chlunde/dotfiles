@@ -60,14 +60,14 @@ pathmunge() {
     fi
 
     case ":${PATH}:" in
-    *:"$1":*) ;;
-    *)
-        if [ "$2" = "after" ]; then
-            PATH=$PATH:$1
-        else
-            PATH=$1:$PATH
-        fi
-        ;;
+        *:"$1":*) ;;
+        *)
+            if [ "$2" = "after" ]; then
+                PATH=$PATH:$1
+            else
+                PATH=$1:$PATH
+            fi
+            ;;
     esac
 }
 
@@ -86,18 +86,19 @@ pathmunge "$HOME/opt/bin"
 pathmunge "$HOME/opt/emacs/bin"
 pathmunge "$HOME/opt/git/bin"
 pathmunge "$HOME/opt/ripgrep"
+pathmunge "$HOME/opt/nvim/bin"
 
 if type nvim &>/dev/null; then
-  export EDITOR=nvim
+    export EDITOR=nvim
 else
-  export EDITOR=vim
+    export EDITOR=vim
 fi
 
-alias vi=$EDITOR
+alias vi="\$EDITOR"
 export ALTERNATE_EDITOR=""
-alias e='emacsclient -t'
 
-em() { emacsclient -a 'emacs' -n "$@" 2>/dev/null; }
+#alias e='emacsclient -t'
+#em() { emacsclient -a 'emacs' -n "$@" 2>/dev/null; }
 
 [ -e ~/.pystartup ] && export PYTHONSTARTUP=~/.pystartup
 
@@ -126,12 +127,12 @@ shopt -s checkwinsize
 
 alias m='make'
 case $MACHTYPE in
-*linux*)
-    alias ls='ls -FX --color=auto'
-    ;;
-*)
-    alias ls="ls -hFG"
-    ;;
+    *linux*)
+        alias ls='ls -FX --color=auto'
+        ;;
+    *)
+        alias ls="ls -hFG"
+        ;;
 esac
 alias grep='grep --color=tty -d skip'
 alias grpe='grep --color=tty -d skip'
@@ -153,18 +154,18 @@ cd() {
     # first, get all options out of the way
     for i in "$@"; do
         case "$i" in
-        --)
-            opt=("${opt[@]}" "$i")
-            split=
-            ;;
-        -?)
-            [ "$split" ] &&
-                opt=("${opt[@]}" "$i") ||
+            --)
+                opt=("${opt[@]}" "$i")
+                split=
+                ;;
+            -?)
+                [ "$split" ] \
+                    && opt=("${opt[@]}" "$i") \
+                    || arg=("${arg[@]}" "$i")
+                ;;
+            *)
                 arg=("${arg[@]}" "$i")
-            ;;
-        *)
-            arg=("${arg[@]}" "$i")
-            ;;
+                ;;
         esac
     done
 
@@ -193,11 +194,6 @@ cd() {
     fi
 }
 
-cover() {
-    local t=$(mktemp -t cover.XXXXXXXXX)
-    go test $COVERFLAGS -coverprofile=$t $@ && go tool cover -func=$t && unlink $t
-}
-
 if [[ -x ~/bin/fzf ]] && [[ -z $INSIDE_EMACS ]]; then
 
     __fzf_proj__() {
@@ -209,58 +205,83 @@ if [[ -x ~/bin/fzf ]] && [[ -z $INSIDE_EMACS ]]; then
         ) | fzf +m) && printf 'cd %q' "$dir"
     }
     # alt-c
+    # shellcheck disable=2016
     bind '"\ec": " \C-e\C-u$(__fzf_proj__)\e\C-e\C-m"'
-
-    __fzf_shell_in_container__() {
-        local container
-        container=$(docker ps -a | sed 1d | fzf +m | cut -d' ' -f1) && printf 'docker exec -it %q /bin/bash' "$container"
-    }
-    # alt-e
-    bind '"\ee": " \C-e\C-u$(__fzf_shell_in_container__)\e\C-e\C-m"'
 fi
 
 #shopt -s progcomp
 #[ -f /etc/bash_completion.d/git ] && source /etc/bash_completion.d/git
 
+# lazy load bash completions (avoid startup cost)
+_lazy_complete() {
+    # shellcheck disable=SC1090
+    source "$HOME/.local/share/bash-completion/$1"
+}
+
 __update-completions() {
-    local -r compdir=$HOME/.local/share/bash-completion/
-    test -d $compdir || mkdir -p $compdir
+    local -r compdir="$HOME/.local/share/bash-completion/"
+    test -d "$compdir" || mkdir -p "$compdir"
 
     . /usr/share/bash-completion/bash_completion
 
     if type kubectl &>/dev/null; then
-        if test $compdir/kubectl -ot $(which kubectl); then
-            kubectl completion bash >$compdir/kubectl
+        if test "$compdir/kubectl" -ot "$(which kubectl)"; then
+            kubectl completion bash >"$compdir/kubectl"
         fi
     fi
+    complete -F _lazy_complete kubectl
 
     if type gh &>/dev/null; then
-        if test $compdir/gh -ot $(which gh); then
-            gh completion -s bash >$compdir/gh
+        if test "$compdir/gh" -ot "$(which gh)"; then
+            gh completion -s bash >"$compdir/gh"
         fi
     fi
+    complete -F _lazy_complete gh
 
     if type kind &>/dev/null; then
-        if test $compdir/kind -ot $(which kind); then
-            kind completion bash >$compdir/kind
+        if test "$compdir/kind" -ot "$(which kind)"; then
+            kind completion bash >"$compdir/kind"
         fi
     fi
+    complete -F _lazy_complete kind
 }
 
 __update-completions
-alias k=kubecolor
 
+alias k=kubectl
+complete -o default -F __start_kubectl k
+
+# Set terminal title manually
 t() {
-    echo -ne "\033]0;$(basename "$PWD")\007"
+    AUTO_TITLE=0
+    if [[ -n $TMUX ]]; then
+        tmux rename-window "$(basename "$PWD") $*"
+    else
+        echo -ne "\033]0;$(basename "$PWD") $*\007"
+    fi
 }
 
-# go install github.com/dty1er/kubecolor/cmd/kubecolor@v0.0.12
-if command -v kubecolor >/dev/null 2>&1; then
-    alias kubectl="kubecolor"
-    complete -o default -F __start_kubectl k
-fi
+# Set terminal title automatically
+preexec() { :; }
+preexec_invoke_exec() {
+    [ -n "$COMP_LINE" ] && return                     # do nothing if completing
+    [ "$BASH_COMMAND" = "$PROMPT_COMMAND" ] && return # don't cause a preexec for $PROMPT_COMMAND
+    [ "$AUTO_TITLE" = 0 ] && return                   # don't set title when title has been set manually
+    local this_command
+    this_command="$(HISTTIMEFORMAT="" history 1 | sed -e "s/^[ ]*[0-9]*[ ]*//" -e 's/^\([^ ]\+\s\+[^ ]\+\s\+[^ ]\+\).*/\1/' -e 's/[|&<>].*//')"
+    pwd="$(basename "$PWD")"
+    if [[ $pwd == "$USER" ]]; then
+        pwd="~"
+    fi
+    if [[ -n $TMUX ]]; then
+        tmux rename-window "$pwd: $this_command"
+    else
+        echo -ne "\033]0;$pwd: $this_command\007"
+    fi
+}
+trap 'preexec_invoke_exec' DEBUG
 
-if tail -n 1 $HOME/.bashrc | grep -q opt/etc/shrc; then
-    sed --follow-symlinks -i '$d' $HOME/.bashrc
+if tail -n 1 "$HOME/.bashrc" | grep -q opt/etc/shrc; then
+    sed --follow-symlinks -i '$d' "$HOME/.bashrc"
 fi
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
