@@ -1,11 +1,10 @@
 #!/bin/bash
-v=1.20.3
-hash=979694c2c25c735755bf26f4f45e19e64e4811d661dd07b8c010f7a8e18adfca
+v=1.22.1
+hash=aab8e15785c997ae20f9c88422ee35d962c4562212bb0f879d052a35c8307c7f
 
-if [[ "$(go version 2> /dev/null)" == "go version go$v "* ]]
-then
-    echo "Already updated"
-    exit 0
+if [[ "$(go version 2>/dev/null)" == "go version go$v "* ]]; then
+	echo "Already updated"
+	exit 0
 fi
 
 mkdir -p ~/Downloads/
@@ -14,8 +13,7 @@ curl -o "$binary" https://storage.googleapis.com/golang/go$v.linux-amd64.tar.gz
 
 found="$(sha256sum $binary | cut -d ' ' -f1)"
 
-if [[ "$found" != "$hash" ]]
-then
+if [[ $found != "$hash" ]]; then
 	echo "Checksum mismatch: ${found}"
 	exit 1
 fi
