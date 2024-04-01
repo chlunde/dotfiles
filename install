@@ -29,3 +29,4 @@ ln -f -s ~/dotfiles/efm-langserver/config.yaml ~/.config/efm-langserver/config.y
 
 rmdir ~/Templates ~/Public
 ln -f -s ~/dotfiles/bin/ll ~/opt/bin/
+ln -f -s ~/dotfiles/bin/clean-git-branches ~/opt/bin/
