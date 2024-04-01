@@ -78,22 +78,22 @@ def git_status(dir):
 		fmt = []
 
 		if b"branch.oid" in meta:
-			fmt.append(meta[b"branch.oid"].decode("utf-8")[:7])
+			fmt.append(color(Rosewater, meta[b"branch.oid"].decode("utf-8")[:7]))
 
-		fmt.append("{0:5s}".format("".join(mods.keys())))
+		fmt.append(color(Peach, "{0:5s}".format("".join(mods.keys()))))
 
-		fmt.append(srv)
+		fmt.append(color(Mantle, srv))
 
 		if b"branch.upstream" in meta:
-			fmt.append(meta[b"branch.upstream"].decode("utf-8"))
+			fmt.append(color(Overlay2, meta[b"branch.upstream"].decode("utf-8")))
 		else:
-			fmt.append(meta[b"branch.head"].decode("utf-8"))
+			fmt.append(color(Yellow, meta[b"branch.head"].decode("utf-8")))
 
 
 		ahead = "u" in mods
 		if b"branch.ab" in meta and meta[b"branch.ab"] != b"+0 -0":
 			ahead_behind = meta[b"branch.ab"].decode("utf-8").replace("+0 ", "").replace(" -0", "")
-			fmt.append(ahead_behind)
+			fmt.append(color(Green, ahead_behind))
 			if "+" in ahead_behind:
 				ahead = True
 
@@ -102,7 +102,7 @@ def git_status(dir):
 				fmt.append(c)
 
 		for branch in local_only_branches:
-			fmt.append(branch)
+			fmt.append(color(Mauve, branch))
 
 		return " ".join(fmt)
 		# print(meta, mods)
@@ -113,12 +113,51 @@ def git_fetch(dir):
 
 	if os.path.exists(os.path.join(dir, ".git")):
 		try:
-			remote = subprocess.check_output(["git", "-C", dir, "remote", "get-url", "origin"], stderr=subprocess.DEVNULL)
+			subprocess.check_output(["git", "-C", dir, "remote", "get-url", "origin"], stderr=subprocess.DEVNULL)
 			st = os.stat(os.path.join(dir, ".git", "FETCH_HEAD"))
 			if st.st_mtime < time.time() - 3600:
 				subprocess.check_output(["git", "-C", dir, "fetch"], stderr=subprocess.DEVNULL)
+		except FileNotFoundError:
+			pass
 		except subprocess.CalledProcessError:
 			pass
+
+
+def rgb(r, g, b):
+	return "{0};{1};{2}".format(r, g, b)
+
+
+def color(rgb, text):
+	return "\033[38;2;{0};m{1}\033[0m".format(rgb, text)
+	# \033[38;2;146;255;12mHello!\033[0m
+
+
+Rosewater = rgb(245, 224, 220)
+Flamingo = rgb(242, 205, 205)
+Pink = rgb(245, 194, 231)
+Mauve = rgb(203, 166, 247)
+Red = rgb(243, 139, 168)
+Maroon = rgb(235, 160, 172)
+Peach = rgb(250, 179, 135)
+Yellow = rgb(249, 226, 175)
+Green = rgb(166, 227, 161)
+Teal = rgb(148, 226, 213)
+Sky = rgb(137, 220, 235)
+Sapphire = rgb(116, 199, 236)
+Blue = rgb(137, 180, 250)
+Lavender = rgb(180, 190, 254)
+Text = rgb(205, 214, 244)
+Subtext1 = rgb(186, 194, 222)
+Subtext0 = rgb(166, 173, 200)
+Overlay2 = rgb(147, 153, 178)
+Overlay1 = rgb(127, 132, 156)
+Overlay0 = rgb(108, 112, 134)
+Surface2 = rgb(88, 91, 112)
+Surface1 = rgb(69, 71, 90)
+Surface0 = rgb(49, 50, 68)
+Base = rgb(30, 30, 46)
+Mantle = rgb(24, 24, 37)
+Crust = rgb(17, 17, 27)
 
 
 def main():
