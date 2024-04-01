@@ -26,3 +26,6 @@ sudo dnf install compat-lua-libs libtermkey libtree-sitter libvterm luajit luaji
 
 mkdir -p ~/.config/efm-langserver/
 ln -f -s ~/dotfiles/efm-langserver/config.yaml ~/.config/efm-langserver/config.yaml
+
+rmdir ~/Templates ~/Public
+ln -f -s ~/dotfiles/bin/ll ~/opt/bin/
