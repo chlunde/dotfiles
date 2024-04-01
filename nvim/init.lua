@@ -797,6 +797,29 @@ require("lazy").setup({
 		end,
 	},
 
+	{
+		"jubnzv/mdeval.nvim",
+		cmd = "MdEval",
+		keys = { "<leader>E" },
+		config = function()
+			vim.keymap.set("n", "<leader>E", "<cmd>MdEval<CR>", { desc = "[E]valuate Code in Markdown" })
+			require("mdeval").setup({
+				-- Don't ask before executing code blocks
+				-- require_confirmation = false,
+				results_label = "*Output:*",
+				-- Change code blocks evaluation options.
+				eval_options = {
+					go = {
+						command = { "go", "run" },
+						language_code = "go",
+						exec_type = "interpreted",
+						extension = "go",
+					},
+				},
+			})
+		end,
+	},
+
 	-- Highlight todo, notes, etc in comments
 	{
 		"folke/todo-comments.nvim",
