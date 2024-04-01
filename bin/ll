@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+
+import sys
+import subprocess
+import os.path
+import time
+
+
+def git_status(dir):
+	# get most recent commit, age and author
+
+
+	if os.path.exists(os.path.join(dir, ".git")):
+		#describe = subprocess.check_output(["git", "-C", dir, "describe", "--contains", "--all", "HEAD"])
+		commit = ["", ""]
+		try:
+			commit = subprocess.check_output(["git", "-C", dir, "log", "-1", "--pretty=format:%h %cr:%an"])
+			commit = commit.decode('utf-8').strip().split(" ", 1)[1].split(":")
+		except subprocess.CalledProcessError:
+			pass
+		#describe = describe.strip()
+
+		srv = "  "
+		try:
+			remote = subprocess.check_output(["git", "-C", dir, "remote", "get-url", "origin"], stderr=subprocess.DEVNULL)
+			if b"github.com" in remote:
+				srv = "GH"
+			st = os.stat(os.path.join(dir, ".git", "FETCH_HEAD"))
+			if st.st_mtime < time.time() - 600:
+				subprocess.check_output(["git", "-C", dir, "fetch"], stderr=subprocess.DEVNULL)
+		except subprocess.CalledProcessError:
+			pass
+
+		def get_status():
+			out = subprocess.check_output(["git", "-C", dir, "status", "--porcelain=2", "--branch", "--show-stash"])
+			meta = {}
+			mods = {}
+			
+			for line in out.splitlines():
+				if line.startswith(b"# "):
+					key, val = line.strip(b"# ").split(b" ", 1)
+					meta[key] = val
+				elif line.startswith(b"1 ") or line.startswith(b"2 "):
+					_, status, _ = line.split(b" ", 2)
+					if status[0] != ".":
+						mods["+"] = "staged"
+					if status[1] != ".":
+						mods["*"] = "dirty"
+					#mods["$"] = "stashed"
+				elif line.startswith(b"u"):
+					mods["u"] = "unmerged"
+				elif line.startswith(b"?"):
+					mods["?"] = "untracked"
+				else:
+					print(line)
+
+			if b"stash" in meta:
+				mods["$"] = "stashed"
+
+			return mods, meta
+
+		mods, meta = get_status()
+		if not b"-0" in meta.get(b"branch.ab", b"-0") and b"+0" in meta[b"branch.ab"] and not "u" in mods and not "+" in mods and not "*" in mods:
+			subprocess.check_output(["git", "-C", dir, "pull"])
+			mods, meta = get_status()
+
+		fmt = []
+
+		if b"branch.oid" in meta:
+			fmt.append(meta[b"branch.oid"].decode("utf-8")[:7])
+
+		fmt.append("{0:5s}".format("".join(mods.keys())))
+
+		fmt.append(srv)
+
+		if b"branch.upstream" in meta:
+			fmt.append(meta[b"branch.upstream"].decode("utf-8"))
+		else:
+			fmt.append(meta[b"branch.head"].decode("utf-8"))
+
+
+		ahead = "u" in mods
+		if b"branch.ab" in meta and meta[b"branch.ab"] != b"+0 -0":
+			ahead_behind = meta[b"branch.ab"].decode("utf-8").replace("+0 ", "").replace(" -0", "")
+			fmt.append(ahead_behind)
+			if "+" in ahead_behind:
+				ahead = True
+
+		if ahead:
+			for c in commit:
+				fmt.append(c)
+
+		return " ".join(fmt)
+		# print(meta, mods)
+	return
+
+
+
+def main():
+	args = ["."]
+	if len(sys.argv) > 1:
+		args = sys.argv[1:]
+	for arg in args:
+		for dir in sorted(os.listdir(arg)):
+			status = git_status(os.path.join(arg, dir))
+			print("{0:40s} {1}".format(dir, status))
+
+if __name__ == "__main__":
+	main()
