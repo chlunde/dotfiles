@@ -964,5 +964,14 @@ require("lazy").setup({
 	},
 })
 
+-- TODO: Markdown only
+vim.keymap.set(
+	"n",
+	"<leader>X",
+	"<cmd>keeppatterns s/^\\s*- \\[\\zs.\\ze\\]/\\=get({' ': 'x', 'x': ' '}, submatch(0), ' ')/e<CR>",
+	--"<cmd>keeppatterns s/^\s*- [\zs.\ze]/\=get({' ': 'x', 'x': ' '}, submatch(0), ' ')/e<CR>",
+	{ desc = "Toggle md list" }
+)
+
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
