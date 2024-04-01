@@ -828,6 +828,17 @@ require("lazy").setup({
 		opts = { signs = false },
 	},
 
+	{
+		"folke/trouble.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		keys = { "<leader>xx" },
+		config = function()
+			vim.keymap.set("n", "<leader>xx", function()
+				require("trouble").toggle()
+			end)
+		end,
+	},
+
 	{ -- Collection of various small independent plugins/modules
 		"echasnovski/mini.nvim",
 		config = function()
