@@ -82,10 +82,13 @@ def git_status(dir):
 
 		fmt.append(color(Peach, "{0:5s}".format("".join(mods.keys()))))
 
-		fmt.append(color(Mantle, srv))
+		fmt.append(color(Surface2, srv))
 
 		if b"branch.upstream" in meta:
-			fmt.append(color(Overlay2, meta[b"branch.upstream"].decode("utf-8")))
+			c = Pink
+			if meta[b"branch.upstream"] in [b"origin/main", b"origin/master"]:
+				c = Overlay2
+			fmt.append(color(c, meta[b"branch.upstream"].decode("utf-8")))
 		else:
 			fmt.append(color(Yellow, meta[b"branch.head"].decode("utf-8")))
 
@@ -128,7 +131,7 @@ def rgb(r, g, b):
 
 
 def color(rgb, text):
-	return "\033[38;2;{0};m{1}\033[0m".format(rgb, text)
+	return "\033[38;2;{0}m{1}\033[0m".format(rgb, text)
 	# \033[38;2;146;255;12mHello!\033[0m
 
 
