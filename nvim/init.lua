@@ -113,7 +113,7 @@ vim.opt.showmode = false
 -- Sync clipboard between OS and Neovim.
 --  Remove this option if you want your OS clipboard to remain independent.
 --  See `:help 'clipboard'`
-vim.opt.clipboard = "unnamedplus"
+-- vim.opt.clipboard = "unnamedplus"
 
 -- Enable break indent
 vim.opt.breakindent = true
@@ -166,6 +166,8 @@ vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Go to previous [D]
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Go to next [D]iagnostic message" })
 vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Show diagnostic [E]rror messages" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
+vim.keymap.set("n", "[c", "<cmd>cnext<CR>", { desc = "Go to next [Q]uickfix" })
+vim.keymap.set("n", "]c", "<cmd>cprev<CR>", { desc = "Go to prev [Q]uickfix" })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -292,24 +294,41 @@ require("lazy").setup({
 
 	{
 		"zk-org/zk-nvim",
-		config = function()
-			require("zk").setup({})
-			local opts = { noremap = true, silent = false }
-			-- Create a new note after asking for its title.
-			vim.api.nvim_set_keymap("n", "<leader>zn", "<Cmd>ZkNew { title = vim.fn.input('Title: ') }<CR>", opts)
-			-- Open notes.
-			vim.api.nvim_set_keymap("n", "<leader>zo", "<Cmd>ZkNotes { sort = { 'modified' } }<CR>", opts)
-			-- Open notes associated with the selected tags.
-			vim.api.nvim_set_keymap("n", "<leader>zt", "<Cmd>ZkTags<CR>", opts)
-			-- Search for the notes matching a given query.
-			vim.api.nvim_set_keymap(
-				"n",
+		keys = {
+			{ "<leader>z", desc = "[z]ettelkasten" },
+			{
+				"<leader>zo",
+				"<Cmd>ZkNotes { sort = { 'modified' } }<CR>",
+				desc = "[O]pen ZK",
+				noremap = true,
+				silent = false,
+			},
+			{
+				"<leader>zn",
+				"<Cmd>ZkNew { title = vim.fn.input('Title: ') }<CR>",
+				desc = "[N]ew ZK",
+				noremap = true,
+				silent = false,
+			},
+			{ "<leader>zt", "<Cmd>ZkTags<CR>", desc = "ZK [t]ags", noremap = true, silent = false },
+			{
 				"<leader>zf",
 				"<Cmd>ZkNotes { sort = { 'modified' }, match = { vim.fn.input('Search: ') } }<CR>",
-				opts
-			)
-			-- Search for the notes matching the current visual selection.
-			vim.api.nvim_set_keymap("v", "<leader>zf", ":'<,'>ZkMatch<CR>", opts)
+				desc = "ZK [f]ind",
+				noremap = true,
+				silent = false,
+			},
+			{
+				"<leader>zf",
+				":'<,'>ZkMatch<CR>",
+				desc = "ZK [f]ind",
+				mode = "v",
+				noremap = true,
+				silent = false,
+			},
+		},
+		config = function()
+			require("zk").setup({})
 		end,
 	},
 
@@ -429,7 +448,7 @@ require("lazy").setup({
 		"neovim/nvim-lspconfig",
 		dependencies = {
 			-- Automatically install LSPs and related tools to stdpath for Neovim
-			"williamboman/mason.nvim",
+			{ "williamboman/mason.nvim", config = true }, -- NOTE: Must be loaded before dependants
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 
@@ -535,15 +554,37 @@ require("lazy").setup({
 					-- When you move your cursor, the highlights will be cleared (the second autocommand).
 					local client = vim.lsp.get_client_by_id(event.data.client_id)
 					if client and client.server_capabilities.documentHighlightProvider then
+						local highlight_augroup =
+							vim.api.nvim_create_augroup("kickstart-lsp-highlight", { clear = false })
 						vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
 							buffer = event.buf,
+							group = highlight_augroup,
 							callback = vim.lsp.buf.document_highlight,
 						})
 
 						vim.api.nvim_create_autocmd({ "CursorMoved", "CursorMovedI" }, {
 							buffer = event.buf,
+							group = highlight_augroup,
 							callback = vim.lsp.buf.clear_references,
 						})
+
+						vim.api.nvim_create_autocmd("LspDetach", {
+							group = vim.api.nvim_create_augroup("kickstart-lsp-detach", { clear = true }),
+							callback = function(event2)
+								vim.lsp.buf.clear_references()
+								vim.api.nvim_clear_autocmds({ group = "kickstart-lsp-highlight", buffer = event2.buf })
+							end,
+						})
+					end
+
+					-- The following autocommand is used to enable inlay hints in your
+					-- code, if the language server you are using supports them
+					--
+					-- This may be unwanted, since they displace some of your code
+					if client and client.server_capabilities.inlayHintProvider and vim.lsp.inlay_hint then
+						map("<leader>th", function()
+							vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
+						end, "[T]oggle Inlay [H]ints")
 					end
 				end,
 			})
@@ -567,7 +608,17 @@ require("lazy").setup({
 			local home = os.getenv("HOME")
 			local servers = {
 				-- clangd = {},
-				gopls = {},
+				gopls = {
+					settings = {
+						gopls = {
+							analyses = {
+								unusedparams = true,
+							},
+							staticcheck = true,
+							gofumpt = true,
+						},
+					},
+				},
 				pyright = {},
 				-- rust_analyzer = {},
 				-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -650,6 +701,17 @@ require("lazy").setup({
 
 	{ -- Autoformat
 		"stevearc/conform.nvim",
+		lazy = false,
+		keys = {
+			{
+				"<leader>f",
+				function()
+					require("conform").format({ async = true, lsp_fallback = true })
+				end,
+				mode = "",
+				desc = "[F]ormat buffer",
+			},
+		},
 		opts = {
 			notify_on_error = false,
 			format_on_save = function(bufnr)
@@ -663,6 +725,8 @@ require("lazy").setup({
 				}
 			end,
 			formatters_by_ft = {
+				-- stop formating Go files, leave gopls to the job with gofumpt
+				go = {},
 				lua = { "stylua" },
 				-- Conform can also run multiple formatters sequentially
 				-- python = { "isort", "black" },
@@ -784,13 +848,16 @@ require("lazy").setup({
 		-- change the command in the config to whatever the name of that colorscheme is.
 		--
 		-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-		"folke/tokyonight.nvim",
+		-- "folke/tokyonight.nvim",
+		"catppuccin/nvim",
+		name = "catppuccin",
+
 		priority = 1000, -- Make sure to load this before all the other start plugins.
 		init = function()
 			-- Load the colorscheme here.
 			-- Like many other themes, this one has different styles, and you could load
 			-- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-			vim.cmd.colorscheme("tokyonight-night")
+			vim.cmd.colorscheme("catppuccin")
 
 			-- You can configure highlights by doing something like:
 			vim.cmd.hi("Comment gui=none")
@@ -800,9 +867,10 @@ require("lazy").setup({
 	{
 		"jubnzv/mdeval.nvim",
 		cmd = "MdEval",
-		keys = { "<leader>E" },
+		keys = {
+			{ "<leader>E", "<cmd>MdEval<CR>", desc = "[E]valuate Code in Markdown" },
+		},
 		config = function()
-			vim.keymap.set("n", "<leader>E", "<cmd>MdEval<CR>", { desc = "[E]valuate Code in Markdown" })
 			require("mdeval").setup({
 				-- Don't ask before executing code blocks
 				-- require_confirmation = false,
@@ -831,11 +899,29 @@ require("lazy").setup({
 	{
 		"folke/trouble.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
-		keys = { "<leader>xx" },
+		keys = { "<leader>xx", "<leader>xd", "<leader>xw", "<leader>xq", "<leader>xl" },
 		config = function()
+			require("which-key").register({
+				["<leader>x"] = { name = "trouble [x]", _ = "which_key_ignore" },
+			})
 			vim.keymap.set("n", "<leader>xx", function()
 				require("trouble").toggle()
 			end)
+			vim.keymap.set("n", "<leader>xw", function()
+				require("trouble").toggle("workspace_diagnostics")
+			end)
+			vim.keymap.set("n", "<leader>xd", function()
+				require("trouble").toggle("document_diagnostics")
+			end)
+			vim.keymap.set("n", "<leader>xq", function()
+				require("trouble").toggle("quickfix")
+			end)
+			vim.keymap.set("n", "<leader>xl", function()
+				require("trouble").toggle("loclist")
+			end)
+			-- vim.keymap.set("n", "gR", function()
+			-- 	require("trouble").toggle("lsp_references")
+			-- end)
 		end,
 	},
 
@@ -935,6 +1021,9 @@ require("lazy").setup({
 	-- require 'kickstart.plugins.debug',
 	-- require 'kickstart.plugins.indent_line',
 	-- require 'kickstart.plugins.lint',
+	-- require 'kickstart.plugins.autopairs',
+	-- require 'kickstart.plugins.neo-tree',
+	require("kickstart.plugins.gitsigns"), -- adds gitsigns recommend keymaps
 
 	-- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
 	--    This is the easiest way to modularize your config.
@@ -962,6 +1051,29 @@ require("lazy").setup({
 			lazy = "💤 ",
 		},
 	},
+})
+
+vim.api.nvim_create_autocmd("BufWritePre", {
+	pattern = "*.go",
+	callback = function()
+		local params = vim.lsp.util.make_range_params()
+		params.context = { only = { "source.organizeImports" } }
+		-- buf_request_sync defaults to a 1000ms timeout. Depending on your
+		-- machine and codebase, you may want longer. Add an additional
+		-- argument after params if you find that you have to write the file
+		-- twice for changes to be saved.
+		-- E.g., vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 3000)
+		local result = vim.lsp.buf_request_sync(0, "textDocument/codeAction", params)
+		for cid, res in pairs(result or {}) do
+			for _, r in pairs(res.result or {}) do
+				if r.edit then
+					local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or "utf-16"
+					vim.lsp.util.apply_workspace_edit(r.edit, enc)
+				end
+			end
+		end
+		vim.lsp.buf.format({ async = false })
+	end,
 })
 
 -- TODO: Markdown only
