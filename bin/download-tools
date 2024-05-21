@@ -8,8 +8,15 @@ fi
 npm install -g yaml-language-server
 # yum install https://github.com/cli/cli/releases/download/v2.0.0/gh_2.0.0_linux_amd64.rpm
 
-nvim_version=0.9.5
-curl --fail -SsL -o nvim.tar.gz "https://github.com/neovim/neovim/releases/download/v${nvim_version}/nvim-linux64.tar.gz"
+nvim_version=0.10.0
+
+suffix=""
+if [[ "$(cat /etc/redhat-release)" == *"release 8"* ]];
+then
+    suffix="-releases"
+fi
+
+curl --fail -SsL -o nvim.tar.gz "https://github.com/neovim/neovim${suffix}/releases/download/v${nvim_version}/nvim-linux64.tar.gz"
 rm -Rf "$HOME/opt/nvim"
 tar -xzf nvim.tar.gz -C "$HOME/opt"
 mv "$HOME/opt/nvim-linux64" "$HOME/opt/nvim"
