@@ -30,7 +30,7 @@ shorthost_prompt() {
     shopt -s extglob
     local host=${HOSTNAME/%.+([a-z0-9]).no/}
     local host="\u@${host/%.localdomain/} "
-    if [[ $host == *client* ]]; then
+    if [ -z "$SSH_CLIENT" ] && [ -z "$SSH_TTY" ]; then
         local host=""
     fi
     eval "$opt"
@@ -222,7 +222,8 @@ __update-completions() {
     local -r compdir="$HOME/.local/share/bash-completion/"
     test -d "$compdir" || mkdir -p "$compdir"
 
-    . /usr/share/bash-completion/bash_completion
+    test -f /usr/share/bash-completion/bash_completion && . /usr/share/bash-completion/bash_completion
+    test -f /opt/homebrew/share/bash-completion/bash_completion && . /opt/homebrew/share/bash-completion/bash_completion
 
     if type kubectl &>/dev/null; then
         if test "$compdir/kubectl" -ot "$(which kubectl)"; then

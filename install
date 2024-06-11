@@ -1,7 +1,8 @@
 #!/bin/bash
 cd ~/
 
-ln -s ~/dotfiles/i3 ~/.config/i3/config
+mkdir -p ~/.local/bin
+mkdir -p ~/.config
 
 for f in bash_profile bashrc emacs inputrc; do
     test -f ~/.$f && mv ~/.$f ~/.${f}.OLD
@@ -12,21 +13,24 @@ for f in gitconfig; do
     test -f ~/.$f || cp ~/dotfiles/$f .$f
 done
 
-mkdir -p ~/.emacs.d/straight/versions/
-ln -f -s ~/dotfiles/version-lock.el ~/.emacs.d/straight/versions/default.el
+ln -f -s ~/dotfiles/nvim ~/.config/
+
+
+#mkdir -p ~/.emacs.d/straight/versions/
+#ln -f -s ~/dotfiles/version-lock.el ~/.emacs.d/straight/versions/default.el
+mkdir -p ~/.emacs.d/
 echo '(setq package-enable-at-startup nil)' >~/.emacs.d/early-init.el
 
-mkdir -p ~/bin
-ln -f -s ~/dotfiles/bin/go-tool-install ~/bin/
+ln -f -s ~/dotfiles/bin/go-tool-install ~/.local/bin
 
-mkdir -p ~/.config/i3
-ln -s ~/dotfiles/i3 ~/.config/i3/config
+#mkdir -p ~/.config/i3
+#ln -s ~/dotfiles/i3 ~/.config/i3/config
 
-sudo dnf install compat-lua-libs libtermkey libtree-sitter libvterm luajit luajit2.1-luv msgpack unibilium xsel
+#sudo dnf install compat-lua-libs libtermkey libtree-sitter libvterm luajit luajit2.1-luv msgpack unibilium xsel
 
 mkdir -p ~/.config/efm-langserver/
 ln -f -s ~/dotfiles/efm-langserver/config.yaml ~/.config/efm-langserver/config.yaml
 
-rmdir ~/Templates ~/Public
-ln -f -s ~/dotfiles/bin/ll ~/opt/bin/
-ln -f -s ~/dotfiles/bin/clean-git-branches ~/opt/bin/
+#rmdir ~/Templates ~/Public
+ln -f -s ~/dotfiles/bin/ll ~/.local/bin
+ln -f -s ~/dotfiles/bin/clean-git-branches ~/.local/bin
