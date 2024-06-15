@@ -5,19 +5,35 @@ if ! npm config get prefix | grep -Eq "(/.npm|$HOME/opt)\$"; then
 	npm config set prefix "$HOME/opt"
 fi
 
-npm install -g yaml-language-server
+# npm install -g yaml-language-server
 # yum install https://github.com/cli/cli/releases/download/v2.0.0/gh_2.0.0_linux_amd64.rpm
 
 nvim_version=0.10.0
 
-suffix=""
-if [[ "$(cat /etc/redhat-release)" == *"release 8"* ]];
-then
-    suffix="-releases"
-fi
+if [[ "$(uname -sm)" == "Linux aarch64" ]]; then
+	mkdir -p ~/tmp
+	cd ~/tmp || exit 1
 
-curl --fail -SsL -o nvim.tar.gz "https://github.com/neovim/neovim${suffix}/releases/download/v${nvim_version}/nvim-linux64.tar.gz"
-rm -Rf "$HOME/opt/nvim"
-tar -xzf nvim.tar.gz -C "$HOME/opt"
-mv "$HOME/opt/nvim-linux64" "$HOME/opt/nvim"
-rm -f nvim.tar.gz
+	sudo apt install npm nodejs
+	sudo apt install ninja-build gettext cmake unzip curl build-essential
+
+	curl --fail -SsL -o nvim-src.tar.gz https://github.com/neovim/neovim/archive/refs/tags/v${nvim_version}.tar.gz
+	rm -Rf neovim-${nvim_version}
+	tar -xvzf nvim-src.tar.gz
+	cd neovim-${nvim_version} || exit 1
+
+	make CMAKE_BUILD_TYPE=Release
+	make CMAKE_INSTALL_PREFIX="$HOME/opt/nvim" CMAKE_BUILD_TYPE=Release install
+else
+	suffix=""
+	if [[ "$(cat /etc/redhat-release)" == *"release 8"* ]];
+	then
+		suffix="-releases"
+	fi
+
+	curl --fail -SsL -o nvim.tar.gz "https://github.com/neovim/neovim${suffix}/releases/download/v${nvim_version}/nvim-linux64.tar.gz"
+	rm -Rf "$HOME/opt/nvim"
+	tar -xzf nvim.tar.gz -C "$HOME/opt"
+	mv "$HOME/opt/nvim-linux64" "$HOME/opt/nvim"
+	rm -f nvim.tar.gz
+fi
