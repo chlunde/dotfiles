@@ -651,7 +651,7 @@ require("lazy").setup({
 				},
 
 				volar = {},
-				tsserver = {
+				ts_ls = {
 					init_options = {
 						plugins = {
 							{
