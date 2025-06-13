@@ -174,8 +174,8 @@ vim.o.confirm = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
+-- vim.keymap.set('n', '[d', vim.diagnostic.jump(), { desc = 'Go to previous [D]iagnostic message' })
+-- vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 vim.keymap.set('n', '[c', '<cmd>cnext<CR>', { desc = 'Go to next [Q]uickfix' })
@@ -753,6 +753,7 @@ require('lazy').setup({
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+        automatic_enable = true, -- automatically enable servers that are installed
         automatic_installation = false,
         handlers = {
           function(server_name)
@@ -1087,12 +1088,22 @@ require('lazy').setup({
     'folke/snacks.nvim',
     priority = 1000,
     lazy = false,
-    ---@type snacks.Config
+    ---@type Snacks.Config
     opts = {
       dashboard = {
         enabled = true,
+        preset = {
+          header = [[
+gra - Code [R]eference [A]ctions .  <l>sf - [S]earch [F]iles           .
+grd - [G]oto [D]efinition        .  <l>sw - [S]earch current [W]ord    .
+grD - [G]oto [D]eclaration       .  <l>sg - [S]earch by [G]rep         .
+gri - [G]oto [I]mplementation    .  <l>s/ - [S]earch [/] in Open Files .
+grn - [R]e[n]ame                 .  <l>s. - [S]earch [.] Recent Files  .
+grr - [G]oto [R]eferences        .  <l>q  - [Q]uickfix List            .
+grt - [G]oto [T]ype Definition   .  ]d    - next diagnostic            .]],
+        },
         sections = {
-          -- { section = "header" },
+          { section = "header" },
           { section = 'keys', gap = 1, padding = 1 },
           { pane = 1, icon = " ", title = "Recent Files", section = "recent_files", indent = 2, padding = 1 },
           { pane = 1, icon = " ", title = "Projects", section = "projects", indent = 2, padding = 1 },
@@ -1122,7 +1133,7 @@ require('lazy').setup({
               },
               {
                 title = 'Open Issues',
-                cmd = 'env GH_FORCE_TTY=vt100 gh issue list -L 3 | grep -v "^Showing "',
+                cmd = 'env GH_FORCE_TTY=vt100 gh issue list -L 3 | grep -v "^Showing " || :',
                 key = 'i',
                 action = function()
                   vim.fn.jobstart('gh issue list --web', { detach = true })
@@ -1133,7 +1144,7 @@ require('lazy').setup({
               {
                 icon = ' ',
                 title = 'Open PRs',
-                cmd = 'env GH_FORCE_TTY=vt100 gh pr list -L 3 | grep -v "^Showing "',
+                cmd = 'env GH_FORCE_TTY=vt100 gh pr list -L 3 | grep -v "^Showing " || :',
                 key = 'P',
                 action = function()
                   vim.fn.jobstart('gh pr list --web', { detach = true })
@@ -1158,7 +1169,6 @@ require('lazy').setup({
               }, cmd)
             end, cmds)
           end,
-          -- { section = 'startup' },
         },
       },
     },
