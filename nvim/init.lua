@@ -933,6 +933,20 @@ require('lazy').setup({
   },
 
   {
+    "folke/flash.nvim",
+    event = "VeryLazy",
+    ---@type Flash.Config
+    opts = {},
+    keys = {
+      { "s",     mode = { "n", "x", "o" }, function() require("flash").jump() end,              desc = "Flash" },
+      { "S",     mode = { "n", "x", "o" }, function() require("flash").treesitter() end,        desc = "Flash Treesitter" },
+      { "r",     mode = "o",               function() require("flash").remote() end,            desc = "Remote Flash" },
+      { "R",     mode = { "o", "x" },      function() require("flash").treesitter_search() end, desc = "Treesitter Search" },
+      { "<c-s>", mode = { "c" },           function() require("flash").toggle() end,            desc = "Toggle Flash Search" },
+    },
+  },
+
+  {
     'jubnzv/mdeval.nvim',
     cmd = 'MdEval',
     keys = {
@@ -1003,6 +1017,101 @@ require('lazy').setup({
       -- 	require("trouble").toggle("lsp_references")
       -- end)
     end,
+  },
+
+  {
+    "quolpr/quicktest.nvim",
+    config = function()
+      local qt = require("quicktest")
+
+      qt.setup({
+        -- Choose your adapter, here all supported adapters are listed
+        adapters = {
+          require("quicktest.adapters.golang")({}),
+          -- require("quicktest.adapters.vitest")({}),
+          -- require("quicktest.adapters.playwright")({}),
+          -- require("quicktest.adapters.elixir"),
+          -- require("quicktest.adapters.criterion"),
+          -- require("quicktest.adapters.dart"),
+          -- require("quicktest.adapters.rspec"),
+        },
+        -- split or popup mode, when argument not specified
+        default_win_mode = "split",
+        use_builtin_colorizer = true
+      })
+    end,
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "MunifTanjim/nui.nvim",
+    },
+    keys = {
+      {
+        "<leader>tl",
+        function()
+          local qt = require("quicktest")
+          -- current_win_mode return currently opened panel, split or popup
+          qt.run_line()
+          -- You can force open split or popup like this:
+          -- qt.run_line('split')
+          -- qt.run_line('popup')
+        end,
+        desc = "[T]est Run [L]line",
+      },
+      {
+        "<leader>tf",
+        function()
+          local qt = require("quicktest")
+
+          qt.run_file()
+        end,
+        desc = "[T]est Run [F]ile",
+      },
+      {
+        '<leader>td',
+        function()
+          local qt = require 'quicktest'
+
+          qt.run_dir()
+        end,
+        desc = '[T]est Run [D]ir',
+      },
+      {
+        '<leader>ta',
+        function()
+          local qt = require 'quicktest'
+
+          qt.run_all()
+        end,
+        desc = '[T]est Run [A]ll',
+      },
+      {
+        "<leader>tp",
+        function()
+          local qt = require("quicktest")
+
+          qt.run_previous()
+        end,
+        desc = "[T]est Run [P]revious",
+      },
+      {
+        "<leader>tt",
+        function()
+          local qt = require("quicktest")
+
+          qt.toggle_win("split")
+        end,
+        desc = "[T]est [T]oggle Window",
+      },
+      {
+        "<leader>tc",
+        function()
+          local qt = require("quicktest")
+
+          qt.cancel_current_run()
+        end,
+        desc = "[T]est [C]ancel Current Run",
+      },
+    },
   },
 
   { -- Collection of various small independent plugins/modules
@@ -1217,49 +1326,69 @@ grt - [G]oto [T]ype Definition   .  ]d    - next diagnostic            .]],
   -- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
   -- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
-    ui = {
-      -- If you are using a Nerd Font: set icons to an empty table which will use the
-      -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
-      icons = vim.g.have_nerd_font and {} or {
-        cmd = '⌘',
-        config = '🛠',
-        event = '📅',
-        ft = '📂',
-        init = '⚙',
-        keys = '🗝',
-        plugin = '🔌',
-        runtime = '💻',
-        require = '🌙',
-        source = '📄',
-        start = '🚀',
-        task = '📌',
-        lazy = '💤 ',
-      },
+  ui = {
+    -- If you are using a Nerd Font: set icons to an empty table which will use the
+    -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
+    icons = vim.g.have_nerd_font and {} or {
+      cmd = '⌘',
+      config = '🛠',
+      event = '📅',
+      ft = '📂',
+      init = '⚙',
+      keys = '🗝',
+      plugin = '🔌',
+      runtime = '💻',
+      require = '🌙',
+      source = '📄',
+      start = '🚀',
+      task = '📌',
+      lazy = '💤 ',
     },
-  })
+  },
+})
 
--- vim.api.nvim_create_autocmd('BufWritePre', {
---   pattern = '*.go',
---   callback = function()
---     local params = vim.lsp.util.make_range_params()
---     params.context = { only = { 'source.organizeImports' } }
---     -- buf_request_sync defaults to a 1000ms timeout. Depending on your
---     -- machine and codebase, you may want longer. Add an additional
---     -- argument after params if you find that you have to write the file
---     -- twice for changes to be saved.
---     -- E.g., vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 3000)
---     local result = vim.lsp.buf_request_sync(0, 'textDocument/codeAction', params)
---     for cid, res in pairs(result or {}) do
---       for _, r in pairs(res.result or {}) do
---         if r.edit then
---           local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or 'utf-16'
---           vim.lsp.util.apply_workspace_edit(r.edit, enc)
---         end
---       end
---     end
---     vim.lsp.buf.format({ async = false })
---   end,
--- })
+
+-- Set up switching between <filename>.go and <filename>_test.go via <leader>tg when in a Go file, by creating a lua function
+local function toggle_go_test_file()
+  local filename = vim.fn.expand('%:r:p')
+  local ext = vim.fn.expand('%:e')
+  if ext == 'go' then
+    local other = filename .. '_test.go'
+    if filename:match('_test$') then
+      other = filename:gsub('_test$', '') .. '.go'
+    end
+
+    vim.cmd('edit ' .. other)
+  else
+    print('Not a Go or test file: ' .. filename .. '.' .. ext)
+  end
+end
+-- Set up the keymap for toggling between Go and test files when in a Go file
+vim.keymap.set('n', '<leader>tg', toggle_go_test_file, { desc = 'Toggle Go/Test File' })
+
+
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = '*.go',
+  callback = function()
+    local params = vim.lsp.util.make_range_params(0, "utf-8")
+    params.context = { only = { 'source.organizeImports' } }
+    -- buf_request_sync defaults to a 1000ms timeout. Depending on your
+    -- machine and codebase, you may want longer. Add an additional
+    -- argument after params if you find that you have to write the file
+    -- twice for changes to be saved.
+    -- E.g., vim.lsp.buf_request_sync(0, "textDocument/codeAction", params, 3000)
+    local result = vim.lsp.buf_request_sync(0, 'textDocument/codeAction', params)
+    for cid, res in pairs(result or {}) do
+      for _, r in pairs(res.result or {}) do
+        if r.edit then
+          local enc = (vim.lsp.get_client_by_id(cid) or {}).offset_encoding or 'utf-16'
+          vim.lsp.util.apply_workspace_edit(r.edit, enc)
+        end
+      end
+    end
+    vim.lsp.buf.format({ async = false })
+  end,
+})
 
 -- TODO: Markdown only
 vim.keymap.set(
