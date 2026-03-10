@@ -1,6 +1,6 @@
 #!/bin/bash
-v=14.1.0
-hash=f84757b07f425fe5cf11d87df6644691c644a5cd2348a2c670894272999d3ba7
+v=15.1.0
+hash=1c9297be4a084eea7ecaedf93eb03d058d6faae29bbc57ecdaf5063921491599
 
 export PATH="~/opt/ripgrep/:$PATH"
 if [[ "$(rg --version | head -n 1 2>/dev/null)" == "ripgrep ${v} "* ]]; then

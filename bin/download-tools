@@ -6,9 +6,9 @@ if ! npm config get prefix | grep -Eq "(/.npm|$HOME/opt)\$"; then
 fi
 
 # npm install -g yaml-language-server
-# yum install https://github.com/cli/cli/releases/download/v2.0.0/gh_2.0.0_linux_amd64.rpm
+# yum install https://github.com/cli/cli/releases/download/v2.87.3/gh_2.87.3_linux_amd64.rpm
 
-nvim_version=0.11.2
+nvim_version=0.11.6
 
 if [[ "$(uname -sm)" == "Linux aarch64" ]]; then
     mkdir -p ~/tmp

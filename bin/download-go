@@ -1,6 +1,6 @@
 #!/bin/bash
-v=1.22.1
-hash=aab8e15785c997ae20f9c88422ee35d962c4562212bb0f879d052a35c8307c7f
+v=1.26.1
+hash=031f088e5d955bab8657ede27ad4e3bc5b7c1ba281f05f245bcc304f327c987a
 
 if [[ "$(go version 2>/dev/null)" == "go version go$v "* ]]; then
 	echo "Already updated"
@@ -9,7 +9,7 @@ fi
 
 mkdir -p ~/Downloads/
 declare -r binary=~/Downloads/go$v.linux-amd64.tar.gz
-curl -o "$binary" https://storage.googleapis.com/golang/go$v.linux-amd64.tar.gz
+curl -L -o "$binary" https://go.dev/dl/go$v.linux-amd64.tar.gz
 
 found="$(sha256sum $binary | cut -d ' ' -f1)"
 

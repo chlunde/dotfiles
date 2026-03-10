@@ -24,12 +24,12 @@ then
     go install honnef.co/go/tools/cmd/staticcheck@latest
     go install github.com/cweill/gotests/gotests@v1.5.3
     go install github.com/rogpeppe/gohack@latest
-    go install github.com/charmbracelet/glow@v1.4.0
-    go install go.mozilla.org/sops/v3/cmd/sops@latest
+    go install github.com/charmbracelet/glow/v2@v2.1.1
+    go install github.com/getsops/sops/v3/cmd/sops@latest
     go install mvdan.cc/sh/v3/cmd/shfmt@latest
-    go install github.com/sachaos/viddy@v0.1.6
+    go install github.com/sachaos/viddy@v0.4.0
     go install github.com/go-delve/delve/cmd/dlv@latest
-    go install sigs.k8s.io/kind@v0.17.0
+    go install sigs.k8s.io/kind@v0.31.0
 else
     go $@
 fi
