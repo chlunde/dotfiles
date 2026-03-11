@@ -1,0 +1,49 @@
+#!/bin/bash
+set -e
+
+if [[ "$(uname)" != "Linux" ]]; then
+	echo "This script only supports Linux"
+	exit 1
+fi
+
+if ! test -f /etc/fedora-release; then
+	echo "This script only supports Fedora"
+	exit 1
+fi
+
+ghostty_version=1.3.0
+zig_version=0.15.2
+
+# Install Fedora build dependencies
+sudo dnf install -y \
+	gtk4-devel \
+	gtk4-layer-shell-devel \
+	libadwaita-devel \
+	gettext
+
+# Install Zig (required version not available via dnf)
+mkdir -p ~/tmp
+cd ~/tmp
+
+if ! ~/opt/zig/zig version 2>/dev/null | grep -q "^${zig_version}$"; then
+	echo "Installing Zig ${zig_version}..."
+	curl --fail -SsL -o zig.tar.xz "https://ziglang.org/download/${zig_version}/zig-x86_64-linux-${zig_version}.tar.xz"
+	rm -Rf ~/opt/zig
+	mkdir -p ~/opt/zig
+	tar -xf zig.tar.xz --strip-components=1 -C ~/opt/zig
+	rm -f zig.tar.xz
+fi
+
+export PATH="$HOME/opt/zig:$PATH"
+
+# Download and build Ghostty
+curl --fail -SsL -o ghostty.tar.gz "https://release.files.ghostty.org/${ghostty_version}/ghostty-${ghostty_version}.tar.gz"
+rm -Rf "ghostty-${ghostty_version}"
+tar -xzf ghostty.tar.gz
+cd "ghostty-${ghostty_version}"
+
+zig build -p "$HOME/.local" -Doptimize=ReleaseFast
+
+cd ~/tmp
+rm -Rf "ghostty-${ghostty_version}" ghostty.tar.gz
+echo "Ghostty ${ghostty_version} installed to ~/.local"
