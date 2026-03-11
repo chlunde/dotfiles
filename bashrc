@@ -41,7 +41,7 @@ shorthost_prompt() {
         # shellcheck disable=SC2034
         GIT_PS1_SHOWDIRTYSTATE="true"
         # shellcheck disable=SC2034
-        GIT_PS1_SHOWUNTRACKEDFILES="true"
+        #GIT_PS1_SHOWUNTRACKEDFILES="true"
         # shellcheck disable=SC2034
         GIT_PS1_SHOWUPSTREAM="true"
     else
@@ -49,7 +49,7 @@ shorthost_prompt() {
             echo
         }
     fi
-    PS1="${host}\$(__ctx)$x${GREEN}\w${RESET}\$(__git_ps1 \" (%s)\")\\$ "
+    PS1="${host}\$(__ctx)$x${GREEN}\w${RESET}\${_GIT_PS1_CACHE}\\$ "
 }
 
 shorthost_prompt
@@ -120,7 +120,10 @@ vim() {
 }
 
 # "infinite" history
-PROMPT_COMMAND='history -a'
+_update_prompt() {
+    _GIT_PS1_CACHE=$(__git_ps1 " (%s)")
+}
+PROMPT_COMMAND='history -a; _update_prompt'
 HISTSIZE=100000
 
 shopt -s checkwinsize
@@ -199,7 +202,7 @@ if [[ -x ~/bin/fzf ]] && [[ -z $INSIDE_EMACS ]]; then
     __fzf_proj__() {
         local dir
         dir=$( (
-            command find -L /git ~/src ~/go/src/ -maxdepth 3 \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
+            command find -L ~/git -maxdepth 2 \( -path '*/\.*' -o -fstype 'dev' -o -fstype 'proc' \) -prune \
                 -o -type d -print 2>/dev/null
             command find -L ~/ -maxdepth 1 -type d 2>/dev/null
         ) | fzf +m) && printf 'cd %q' "$dir"
@@ -222,35 +225,42 @@ __update-completions() {
     local -r compdir="$HOME/.local/share/bash-completion/"
     test -d "$compdir" || mkdir -p "$compdir"
 
-    test -f /usr/share/bash-completion/bash_completion && . /usr/share/bash-completion/bash_completion
-    test -f /opt/homebrew/share/bash-completion/bash_completion && . /opt/homebrew/share/bash-completion/bash_completion
-
-    if type kubectl &>/dev/null; then
-        if test "$compdir/kubectl" -ot "$(which kubectl)"; then
-            kubectl completion bash >"$compdir/kubectl"
-        fi
+    local sentinel="$compdir/.loaded"
+    if [[ /usr/share/bash-completion/bash_completion -nt $sentinel ]]; then
+        . /usr/share/bash-completion/bash_completion
+        touch "$sentinel"
+    elif [[ /opt/homebrew/share/bash-completion/bash_completion -nt $sentinel ]]; then
+        . /opt/homebrew/share/bash-completion/bash_completion
+        touch "$sentinel"
     fi
-    complete -F _lazy_complete kubectl
 
-    if type gh &>/dev/null; then
-        if test "$compdir/gh" -ot "$(which gh)"; then
-            gh completion -s bash >"$compdir/gh"
+    local b
+    for b in kubectl gh kind; do
+        local bin
+        bin=$(command -v "$b" 2>/dev/null)
+        if [[ -n $bin ]]; then
+            if [[ ! -f $compdir/$b || $compdir/$b -ot $bin ]]; then
+                case $b in
+                    kubectl) kubectl completion bash >"$compdir/$b" ;;
+                    gh) gh completion -s bash >"$compdir/$b" ;;
+                    kind) kind completion bash >"$compdir/$b" ;;
+                esac
+            fi
+            complete -F _lazy_complete "$b"
         fi
-    fi
-    complete -F _lazy_complete gh
-
-    if type kind &>/dev/null; then
-        if test "$compdir/kind" -ot "$(which kind)"; then
-            kind completion bash >"$compdir/kind"
-        fi
-    fi
-    complete -F _lazy_complete kind
+    done
 }
 
 __update-completions
+#_chk "4 completions"
 
 alias k=kubectl
-complete -o default -F __start_kubectl k
+_lazy_complete_k() {
+    source "$HOME/.local/share/bash-completion/kubectl" 2>/dev/null
+    complete -o default -F __start_kubectl k
+    __start_kubectl "$@"
+}
+complete -o default -F _lazy_complete_k k
 
 # Set terminal title manually
 t() {
@@ -267,7 +277,8 @@ preexec() { :; }
 preexec_invoke_exec() {
     [ -n "$COMP_LINE" ] && return                     # do nothing if completing
     [ "$BASH_COMMAND" = "$PROMPT_COMMAND" ] && return # don't cause a preexec for $PROMPT_COMMAND
-    [ "$AUTO_TITLE" = 0 ] && return                   # don't set title when title has been set manually
+    [[ $BASH_COMMAND == __* || $BASH_COMMAND == _update_prompt || $BASH_COMMAND == "history -a" || $BASH_COMMAND == '[['* || $BASH_COMMAND == builtin* ]] && return
+    [ "$AUTO_TITLE" = 0 ] && return # don't set title when title has been set manually
     local this_command
     this_command="$(HISTTIMEFORMAT="" history 1 | sed -e "s/^[ ]*[0-9]*[ ]*//" -e 's/^\([^ ]\+\s\+[^ ]\+\s\+[^ ]\+\).*/\1/' -e 's/[|&<>].*//')"
     pwd="$(basename "$PWD")"
@@ -280,9 +291,47 @@ preexec_invoke_exec() {
         echo -ne "\033]0;$pwd: $this_command\007"
     fi
 }
-trap 'preexec_invoke_exec' DEBUG
 
 if tail -n 1 "$HOME/.bashrc" | grep -q opt/etc/shrc; then
     sed --follow-symlinks -i '$d' "$HOME/.bashrc"
 fi
 [ -f ~/.bashrc.local ] && source ~/.bashrc.local
+
+alias gcm='git checkout main || git checkout master; git pull --ff-only'
+
+tmuxsplit() {
+    local cmd="$*"
+
+    if [ -z "$TMUX" ]; then
+        # Check for existing tmux sessions
+        if tmux ls 2>/dev/null | grep -q .; then
+            # Attach to the first available session and create a new window
+            local session
+            session=$(tmux ls | head -n1 | cut -d: -f1)
+            tmux attach-session -t "$session" \; \
+                new-window \; \
+                split-window -v \; \
+                select-pane -t 0 \; \
+                send-keys "$cmd" C-m \; \
+                select-pane -t 1
+        else
+            # Create a new session
+            tmux new-session \; \
+                split-window -v \; \
+                select-pane -t 0 \; \
+                send-keys "$cmd" C-m \; \
+                select-pane -t 1
+        fi
+    else
+        # Already in tmux - just split
+        tmux split-window -v
+        tmux select-pane -t 0
+        tmux send-keys "$cmd" C-m
+        tmux select-pane -t 1
+    fi
+}
+
+#printf '.bashrc loaded in %.0fms\n' "$(echo "( ${EPOCHREALTIME} - ${_BASHRC_START} ) * 1000" | bc)" >&2
+#unset _BASHRC_START
+trap 'preexec_invoke_exec' DEBUG
+return

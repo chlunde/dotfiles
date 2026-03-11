@@ -11,28 +11,11 @@ for font in Go-Bold-Italic.ttf Go-Bold.ttf Go-Italic.ttf Go-Medium-Italic.ttf Go
 done
 
 # https://github.com/githubnext/monaspace/issues/15
-mkdir -p ~/.config/fontconfig/conf.d
-cat >~/.config/fontconfig/conf.d/20-monaspace.conf <<EOF
-<?xml version="1.0"?>
-<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
-<fontconfig>
-    <match target="scan">
-        <test name="family" compare="contains">
-            <string>Monaspace</string>
-        </test>
-        <edit name="spacing">
-            <const>dual</const>
-        </edit>
-    </match>
-</fontconfig>
-EOF
-
-monaspaceVersion=v1.301
-if ! [[ -f "monaspace-static-$monaspaceVersion.zip" ]]; then
-    curl --location -O "https://github.com/githubnext/monaspace/releases/download/$monaspaceVersion/monaspace-static-$monaspaceVersion.zip"
-    unzip "monaspace-static-$monaspaceVersion.zip" "Static Fonts/*/*.otf"
-    mv Static\ Fonts/*/*.otf .
-    rm -rf "Static Fonts"
+monaspaceVersion=nerdfonts-v1.301
+if ! [[ -f "monaspace-$monaspaceVersion.zip" ]]; then
+    curl --location -O "https://github.com/githubnext/monaspace/releases/download/$monaspaceVersion/monaspace-$monaspaceVersion.zip"
+    unzip "monaspace-$monaspaceVersion.zip" "monaspace-$monaspaceVersion/fonts/otf/*"
+    mv "monaspace-$monaspaceVersion/fonts/otf/"* .
 fi
 
 for font in MaterialIcons-Regular.ttf; do
@@ -42,13 +25,13 @@ for font in MaterialIcons-Regular.ttf; do
 done
 
 # Community Fork
-git clone --depth 1 https://github.com/Templarian/MaterialDesign-Webfont
+[[ -d MaterialDesign-Webfont ]] || git clone --depth 1 https://github.com/Templarian/MaterialDesign-Webfont
 
 # FontAwesome
-git clone --depth 1 https://github.com/FortAwesome/Font-Awesome
+[[ -d Font-Awesome ]] || git clone --depth 1 https://github.com/FortAwesome/Font-Awesome
 
 # Typicons
-git clone --depth 1 https://github.com/stephenhutchings/typicons.font
+[[ -d typicons.font ]] || git clone --depth 1 https://github.com/stephenhutchings/typicons.font
 
 for font in iAWriterMonoS-Bold.ttf iAWriterMonoS-Italic.ttf iAWriterMonoS-BoldItalic.ttf iAWriterMonoS-Regular.ttf; do
     if [[ ! -f $font ]]; then

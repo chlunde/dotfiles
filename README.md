@@ -25,4 +25,15 @@ done
     ln -s ~/dotfiles/bin/go-tool-install ~/bin/
 
 gh config set git_protocol ssh -h github.com
+
+git config core.hooksPath $HOME/dotfiles/git-global-hooks
 ```
+
+```bash
+cat << 'EOF' > ~/.git_commit_template.txt
+# Co-authored-by: Name <name>
+EOF
+
+git config --global commit.template ~/.git_commit_template.txt
+```
+

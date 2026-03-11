@@ -162,6 +162,9 @@ Base = rgb(30, 30, 46)
 Mantle = rgb(24, 24, 37)
 Crust = rgb(17, 17, 27)
 
+#for a, val in dict(locals()).items():
+	#if type(val) == str and ";" in val:
+		#print(color(val, a))
 
 def main():
 	args = ["."]
