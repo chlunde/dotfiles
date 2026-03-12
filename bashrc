@@ -273,6 +273,7 @@ t() {
 }
 
 # Set terminal title automatically
+# Ghostty handles titles natively via shell integration — skip this overhead
 preexec() { :; }
 preexec_invoke_exec() {
     [ -n "$COMP_LINE" ] && return                     # do nothing if completing
@@ -281,10 +282,8 @@ preexec_invoke_exec() {
     [ "$AUTO_TITLE" = 0 ] && return # don't set title when title has been set manually
     local this_command
     this_command="$(HISTTIMEFORMAT="" history 1 | sed -e "s/^[ ]*[0-9]*[ ]*//" -e 's/^\([^ ]\+\s\+[^ ]\+\s\+[^ ]\+\).*/\1/' -e 's/[|&<>].*//')"
-    pwd="$(basename "$PWD")"
-    if [[ $pwd == "$USER" ]]; then
-        pwd="~"
-    fi
+    local pwd="${PWD##*/}"
+    [[ $pwd == "$USER" ]] && pwd="~"
     if [[ -n $TMUX ]]; then
         tmux rename-window "$pwd: $this_command"
     else
@@ -333,5 +332,9 @@ tmuxsplit() {
 
 #printf '.bashrc loaded in %.0fms\n' "$(echo "( ${EPOCHREALTIME} - ${_BASHRC_START} ) * 1000" | bc)" >&2
 #unset _BASHRC_START
-trap 'preexec_invoke_exec' DEBUG
+
+# Skip DEBUG trap in Ghostty — it handles title setting via shell integration
+if [[ -z "$GHOSTTY_RESOURCES_DIR" ]]; then
+    trap 'preexec_invoke_exec' DEBUG
+fi
 return
