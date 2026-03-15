@@ -1,0 +1,25 @@
+#!/bin/bash
+cmd="$*"
+
+if [ -z "$TMUX" ]; then
+    if tmux ls 2>/dev/null | grep -q .; then
+        session=$(tmux ls | head -n1 | cut -d: -f1)
+        tmux attach-session -t "$session" \; \
+            new-window \; \
+            split-window -v \; \
+            select-pane -t 0 \; \
+            send-keys "$cmd" C-m \; \
+            select-pane -t 1
+    else
+        tmux new-session \; \
+            split-window -v \; \
+            select-pane -t 0 \; \
+            send-keys "$cmd" C-m \; \
+            select-pane -t 1
+    fi
+else
+    tmux split-window -v
+    tmux select-pane -t 0
+    tmux send-keys "$cmd" C-m
+    tmux select-pane -t 1
+fi
