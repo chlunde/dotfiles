@@ -121,9 +121,6 @@ if [[ -x ~/bin/fzf ]] && [[ -z $INSIDE_EMACS ]]; then
     bind '"\ec": " \C-e\C-u$(__fzf-proj)\e\C-e\C-m"'
 fi
 
-#shopt -s progcomp
-#[ -f /etc/bash_completion.d/git ] && source /etc/bash_completion.d/git
-
 # lazy load bash completions (avoid startup cost)
 _lazy_complete() {
     # shellcheck disable=SC1090
@@ -166,6 +163,13 @@ __update-completions() {
 }
 
 __update-completions
+
+_lazy_complete_git() {
+    source /usr/share/bash-completion/completions/git 2>/dev/null \
+        || source /usr/share/doc/git/contrib/completion/git-completion.bash 2>/dev/null
+    __git_main "$@" 2>/dev/null || return 124
+}
+complete -o bashdefault -o default -o nospace -F _lazy_complete_git git
 
 alias k=kubectl
 _lazy_complete_k() {
