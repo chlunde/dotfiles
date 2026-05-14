@@ -15,7 +15,6 @@ done
 
     mkdir -p ~/.config ~/.vim
     ln -s ~/.vim ~/.config/nvim
-    ln -s ~/dotfiles/vimrc ~/.config/nvim/init.vim
 
     curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
         https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim

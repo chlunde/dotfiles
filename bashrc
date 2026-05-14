@@ -33,8 +33,15 @@ shorthost_prompt() {
     ((had_extglob)) || shopt -u extglob
 
     PROMPT_DIRTRIM=2
-    if [[ -f /usr/share/doc/git/contrib/completion/git-prompt.sh ]]; then
-        . /usr/share/doc/git/contrib/completion/git-prompt.sh
+    local git_prompt
+    for git_prompt in \
+        /usr/share/doc/git/contrib/completion/git-prompt.sh \
+        /opt/homebrew/etc/bash_completion.d/git-prompt.sh; do
+        [[ -f $git_prompt ]] && break
+        git_prompt=
+    done
+    if [[ -n $git_prompt ]]; then
+        . "$git_prompt"
         # shellcheck disable=SC2034
         GIT_PS1_SHOWDIRTYSTATE="true"
         # shellcheck disable=SC2034
@@ -166,6 +173,7 @@ __update-completions
 
 _lazy_complete_git() {
     source /usr/share/bash-completion/completions/git 2>/dev/null \
+        || source /opt/homebrew/share/bash-completion/completions/git 2>/dev/null \
         || source /usr/share/doc/git/contrib/completion/git-completion.bash 2>/dev/null
     __git_main "$@" 2>/dev/null || return 124
 }

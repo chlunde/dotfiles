@@ -15,6 +15,11 @@ done
 
 ln -f -s ~/dotfiles/nvim ~/.config/
 
+# nvim-treesitter (main branch) compiles parsers via the tree-sitter CLI at install time
+if command -v brew >/dev/null; then
+    brew list tree-sitter-cli >/dev/null 2>&1 || brew install tree-sitter-cli
+fi
+
 
 #mkdir -p ~/.emacs.d/straight/versions/
 #ln -f -s ~/dotfiles/version-lock.el ~/.emacs.d/straight/versions/default.el
