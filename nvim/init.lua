@@ -297,7 +297,7 @@ require('lazy').setup({
   -- Then, because we use the `opts` key (recommended), the configuration runs
   -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
 
-  { -- Useful plugin to show you pending keybinds.
+  {                     -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
@@ -378,7 +378,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -684,7 +684,7 @@ require('lazy').setup({
           },
         },
         pyright = {},
-        -- rust_analyzer = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -752,7 +752,7 @@ require('lazy').setup({
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
-        ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
+        ensure_installed = {},   -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
         automatic_enable = true, -- automatically enable servers that are installed
         automatic_installation = false,
         handlers = {
@@ -981,7 +981,7 @@ require('lazy').setup({
       --  - :SessionLoad - Load the last saved session
       --  - :SessionDelete - Delete the last saved session
       require('mini.sessions').setup {
-        autoload = true, -- Automatically load the last session on startup
+        autoload = true,                                   -- Automatically load the last session on startup
         autoload_ignore_filetypes = { 'TelescopePrompt' }, -- Ignore certain filetypes when autoloading
       }
     end,
@@ -1231,7 +1231,8 @@ grt - [G]oto [T]ype Definition   .  ]d    - next diagnostic            .]],
             local cmds = {
               {
                 title = "Notifications",
-                cmd = "gh api notifications --method=GET -F per_page=10 -F participating=true --template '{{range .}}{{ if (eq .subject.type \"PullRequest\") }}{{tablerow .repository.full_name (truncate 100 .subject.title) .reason}}{{end}}{{end}}' | head -n 3",
+                cmd =
+                "gh api notifications --method=GET -F per_page=10 -F participating=true --template '{{range .}}{{ if (eq .subject.type \"PullRequest\") }}{{tablerow .repository.full_name (truncate 100 .subject.title) .reason}}{{end}}{{end}}' | head -n 3",
                 action = function()
                   vim.ui.open("https://github.com/notifications")
                 end,
